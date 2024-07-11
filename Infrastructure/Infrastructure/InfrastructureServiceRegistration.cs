@@ -10,10 +10,11 @@ namespace Infrastructure
     {
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<PasswordSetterSettings>(configuration.GetSection("PasswordSetterSettings"));
+            services.Configure<HashProviderSettings>(configuration.GetSection("HashProviderSettings"));
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<IUserPasswordSetter, UserPasswordSetter>();
+            services.AddTransient<IUserPasswordSetter, PasswordSetter.PasswordSetter>();
+            services.AddTransient<IHashProvider, HashProvider.HashProvider>();
 
             return services;
         }

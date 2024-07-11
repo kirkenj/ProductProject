@@ -3,7 +3,7 @@ using Domain.Common.Interfaces;
 
 namespace Application.DTOs.User
 {
-    internal class UserListDto : IIdObject<Guid>
+    public class UserListDto : IIdObject<Guid>
     {
         public Guid Id { get; set; }
         public string Login { get; set; } = null!;

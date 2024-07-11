@@ -10,8 +10,5 @@ namespace Application.DTOs.User
         public bool IsEmailConfirmed { get; set; } = false;
         public string Address { get; set; } = null!;
         public int RoleID { get; set; }
-        public string HasgAlgorithm { get; set; } = null!;
-        public string StringEncoding { get; set; } = null!;
-        public string PasswordHash { get; set; } = null!;
     }
 }

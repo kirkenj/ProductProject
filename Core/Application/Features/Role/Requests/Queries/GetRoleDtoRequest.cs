@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Features.User.Requests.Queries
 {
-    public class GetRoleDtoRequest : IRequest<RoleDto>
+    public class GetRoleDtoRequest : IRequest<RoleDto?>
     {
         public int Id { get; set; }
     }

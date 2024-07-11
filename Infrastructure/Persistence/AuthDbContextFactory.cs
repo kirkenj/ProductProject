@@ -16,7 +16,7 @@ namespace Persistence
                 .Build();
 
             var builder = new DbContextOptionsBuilder<AuthDbContext>();
-            var connectionString = configuration.GetConnectionString("AuthDbContext");//may be has to be changed
+            var connectionString = configuration.GetConnectionString("AuthDbConnectionString");//may be has to be changed
 
             builder.UseSqlServer(connectionString);
 

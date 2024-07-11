@@ -3,8 +3,6 @@ using Application.Exceptions;
 using Application.Features.User.Requests.Commands;
 using Application.Contracts.Persistence;
 using MediatR;
-using System.Security.Cryptography;
-using System.Text;
 using Application.Contracts.Infrastructure;
 
 namespace Application.Features.User.Handlers.Commands
@@ -14,10 +12,10 @@ namespace Application.Features.User.Handlers.Commands
         private readonly IUserRepository userRepository;
         private readonly IUserPasswordSetter passwordSetter;
 
-        public UpdateUserPasswordComandHandler(IUserRepository userRepository, IUserPasswordSetter passwordSetter)
+        public UpdateUserPasswordComandHandler(IUserRepository userRepository, IUserPasswordSetter userPasswordSetter)
         {
             this.userRepository = userRepository;
-            this.passwordSetter = passwordSetter;
+            this.passwordSetter = userPasswordSetter;
         }
 
         public async Task<Unit> Handle(UpdateUserPasswordComand request, CancellationToken cancellationToken)
@@ -35,11 +33,6 @@ namespace Application.Features.User.Handlers.Commands
 
             if (validaationResult.IsValid == false)
             {
-                if (validaationResult is null)
-                {
-                    throw new InvalidProgramException($"{nameof(validaationResult)} is null");
-                }
-
                 throw new ValidationException(validaationResult);
             }
 

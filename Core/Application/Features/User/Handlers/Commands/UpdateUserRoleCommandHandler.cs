@@ -25,11 +25,6 @@ namespace Application.Features.User.Handlers.Commands
 
             if (result.IsValid == false)
             {
-                if (result is null)
-                {
-                    throw new InvalidProgramException($"{nameof(result)} is null");
-                }
-
                 throw new ValidationException(result);
             }
 

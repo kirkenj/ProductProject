@@ -8,14 +8,13 @@ namespace Persistence.Repositories
     public abstract class GenericFiltrableRepository<T, TIdType, TFilter> : GenericRepository<T, TIdType>, IGenericFiltrableRepository<T, TIdType, TFilter> where T : class, IIdObject<TIdType> where TIdType : struct
     {
         public GenericFiltrableRepository(AuthDbContext dbContext) : base(dbContext)
-        { 
+        {
         }
 
-        protected abstract bool FilterCompareDelegate(T obj, TFilter filter);
+        protected abstract IQueryable<T> GetFilteredSet(IQueryable<T> set, TFilter filter);
 
-        public async Task<T?> GetAsync(TFilter filter) => await _dbSet.FirstOrDefaultAsync(o => FilterCompareDelegate(o, filter));
+        public async Task<T?> GetAsync(TFilter filter) => await GetFilteredSet(_dbSet, filter).FirstOrDefaultAsync();
 
-        public async Task<IEnumerable<T>> GetRangeAsync(TFilter filter) => await _dbSet.Where(o => FilterCompareDelegate(o, filter)).ToArrayAsync();
-
+        public async Task<IEnumerable<T>> GetRangeAsync(TFilter filter) => await GetFilteredSet(_dbSet, filter).ToArrayAsync();
     }
 }

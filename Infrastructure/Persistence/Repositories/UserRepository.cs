@@ -1,8 +1,8 @@
 ﻿using Application.Contracts.Persistence;
 using Domain.Models;
-using Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using Application.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -12,28 +12,48 @@ namespace Persistence.Repositories
         {
         }
 
-        protected override bool FilterCompareDelegate(User obj, UserFilter filter)
+        protected override IQueryable<User> GetFilteredSet(IQueryable<User> set, UserFilter filter)
         {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
-
             if (filter == null)
-                throw new ArgumentNullException(nameof(filter));
+            {
+                return set;
+            }
 
-#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
-            bool idsCmp = filter.Ids.IsNullOrEmpty() || filter.Ids.Contains(obj.Id);
+            #pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+            if (!filter.Ids.IsNullOrEmpty())
+            {
+                set = set.Where(obj => filter.Ids.Contains(obj.Id));
+            }
 
-            bool loginPartCmp = filter.LoginPart.IsNullOrEmpty() || obj.Login.Contains(filter.LoginPart);
-            
-            bool loginCmp = filter.AccurateLogin.IsNullOrEmpty() || obj.Login == filter.AccurateLogin;
+            if (!filter.LoginPart.IsNullOrEmpty())
+            {
+                set = set.Where(obj => obj.Login.Contains(filter.LoginPart));
+            }
 
-            bool addressCmp = filter.Address.IsNullOrEmpty() || obj.Address.Contains(filter.Address);
- 
-            bool emailCmp = filter.Email.IsNullOrEmpty() || obj.Email == filter.Email;
+            if (!filter.AccurateLogin.IsNullOrEmpty())
+            {
+                set = set.Where(obj => obj.Login == filter.AccurateLogin);
+            }
 
-            bool emilConfirmedCmp = filter.EmailConfirmed == null || obj.IsEmailConfirmed == filter.EmailConfirmed;
-#pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
-            return idsCmp && loginPartCmp && loginCmp && addressCmp && emailCmp && emilConfirmedCmp;
+            if (!filter.Address.IsNullOrEmpty())
+            {
+                set = set.Where(obj => obj.Address.Contains(filter.Address));
+            }
+
+            if (!filter.Email.IsNullOrEmpty())
+            {
+                #pragma warning disable CS8602 // Разыменование вероятной пустой ссылки.
+                set = set.Where(obj => obj.Email!= null && obj.Email.Contains(filter.Email));
+                #pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.
+            }
+
+            if (filter.EmailConfirmed != null)
+            {
+                set = set.Where(obj => obj.IsEmailConfirmed == filter.EmailConfirmed);
+            }
+            #pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+
+            return set;
         }
     }
 }

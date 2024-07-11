@@ -13,9 +13,8 @@ namespace Persistence
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
 
-            services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("@Server=DESKTOP-89QT4FF\\SQLEXPRESS;Database=AuthDb;TrustServerCertificate=true;Trusted_Connection=True;")));
-            //services.AddDbContext<AuthDbContext>(options => options.UseSqlServer("@Server=DESKTOP-89QT4FF\\SQLEXPRESS;Database=AuthDb;TrustServerCertificate=true;Trusted_Connection=True;"));
-
+            services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AuthDbConnectionString")));
+            
             return services;
         }
     }

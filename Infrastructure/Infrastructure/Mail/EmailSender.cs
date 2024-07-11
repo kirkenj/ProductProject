@@ -19,7 +19,7 @@ namespace Infrastructure.Mail
         {
             using var emailMessage = new MimeMessage();
 
-            emailMessage.From.Add(new MailboxAddress(Settings.FromName, Settings.FromAdress));
+            emailMessage.From.Add(new MailboxAddress(Settings.FromName, Settings.ApiLogin));
             emailMessage.To.Add(new MailboxAddress("User", email.To));
             emailMessage.Subject = email.Subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -31,8 +31,8 @@ namespace Infrastructure.Mail
 
             try
             {
-                await client.ConnectAsync(Settings.FromAdress, Settings.FromPort, true);
-                await client.AuthenticateAsync(Settings.ApiLogin, Settings.ApiPassword);//HIDE INTO SECRETS : "kirkend@bk.ru", "aCYaLcDPdhb7Cv8AkYJQ"
+                await client.ConnectAsync(Settings.ApiAdress, Settings.ApiPort, true);
+                await client.AuthenticateAsync(Settings.ApiLogin, Settings.ApiPassword);
                 await client.SendAsync(emailMessage);
 
                 await client.DisconnectAsync(true);

@@ -6,6 +6,7 @@ using MediatR;
 using Application.Exceptions;
 using Application.Contracts.Infrastructure;
 using Application.Models;
+using Microsoft.Extensions.Options;
 
 namespace Application.Features.User.Handlers.Commands
 {
@@ -14,16 +15,19 @@ namespace Application.Features.User.Handlers.Commands
         private readonly IUserRepository userRepository;
         private readonly IRoleRepository roleRepository;
         private readonly IEmailSender emailSender;
-        private readonly IMapper mapper;
-        private readonly IUserPasswordSetter userPasswordSetter;
+        private readonly IMapper mapper; 
+        private readonly IUserPasswordSetter passwordSetter;
+        private readonly CreateUserSettings createUserSettings;
 
-        public CreateUserComandHandler(IUserRepository userRepository, IRoleRepository roleRepository, IMapper mapper, IEmailSender emailSender, IUserPasswordSetter updateUserPasswordSetter)
+
+        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IUserRepository userRepository, IRoleRepository roleRepository, IMapper mapper, IEmailSender emailSender, IUserPasswordSetter passwordSetter)
         {
             this.userRepository = userRepository;
             this.roleRepository = roleRepository;
             this.mapper = mapper;
             this.emailSender = emailSender;
-            this.userPasswordSetter = updateUserPasswordSetter;
+            this.passwordSetter = passwordSetter;
+            this.createUserSettings = createUserSettings.Value;
         }
 
 
@@ -43,10 +47,11 @@ namespace Application.Features.User.Handlers.Commands
                 throw new ValidationException(result);
             }
 
-            var user = mapper.Map<Domain.Models.User>(request);
+            var user = mapper.Map<Domain.Models.User>(request.CreateUserDto);
             user.Id = Guid.NewGuid();
+            user.RoleID = createUserSettings.DefaultRoleID;
 
-            userPasswordSetter.SetPassword(user, request.CreateUserDto.Password);
+            passwordSetter.SetPassword(user, request.CreateUserDto.Password);
 
             await userRepository.AddAsync(user);
 

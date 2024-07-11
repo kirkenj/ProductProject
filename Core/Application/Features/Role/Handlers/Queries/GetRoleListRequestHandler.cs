@@ -8,19 +8,18 @@ namespace Application.Features.User.Handlers.Queries
 {
     public class GetRoleListRequestHandler : IRequestHandler<GetRoleListRequest, List<RoleDto>>
     {
-        private readonly IUserRepository userRepository;
+        private readonly IRoleRepository roleRepository;
         private readonly IMapper mapper;
 
-        public GetRoleListRequestHandler(IUserRepository userRepository, IMapper mapper)
+        public GetRoleListRequestHandler(IRoleRepository userRepository, IMapper mapper)
         {
-            this.userRepository = userRepository;
+            this.roleRepository = userRepository;
             this.mapper = mapper;
         }
 
-
         async Task<List<RoleDto>> IRequestHandler<GetRoleListRequest, List<RoleDto>>.Handle(GetRoleListRequest request, CancellationToken cancellationToken)
         {
-            var users = await userRepository.GetAllAsync();
+            var users = await roleRepository.GetAllAsync();
             return mapper.Map<List<RoleDto>>(users);
         }
     }

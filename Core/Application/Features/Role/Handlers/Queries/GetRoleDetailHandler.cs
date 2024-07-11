@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class GetRoleDetailHandler : IRequestHandler<GetRoleDtoRequest, RoleDto>
+    public class GetRoleDetailHandler : IRequestHandler<GetRoleDtoRequest, RoleDto?>
     {
         private readonly IRoleRepository userRepository;
         private readonly IMapper mapper;
@@ -17,10 +17,10 @@ namespace Application.Features.User.Handlers.Queries
             this.mapper = mapper;
         }
 
-        public async Task<RoleDto> Handle(GetRoleDtoRequest request, CancellationToken cancellationToken)
+        public async Task<RoleDto?> Handle(GetRoleDtoRequest request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetAsync(request.Id);
-            return mapper.Map<RoleDto>(user);
+            return user == null ? null : mapper.Map<RoleDto>(user);
         }
     }
 }

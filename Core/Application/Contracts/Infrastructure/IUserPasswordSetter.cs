@@ -1,15 +1,12 @@
-﻿using System.Security.Cryptography;
-using System.Text;
+﻿using Domain.Models;
 
 namespace Application.Contracts.Infrastructure
 {
     public interface IUserPasswordSetter
     {
-        string HashAlgorithmName { get; }
-        HashAlgorithm HashFunction { get; }
-        Encoding Encoding { get; }
+        public IHashProvider HashProvider { get; }
 
-        public void SetPassword(Domain.Models.User user, string password)
+        public User SetPassword(User user, string password)
         {
             if (user == null)
             {
@@ -21,12 +18,10 @@ namespace Application.Contracts.Infrastructure
                 throw new ArgumentNullException(nameof(password));
             }
 
-            var pwdBytes = Encoding.GetBytes(password);
-            var pwdHash = HashFunction.ComputeHash(pwdBytes);
-
-            user.PasswordHash = Encoding.GetString(pwdHash);
-            user.StringEncoding = Encoding.EncodingName;
-            user.HashAlgorithm = HashFunction.ToString() ?? throw new InvalidOperationException();
+            user.PasswordHash = HashProvider.GetHash(password);
+            user.StringEncoding = HashProvider.Encoding.BodyName;
+            user.HashAlgorithm = HashProvider.HashAlgorithmName;
+            return user;
         }
     }
 }
