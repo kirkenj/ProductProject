@@ -27,11 +27,11 @@ namespace Application.Features.User.Handlers.Commands
             this.roleRepository = roleRepository;
             this.mapper = mapper;
             this.emailSender = emailSender;
-            this.PasswordSetter = passwordSetter;
+            this.HashPrvider = passwordSetter;
             this.createUserSettings = createUserSettings.Value;
         }
 
-        public IHashProvider PasswordSetter { get; private set; }
+        public IHashProvider HashPrvider { get; private set; }
 
         public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
@@ -53,7 +53,7 @@ namespace Application.Features.User.Handlers.Commands
             user.Id = Guid.NewGuid();
             user.RoleID = createUserSettings.DefaultRoleID;
 
-            (this as IPasswordSettingHandler).SetPassword(request.CreateUserDto.Password, user);
+            (this as IPasswordSettingHandler).SetPassword(request.CreateUserDto.NewPassword, user);
 
             await userRepository.AddAsync(user);
 

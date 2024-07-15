@@ -8,7 +8,7 @@ namespace Application.DTOs.User.Validators
     {
         public IUpdateUserPasswordDtoValidator()
         {
-            RuleFor(o => o.Password)
+            RuleFor(o => o.NewPassword)
                 .NotEmpty().WithMessage("{PropertyName} can not be null or empty")
                 .NotNull().WithMessage("{PropertyName} can not be null or empty")
                 .MinimumLength(8).WithMessage("{PropertyName} minimal length is {ComparisonValue}")

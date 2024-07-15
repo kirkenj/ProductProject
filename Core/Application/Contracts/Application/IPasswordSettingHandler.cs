@@ -5,7 +5,7 @@ namespace Application.Contracts.Application
 {
     public interface IPasswordSettingHandler
     {
-        public IHashProvider PasswordSetter { get; }
+        public IHashProvider HashPrvider { get; }
 
         public User SetPassword(string password, User user)
         {
@@ -19,9 +19,9 @@ namespace Application.Contracts.Application
                 throw new ArgumentNullException(nameof(password));
             }
 
-            user.PasswordHash = PasswordSetter.GetHash(password);
-            user.StringEncoding = PasswordSetter.Encoding.BodyName;
-            user.HashAlgorithm = PasswordSetter.HashAlgorithmName;
+            user.PasswordHash = HashPrvider.GetHash(password);
+            user.StringEncoding = HashPrvider.Encoding.BodyName;
+            user.HashAlgorithm = HashPrvider.HashAlgorithmName;
             return user;
         }
     }

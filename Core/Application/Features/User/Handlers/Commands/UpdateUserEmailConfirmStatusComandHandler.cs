@@ -21,7 +21,7 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Unit> Handle(UpdateUserEmailConfirmStatusComand request, CancellationToken cancellationToken)
         {
-            var emailAddress = request.UpdateUserEmailConfirmStatusDTO.Email;
+            var emailAddress = request.UpdateUserEmailConfirmStatusDto.Email;
 
             var user = await userRepository.GetAsync(new UserFilter { Email = emailAddress });
             
@@ -30,7 +30,7 @@ namespace Application.Features.User.Handlers.Commands
                 throw new NotFoundException(nameof(user), $"{nameof(emailAddress)} = {emailAddress}");
             }
 
-            user.IsEmailConfirmed = request.UpdateUserEmailConfirmStatusDTO.Status;
+            user.IsEmailConfirmed = request.UpdateUserEmailConfirmStatusDto.Status;
             
             await userRepository.UpdateAsync(user);
 

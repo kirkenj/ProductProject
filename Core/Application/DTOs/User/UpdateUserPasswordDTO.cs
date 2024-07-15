@@ -2,9 +2,10 @@
 
 namespace Application.DTOs.User
 {
-    public class UpdateUserPasswordDTO : IUpdateUserPasswordDto
+    public class UpdateUserPasswordDto : IUpdateUserPasswordDto
     {
         public Guid Id { get; set; }
-        public string Password { get; set; } = null!;
+        public string OldPassword { get; set; } = null!;
+        public string NewPassword { get; set; } = null!;
     }
 }

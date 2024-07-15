@@ -2,6 +2,6 @@
 {
     public interface IUpdateUserPasswordDto
     {
-        public string Password { get; set; }
+        public string NewPassword { get; set; }
     }
 }

@@ -20,33 +20,6 @@ namespace AuthAPI.Controllers
         {
             _mediator = mediator;
         }
-
-
-        // GET: api/<AuthController2>
-        [HttpGet("Roles")]
-        public async Task<IEnumerable<RoleDto>> GetRolesList() => await _mediator.Send(new GetRoleListRequest());
-
-
-        // GET api/<AuthController2>/5
-        [HttpGet("Roles/{id}")]
-        public async Task<ActionResult<RoleDto>> GetRole(int id)
-        {
-            var result = await _mediator.Send(new GetRoleDtoRequest() { Id = id });
-            return result == null ? NotFound() : result;
-        }
-
-        // GET: api/<AuthController2>
-        [HttpGet("Users")]
-        public async Task<IEnumerable<UserListDto>> Get() => await _mediator.Send(new GetUserListRequest());
-
-
-        // GET api/<AuthController2>/5
-        [HttpGet("Users/{id}")]
-        public async Task<ActionResult<UserDto>> Get(Guid id)
-        {
-            var result = await _mediator.Send(new GetUserDtoRequest() { Id = id });
-            return result == null ? NotFound() : result;
-        }
         
 
         // POST api/<AuthController2>
@@ -67,26 +40,6 @@ namespace AuthAPI.Controllers
             }
 
             return result;
-        }
-
-
-        [Authorize()]
-        [HttpGet("Account")]
-        public string GetLogin()
-        {
-            return User.Identity.Name;
-        }
-
-        // PUT api/<AuthController2>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<AuthController2>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
