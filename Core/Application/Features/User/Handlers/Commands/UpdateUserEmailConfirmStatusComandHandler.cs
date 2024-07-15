@@ -2,7 +2,8 @@
 using Application.Contracts.Persistence;
 using Application.Exceptions;
 using MediatR;
-using Application.Models;
+using Application.Models.Email;
+using Application.Models.User;
 using Application.Contracts.Infrastructure;
 
 namespace Application.Features.User.Handlers.Commands
@@ -33,7 +34,7 @@ namespace Application.Features.User.Handlers.Commands
             
             await userRepository.UpdateAsync(user);
 
-            var email = new Email { Body = "Email confirmed", Subject = "Email confirmation", To = emailAddress };
+            var email = new Email{ Body = "Email confirmed", Subject = "Email confirmation", To = emailAddress };
 
             try
             {

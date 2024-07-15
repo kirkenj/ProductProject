@@ -1,4 +1,5 @@
-﻿using Domain.Common.Interfaces;
+﻿using Application.DTOs.Role;
+using Domain.Common.Interfaces;
 
 namespace Application.DTOs.User
 {
@@ -10,5 +11,6 @@ namespace Application.DTOs.User
         public bool IsEmailConfirmed { get; set; } = false;
         public string Address { get; set; } = null!;
         public int RoleID { get; set; }
+        public RoleDto Role { get; set; } = null!;
     }
 }

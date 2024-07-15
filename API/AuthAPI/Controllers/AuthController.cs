@@ -4,6 +4,7 @@ using Application.Features.User.Requests.Queries;
 using Application.Features.User.Requests.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -65,7 +66,15 @@ namespace AuthAPI.Controllers
                 return false.ToString();
             }
 
-            return result.Login;
+            return result;
+        }
+
+
+        [Authorize()]
+        [HttpGet("Account")]
+        public string GetLogin()
+        {
+            return User.Identity.Name;
         }
 
         // PUT api/<AuthController2>/5

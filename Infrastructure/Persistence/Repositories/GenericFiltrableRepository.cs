@@ -1,7 +1,6 @@
 ﻿using Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Domain.Common.Interfaces;
-using Infrastructure;
 
 namespace Persistence.Repositories
 {

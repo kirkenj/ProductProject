@@ -1,8 +1,8 @@
 ﻿using Application.Contracts.Persistence;
 using Domain.Models;
 using Microsoft.IdentityModel.Tokens;
-using Application.Models;
 using Microsoft.EntityFrameworkCore;
+using Application.Models.User;
 
 namespace Persistence.Repositories
 {
@@ -11,6 +11,14 @@ namespace Persistence.Repositories
         public UserRepository(AuthDbContext dbContext) : base(dbContext)
         {
         }
+
+        public Task<User?> GetAsync(Guid id, bool includeLinks = false) => includeLinks ?
+            _dbSet.Include(o => o.Role).FirstOrDefaultAsync(o => o.Id.Equals(id))
+            : _dbSet.FirstOrDefaultAsync(o => o.Id.Equals(id));
+ 
+        public Task<User?> GetAsync(UserFilter filter, bool includeLinks = false) => includeLinks ?
+            GetFilteredSet(_dbSet, filter).Include(o => o.Role).FirstOrDefaultAsync()
+            : GetFilteredSet(_dbSet, filter).FirstOrDefaultAsync();
 
         protected override IQueryable<User> GetFilteredSet(IQueryable<User> set, UserFilter filter)
         {

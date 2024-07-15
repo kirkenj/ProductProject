@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.Persistence;
 using FluentValidation;
+using Application.Models.User;
 
 namespace Application.DTOs.User.Validators
 {
@@ -7,14 +8,12 @@ namespace Application.DTOs.User.Validators
     {
         public CreateUserDtoValidator(IRoleRepository roleRepository, IUserRepository userRepository)
         {
-            Include(new IRoleEditIingDtoValidator(roleRepository));
-
             Include(new IUpdateUserPasswordDtoValidator());
 
             RuleFor(p => p.Login)
                 .MustAsync(async (Login, cancellationToken) =>
                 {
-                    var resultUser = await userRepository.GetAsync(new Models.UserFilter { AccurateLogin = Login });
+                    var resultUser = await userRepository.GetAsync(new UserFilter { AccurateLogin = Login });
                     if (resultUser == null)
                     {
                         return true;

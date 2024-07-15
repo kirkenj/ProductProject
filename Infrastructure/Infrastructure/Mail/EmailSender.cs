@@ -1,8 +1,8 @@
 ﻿using Application.Contracts.Infrastructure;
-using Application.Models;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MailKit.Net.Smtp;
+using Application.Models.Email;
 
 namespace Infrastructure.Mail
 {

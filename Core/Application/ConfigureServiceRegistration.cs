@@ -1,4 +1,4 @@
-﻿using Application.Models;
+﻿using Application.Models.User;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

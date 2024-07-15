@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Features.User.Requests.Queries
 {
-    public class LoginDto : IRequest<UserDto?>
+    public class LoginDto : IRequest<string?>
     {
         public string Login { get; set; } = null!;
         public string Password { get; set; } = null!;

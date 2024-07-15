@@ -5,31 +5,33 @@ using AutoMapper;
 using MediatR;
 using Application.Exceptions;
 using Application.Contracts.Infrastructure;
-using Application.Models;
 using Microsoft.Extensions.Options;
+using Application.Models.User;
+using Application.Models.Email;
+using Application.Contracts.Application;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class CreateUserComandHandler : IRequestHandler<CreateUserCommand, Guid>
+    public class CreateUserComandHandler : IRequestHandler<CreateUserCommand, Guid>, IPasswordSettingHandler
     {
         private readonly IUserRepository userRepository;
         private readonly IRoleRepository roleRepository;
         private readonly IEmailSender emailSender;
         private readonly IMapper mapper; 
-        private readonly IUserPasswordSetter passwordSetter;
         private readonly CreateUserSettings createUserSettings;
 
 
-        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IUserRepository userRepository, IRoleRepository roleRepository, IMapper mapper, IEmailSender emailSender, IUserPasswordSetter passwordSetter)
+        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IUserRepository userRepository, IRoleRepository roleRepository, IMapper mapper, IEmailSender emailSender, IHashProvider passwordSetter)
         {
             this.userRepository = userRepository;
             this.roleRepository = roleRepository;
             this.mapper = mapper;
             this.emailSender = emailSender;
-            this.passwordSetter = passwordSetter;
+            this.PasswordSetter = passwordSetter;
             this.createUserSettings = createUserSettings.Value;
         }
 
+        public IHashProvider PasswordSetter { get; private set; }
 
         public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
@@ -51,7 +53,7 @@ namespace Application.Features.User.Handlers.Commands
             user.Id = Guid.NewGuid();
             user.RoleID = createUserSettings.DefaultRoleID;
 
-            passwordSetter.SetPassword(user, request.CreateUserDto.Password);
+            (this as IPasswordSettingHandler).SetPassword(request.CreateUserDto.Password, user);
 
             await userRepository.AddAsync(user);
 

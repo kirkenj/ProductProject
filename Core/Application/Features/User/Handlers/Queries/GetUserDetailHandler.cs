@@ -19,7 +19,7 @@ namespace Application.Features.User.Handlers.Queries
 
         public async Task<UserDto> Handle(GetUserDtoRequest request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetAsync(request.Id);
+            var user = await userRepository.GetAsync(request.Id, true);
             return mapper.Map<UserDto>(user);
         }
     }

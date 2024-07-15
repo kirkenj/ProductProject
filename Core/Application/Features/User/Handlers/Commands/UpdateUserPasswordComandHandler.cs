@@ -4,19 +4,21 @@ using Application.Features.User.Requests.Commands;
 using Application.Contracts.Persistence;
 using MediatR;
 using Application.Contracts.Infrastructure;
+using Application.Contracts.Application;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class UpdateUserPasswordComandHandler : IRequestHandler<UpdateUserPasswordComand, Unit>
+    public class UpdateUserPasswordComandHandler : IRequestHandler<UpdateUserPasswordComand, Unit>, IPasswordSettingHandler
     {
         private readonly IUserRepository userRepository;
-        private readonly IUserPasswordSetter passwordSetter;
 
-        public UpdateUserPasswordComandHandler(IUserRepository userRepository, IUserPasswordSetter userPasswordSetter)
+        public UpdateUserPasswordComandHandler(IUserRepository userRepository, IHashProvider userPasswordSetter)
         {
             this.userRepository = userRepository;
-            this.passwordSetter = userPasswordSetter;
+            this.PasswordSetter = userPasswordSetter;
         }
+
+        public IHashProvider PasswordSetter { get; private set; }
 
         public async Task<Unit> Handle(UpdateUserPasswordComand request, CancellationToken cancellationToken)
         {
@@ -36,7 +38,8 @@ namespace Application.Features.User.Handlers.Commands
                 throw new ValidationException(validaationResult);
             }
 
-            passwordSetter.SetPassword(user, request.UpdateUserPasswordDTO.Password);
+
+            (this as IPasswordSettingHandler).SetPassword(request.UpdateUserPasswordDTO.Password, user);
 
             await userRepository.UpdateAsync(user);
 
