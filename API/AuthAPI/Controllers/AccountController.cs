@@ -84,5 +84,18 @@ namespace AuthAPI.Controllers
                 } 
             });
         }
+
+        [HttpPost("ConfirmEmail")]
+        public async Task<string> ConfirmEmail(string code)
+        {
+            return await _mediator.Send(new ConfirmEmailComand
+            {
+                ConfirmEmailDto = new ConfirmEmailDto
+                {
+                    Key = code,
+                    UserId = User.GetUserId()
+                }
+            });
+        }
     }
 }

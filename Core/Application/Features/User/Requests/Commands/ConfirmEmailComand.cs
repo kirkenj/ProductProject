@@ -4,8 +4,8 @@ using MediatR;
 
 namespace Application.Features.User.Requests.Commands
 {
-    public class CreateUserCommand : IRequest<Response>
+    public class ConfirmEmailComand : IRequest<Response>
     {
-        public CreateUserDto CreateUserDto { get; set; } = null!;
+        public ConfirmEmailDto ConfirmEmailDto { get; set; } = null!;
     }
 }

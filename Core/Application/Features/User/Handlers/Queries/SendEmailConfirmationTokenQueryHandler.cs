@@ -3,23 +3,27 @@ using MediatR;
 using Application.Models.Email;
 using Application.Contracts.Infrastructure;
 using Application.Features.User.Requests.Queries;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Application.Features.User.Handlers.Queries
 {
     public class SendEmailConfirmationTokenQueryHandler : IRequestHandler<SendEmailConfirmationTokenQuery, string>
     {
-        private readonly IUserRepository userRepository;
-        private readonly IEmailSender emailSender;
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailSender _emailSender;
+        private readonly IMemoryCache _memoryCache;
 
-        public SendEmailConfirmationTokenQueryHandler(IUserRepository userRepository, IEmailSender emailSender)
+
+        public SendEmailConfirmationTokenQueryHandler(IUserRepository userRepository, IEmailSender emailSender, IMemoryCache memoryCache)
         {
-            this.userRepository = userRepository;
-            this.emailSender = emailSender;
+            _userRepository = userRepository;
+            _emailSender = emailSender;
+            _memoryCache = memoryCache;
         }
 
         public async Task<string> Handle(SendEmailConfirmationTokenQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetAsync(request.SendEmailConfirmationTokenDto.UserID);
+            var user = await _userRepository.GetAsync(request.SendEmailConfirmationTokenDto.UserID);
 
             if (user == null)
             {
@@ -36,16 +40,24 @@ namespace Application.Features.User.Handlers.Queries
                 return "Email not set";
             }
 
-            var isEmailSent = await emailSender.SendEmailAsync(
+            var token = Guid.NewGuid().ToString();
+
+            var isEmailSent = await _emailSender.SendEmailAsync(
                     new Email
                     {
-                        Body = $"Dear {user.Login}. Your email is being updated. Your email confirmation status dropped.",
-                        Subject = "Email updated",
+                        Subject = "Email confirmation",
+                        Body = $"Confirmation code: {token}.",
                         To = user.Email
                     }
                     );
 
-            return isEmailSent ? "Check emails" : "Confirmation token was not sent";
+            if (isEmailSent) 
+            {
+                _memoryCache.Set(user.Email, token, DateTimeOffset.UtcNow.AddMinutes(10));
+                return "Check emails";
+            }
+            
+            return "Confirmation token was not sent";
         }
     }
 }

@@ -17,7 +17,6 @@ namespace Infrastructure
             services.Configure<HashProviderSettings>(configuration.GetSection("HashProviderSettings"));
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-            services.Configure<EmailConfirmationTokenGeneratorSetting>(configuration.GetSection("EmailConfirmationTokenGeneratorSetting"));
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IHashProvider, HashProvider.HashProvider>();
             services.AddTransient<IJwtService, JwtService>();

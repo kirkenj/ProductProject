@@ -9,10 +9,11 @@ using Microsoft.Extensions.Options;
 using Application.Models.User;
 using Application.Models.Email;
 using Application.Contracts.Application;
+using Application.Models;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class CreateUserComandHandler : IRequestHandler<CreateUserCommand, Guid>, IPasswordSettingHandler
+    public class CreateUserComandHandler : IRequestHandler<CreateUserCommand, Response>, IPasswordSettingHandler
     {
         private readonly IUserRepository userRepository;
         private readonly IRoleRepository roleRepository;
@@ -33,11 +34,13 @@ namespace Application.Features.User.Handlers.Commands
 
         public IHashProvider HashPrvider { get; private set; }
 
-        public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var validator = new CreateUserDtoValidator(roleRepository, userRepository);
 
             var result = await validator.ValidateAsync(request.CreateUserDto, cancellationToken);
+
+            var response = new Response();
 
             if (result.IsValid == false)
             {
@@ -46,7 +49,10 @@ namespace Application.Features.User.Handlers.Commands
                     throw new InvalidProgramException($"{nameof(result)} is null");
                 }
 
-                throw new ValidationException(result);
+                response.Success = false;
+                response.Message = string.Join("\n", result.Errors.Select(e => e.ErrorMessage));
+                response.Status = 400;              
+                return response;
             }
 
             var user = mapper.Map<Domain.Models.User>(request.CreateUserDto);
@@ -64,7 +70,12 @@ namespace Application.Features.User.Handlers.Commands
                 await emailSender.SendEmailAsync(email);
             }
 
-            return user.Id;
+
+            response.Success = true;
+            response.Message = $"Created user's id: {user.Id}";
+            response.Status = 200;
+            response.Result = user.Id.ToString();
+            return response;
         }
     }
 }
