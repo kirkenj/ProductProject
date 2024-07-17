@@ -5,10 +5,12 @@ using Application.Contracts.Persistence;
 using MediatR;
 using Application.Contracts.Infrastructure;
 using Application.Contracts.Application;
+using Application.Models.Response;
+using System.Net;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class UpdateUserPasswordComandHandler : IRequestHandler<UpdateUserPasswordComand, Unit>, IPasswordSettingHandler
+    public class UpdateUserPasswordComandHandler : IRequestHandler<UpdateUserPasswordComand, Response<string>>, IPasswordSettingHandler
     {
         private readonly IUserRepository userRepository;
 
@@ -20,35 +22,35 @@ namespace Application.Features.User.Handlers.Commands
 
         public IHashProvider HashPrvider { get; private set; }
 
-        public async Task<Unit> Handle(UpdateUserPasswordComand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(UpdateUserPasswordComand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetAsync(request.UpdateUserPasswordDto.Id);
 
             if (user == null)
             {
-                throw new NotFoundException(nameof(user), $"{nameof(request.UpdateUserPasswordDto.Id)} = {request.UpdateUserPasswordDto.Id}");
+                return Response<string>.NotFoundResponse(nameof(user.Id), true);
             }
 
             var validator = new UpdateUserPasswordDTOValidator();
 
-            var validaationResult = await validator.ValidateAsync(request.UpdateUserPasswordDto, cancellationToken);
+            var validationResult = await validator.ValidateAsync(request.UpdateUserPasswordDto, cancellationToken);
 
-            if (validaationResult.IsValid == false)
+            if (validationResult.IsValid == false)
             {
-                throw new ValidationException(validaationResult);
+                return Response<string>.BadRequestResponse(validationResult.Errors);
             }
 
             var oldPasswordHash = user.PasswordHash;
             if (oldPasswordHash != HashPrvider.GetHash(request.UpdateUserPasswordDto.OldPassword))
             {
-                throw new ArgumentException("You sent wrong old password");
+                return Response<string>.BadRequestResponse("You sent wrong old password");
             }
 
             (this as IPasswordSettingHandler).SetPassword(request.UpdateUserPasswordDto.NewPassword, user);
 
             await userRepository.UpdateAsync(user);
 
-            return Unit.Value;
+            return Response<string>.OkResponse("Ok", "Password updated");
         }
     }
 }

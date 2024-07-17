@@ -1,55 +1,53 @@
 ﻿using Application.Features.User.Requests.Commands;
 using Application.Contracts.Persistence;
 using MediatR;
-using Application.Contracts.Infrastructure;
 using Microsoft.Extensions.Caching.Memory;
-using Application.Models;
+using System.Net;
+using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class ConfirmEmailComandHandler : IRequestHandler<ConfirmEmailComand, Response>
+    public class ConfirmEmailComandHandler : IRequestHandler<ConfirmEmailComand, Response<string>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IEmailSender _emailSender;
         private readonly IMemoryCache _memoryCache;
 
-        public ConfirmEmailComandHandler(IUserRepository userRepository, IEmailSender emailSender, IMemoryCache memoryCache)
+        public ConfirmEmailComandHandler(IUserRepository userRepository, IMemoryCache memoryCache)
         {
             _userRepository = userRepository;
-            _emailSender = emailSender;
             _memoryCache = memoryCache;
         }
 
-        public async Task<Response> Handle(ConfirmEmailComand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(ConfirmEmailComand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetAsync(request.ConfirmEmailDto.UserId);
 
-            var response = new Response();
+            var response = new Response<string>();
 
             if (user == null)
             {
-                throw new ApplicationException("User not found");
+                //throw new ApplicationException("User not found");
+                response.Success = false;
+                response.Message = "User not found";
+                response.StatusCode = HttpStatusCode.NotFound;
+                return response;
             }
 
             if (user.IsEmailConfirmed)
             {
-
-                throw new ApplicationException("Email is already confirmed");
+                return Response<string>.BadRequestResponse("This email is already confirmed");
             }
 
             if (user.Email == null)
             {
-                throw new ApplicationException("Coupled email to this user is null");
+                return Response<string>.BadRequestResponse("Coupled email to this user is not set");
             }
 
             var storedToken = _memoryCache.Get(user.Email);
 
             if (storedToken == null)
             {
-                response.Success = false;
-                response.Message = "Token expired";
-                response.Status = 400;
-                return response;
+                return Response<string>.BadRequestResponse("Token expired");
             }
 
             if (storedToken.ToString() == request.ConfirmEmailDto.Key) 
@@ -58,19 +56,10 @@ namespace Application.Features.User.Handlers.Commands
                 await _userRepository.UpdateAsync(user);
                 _memoryCache.Remove(user.Email);
 
-
-                response.Success = true;
-                response.Message = "Email confirmed";
-                response.Status = 200;
-                return response;
+                return Response<string>.OkResponse("Ok", "Email confirmed");
             }
 
-
-
-            response.Success = true;
-            response.Message = "Wrong token";
-            response.Status = 400;
-            return response;
+            return Response<string>.BadRequestResponse("You sent wrong token");
         }
     }
 }

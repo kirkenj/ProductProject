@@ -1,13 +1,13 @@
 ﻿using Application.Features.User.Requests.Commands;
 using Application.Contracts.Persistence;
-using Application.Exceptions;
 using MediatR;
 using Application.Models.Email;
 using Application.Contracts.Infrastructure;
+using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class UpdateUserEmailComandHandler : IRequestHandler<UpdateUserEmailComand, Unit>
+    public class UpdateUserEmailComandHandler : IRequestHandler<UpdateUserEmailComand, Response<string>>
     {
         private readonly IUserRepository userRepository;
         private readonly IEmailSender emailSender;
@@ -18,15 +18,15 @@ namespace Application.Features.User.Handlers.Commands
             this.emailSender = emailSender;
         }
 
-        public async Task<Unit> Handle(UpdateUserEmailComand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(UpdateUserEmailComand request, CancellationToken cancellationToken)
         {
             var emailAddress = request.UpdateUserEmailDto.Email;
 
             var user = await userRepository.GetAsync(request.UpdateUserEmailDto.Id);
-            
+
             if (user == null)
             {
-                throw new NotFoundException(nameof(user), $"{nameof(emailAddress)} = {emailAddress}");
+                return Response<string>.NotFoundResponse(nameof(user.Id), true);
             }
 
             if (user.IsEmailConfirmed && user.Email != null)
@@ -45,7 +45,7 @@ namespace Application.Features.User.Handlers.Commands
             user.IsEmailConfirmed = false;
             await userRepository.UpdateAsync(user);
 
-            return Unit.Value;
+            return Response<string>.OkResponse("Ok", "Email changed. Confirmation status dropped");
         }
     }
 }

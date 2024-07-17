@@ -1,12 +1,12 @@
 ﻿using Application.DTOs.User.Validators;
-using Application.Exceptions;
 using Application.Features.User.Requests.Commands;
 using Application.Contracts.Persistence;
 using MediatR;
+using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class UpdateUserRoleCommandHandler : IRequestHandler<UpdateUserRoleCommand, Unit>
+    public class UpdateUserRoleCommandHandler : IRequestHandler<UpdateUserRoleCommand, Response<string>>
     {
         private readonly IRoleRepository roleRepository;
         private readonly IUserRepository userRepository;
@@ -17,29 +17,29 @@ namespace Application.Features.User.Handlers.Commands
             this.userRepository = userRepository;
         }
 
-        public async Task<Unit> Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken)
         {
             var validator = new UpdateUserRoleDTOValidator(roleRepository);
 
-            var result = await validator.ValidateAsync(request.UpdateUserRoleDTO, cancellationToken);
+            var validationResult = await validator.ValidateAsync(request.UpdateUserRoleDTO, cancellationToken);
 
-            if (result.IsValid == false)
+            if (validationResult.IsValid == false)
             {
-                throw new ValidationException(result);
+                return Response<string>.BadRequestResponse(validationResult.Errors);
             }
 
             var user = await userRepository.GetAsync(request.UpdateUserRoleDTO.UserId);
 
             if (user == null)
             {
-                throw new NotFoundException(nameof(user), $"{nameof(request.UpdateUserRoleDTO.UserId)} = {request.UpdateUserRoleDTO.RoleID}");
+                return Response<string>.NotFoundResponse(nameof(user.Email), true);
             }
 
             user.RoleID = request.UpdateUserRoleDTO.RoleID;
             
             await userRepository.UpdateAsync(user);
 
-            return Unit.Value;
+            return Response<string>.OkResponse("Ok", "Role updated");
         }
     }
 }

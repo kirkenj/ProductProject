@@ -38,7 +38,7 @@ namespace AuthAPI.Controllers
         [HttpPut("Address")]
         public async Task UpdateUser(string newAddress)
         {
-            await _mediator.Send(new UpdateUserAddressComand 
+            await _mediator.Send(new UpdateNotSensitiveUserInfoComand 
             { 
                 UpdateUserAddressDto = new UpdateUserAddressDto 
                 { 
