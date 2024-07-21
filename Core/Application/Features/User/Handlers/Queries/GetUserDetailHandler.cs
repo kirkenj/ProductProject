@@ -3,10 +3,11 @@ using Application.Features.User.Requests.Queries;
 using Application.Contracts.Persistence;
 using AutoMapper;
 using MediatR;
+using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class GetUserDetailHandler : IRequestHandler<GetUserDtoRequest, UserDto>
+    public class GetUserDetailHandler : IRequestHandler<GetUserDtoRequest, Response<UserDto>>
     {
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
@@ -17,10 +18,16 @@ namespace Application.Features.User.Handlers.Queries
             this.mapper = mapper;
         }
 
-        public async Task<UserDto> Handle(GetUserDtoRequest request, CancellationToken cancellationToken)
+        public async Task<Response<UserDto>> Handle(GetUserDtoRequest request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetAsync(request.Id, true);
-            return mapper.Map<UserDto>(user);
+
+            if (user == null)
+            { 
+                return Response<UserDto>.NotFoundResponse(nameof(request.Id), true);
+            }
+
+            return Response<UserDto>.OkResponse(mapper.Map<UserDto>(user), "Success");
         }
     }
 }

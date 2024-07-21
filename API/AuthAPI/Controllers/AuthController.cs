@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
+using AuthAPI.Extensions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,10 +29,10 @@ namespace AuthAPI.Controllers
 
         // POST api/<AuthController2>
         [HttpPost("Register")]
-        public async Task<Guid> Post([FromBody] CreateUserDto createUserDto)
+        public async Task<ActionResult<Guid>> Post([FromBody] CreateUserDto createUserDto)
         {
             var result = await _mediator.Send(new CreateUserCommand() { CreateUserDto = createUserDto });
-            return result;
+            return result.GetActionResult();
         }
 
         [HttpPost("Login")]
@@ -43,7 +44,7 @@ namespace AuthAPI.Controllers
                 return false.ToString();
             }
 
-            return result;
+            return result.GetActionResult();
         }
 
         [HttpPost("Cache")]

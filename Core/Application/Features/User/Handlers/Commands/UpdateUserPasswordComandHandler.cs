@@ -40,12 +40,6 @@ namespace Application.Features.User.Handlers.Commands
                 return Response<string>.BadRequestResponse(validationResult.Errors);
             }
 
-            var oldPasswordHash = user.PasswordHash;
-            if (oldPasswordHash != HashPrvider.GetHash(request.UpdateUserPasswordDto.OldPassword))
-            {
-                return Response<string>.BadRequestResponse("You sent wrong old password");
-            }
-
             (this as IPasswordSettingHandler).SetPassword(request.UpdateUserPasswordDto.NewPassword, user);
 
             await userRepository.UpdateAsync(user);

@@ -3,10 +3,11 @@ using Application.Features.User.Requests.Queries;
 using Application.Contracts.Persistence;
 using AutoMapper;
 using MediatR;
+using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class GetRoleDetailHandler : IRequestHandler<GetRoleDtoRequest, RoleDto?>
+    public class GetRoleDetailHandler : IRequestHandler<GetRoleDtoRequest, Response<RoleDto>>
     {
         private readonly IRoleRepository userRepository;
         private readonly IMapper mapper;
@@ -17,10 +18,12 @@ namespace Application.Features.User.Handlers.Queries
             this.mapper = mapper;
         }
 
-        public async Task<RoleDto?> Handle(GetRoleDtoRequest request, CancellationToken cancellationToken)
+        public async Task<Response<RoleDto>> Handle(GetRoleDtoRequest request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetAsync(request.Id);
-            return user == null ? null : mapper.Map<RoleDto>(user);
+            return user == null ? 
+                Response<RoleDto>.NotFoundResponse(nameof(request.Id), true) 
+                : Response<RoleDto>.OkResponse(mapper.Map<RoleDto>(user), string.Empty);
         }
     }
 }

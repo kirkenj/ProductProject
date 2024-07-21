@@ -1,14 +1,12 @@
-﻿using Application.DTOs.Role;
-using Application.DTOs.User;
+﻿using Application.DTOs.User;
+using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
+using AuthAPI.Extensions;
+using AuthAPI.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using AuthAPI.Extensions;
-using Application.Features.User.Requests.Commands;
-using Application.DTOs.User.Interfaces;
-using AuthAPI.Models;
-using Application.Features.User.Handlers.Queries;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,15 +28,16 @@ namespace AuthAPI.Controllers
         public IEnumerable<KeyValuePair<string, string>> GetTokenClaims() => User.Claims.Select(o => new KeyValuePair<string, string>(o.Type ?? "Unknown", o.Value ?? "Unknown"));
 
         [HttpGet]
-        public async Task<UserDto> GetAccountDetails()
+        public async Task<ActionResult<UserDto>> GetAccountDetails()
         {
-            return await _mediator.Send(new GetUserDtoRequest() { Id = User.GetUserId() });
+            var result = await _mediator.Send(new GetUserDtoRequest() { Id = User.GetUserId() });
+            return result.GetActionResult();
         }
 
         [HttpPut("Address")]
-        public async Task UpdateUser(string newAddress)
+        public async Task<ActionResult<string>> UpdateUser(string newAddress)
         {
-            await _mediator.Send(new UpdateNotSensitiveUserInfoComand 
+            var result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand 
             { 
                 UpdateUserAddressDto = new UpdateUserAddressDto 
                 { 
@@ -46,24 +45,27 @@ namespace AuthAPI.Controllers
                     Address = newAddress
                 }
             });
+
+            return result.GetActionResult();
         }
 
         [HttpPut("Password")]
-        public async Task UpdatePassword(AuthorizedUserUpdatePassword request)
+        public async Task<ActionResult<string>> UpdatePassword(AuthorizedUserUpdatePassword request)
         {
-            await _mediator.Send(new UpdateUserPasswordComand { UpdateUserPasswordDto = new UpdateUserPasswordDto
+            var result = await _mediator.Send(new UpdateUserPasswordComand { UpdateUserPasswordDto = new UpdateUserPasswordDto
             { 
                 Id = User.GetUserId(),
-                OldPassword = request.OldPassword,
                 NewPassword = request.NewPassword
             }
             });
+
+            return result.GetActionResult();
         }
 
         [HttpPut("Email")]
-        public async Task UpdateEmail(string newEmail)
+        public async Task<ActionResult<string>> UpdateEmail(string newEmail)
         {
-            await _mediator.Send(new UpdateUserEmailComand
+            var result = await _mediator.Send(new UpdateUserEmailComand
             {
                 UpdateUserEmailDto = new UpdateUserEmailDto
                 {
@@ -71,31 +73,50 @@ namespace AuthAPI.Controllers
                     Id = User.GetUserId()
                 }
             });
+
+            return result.GetActionResult();
         }
 
         [HttpPost("SendEmailConfirmationToken")]
-        public async Task<string> SendEmailConfirmationToken()
+        public async Task<ActionResult<string>> SendEmailConfirmationToken()
         {
-            return await _mediator.Send(new SendEmailConfirmationTokenQuery 
+            var result = await _mediator.Send(new SendEmailConfirmationTokenQuery 
             { 
                 SendEmailConfirmationTokenDto = new SendEmailConfirmationTokenDto 
                 { 
                     UserID = User.GetUserId() 
                 } 
             });
+
+            return result.GetActionResult();
         }
 
         [HttpPost("ConfirmEmail")]
-        public async Task<string> ConfirmEmail(string code)
+        public async Task<ActionResult<string>> ConfirmEmail(string code)
         {
-            return await _mediator.Send(new ConfirmEmailComand
+            var result = await _mediator.Send(new ConfirmEmailComand 
+            { 
+                ConfirmEmailDto = new ConfirmEmailDto 
+                { 
+                    Key = code, 
+                    UserId = User.GetUserId() 
+                } 
+            });
+            return result.GetActionResult();
+        }
+
+
+        [HttpPost("ForgotPassword")]
+        public async Task<ActionResult<string>> ForgotPassword(string email)
+        {
+            var result = await _mediator.Send(new ForgotPasswordComand
             {
-                ConfirmEmailDto = new ConfirmEmailDto
+                ForgotPasswordDto = new ForgotPasswordDto
                 {
-                    Key = code,
-                    UserId = User.GetUserId()
+                    Email = email
                 }
             });
+            return result.GetActionResult();
         }
     }
 }

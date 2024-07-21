@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Infrastructure;
-using Application.Models;
 using Application.Models.Email;
 using Application.Models.Hash;
 using Application.Models.Jwt;
@@ -20,6 +19,7 @@ namespace Infrastructure
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IHashProvider, HashProvider.HashProvider>();
             services.AddTransient<IJwtService, JwtService>();
+            services.AddTransient<IPasswordGenerator, PasswordGenerator.PasswordGenerator>();
 
             return services;
         }

@@ -6,7 +6,7 @@ namespace Application.DTOs.User.Validators
 {
     public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
     {
-        public CreateUserDtoValidator(IRoleRepository roleRepository, IUserRepository userRepository)
+        public CreateUserDtoValidator(IUserRepository userRepository)
         {
             Include(new IUpdateUserPasswordDtoValidator());
 

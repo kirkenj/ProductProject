@@ -34,7 +34,7 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<Guid>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateUserDtoValidator(roleRepository, userRepository);
+            var validator = new CreateUserDtoValidator(userRepository);
 
             var validationResult = await validator.ValidateAsync(request.CreateUserDto, cancellationToken);
 

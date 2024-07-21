@@ -3,10 +3,12 @@ using Application.Features.User.Requests.Queries;
 using Application.Contracts.Persistence;
 using AutoMapper;
 using MediatR;
+using Application.Models.Response;
+using System.Collections.Generic;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class GetRoleListRequestHandler : IRequestHandler<GetRoleListRequest, List<RoleDto>>
+    public class GetRoleListRequestHandler : IRequestHandler<GetRoleListRequest, Response<List<RoleDto>>>
     {
         private readonly IRoleRepository roleRepository;
         private readonly IMapper mapper;
@@ -17,10 +19,10 @@ namespace Application.Features.User.Handlers.Queries
             this.mapper = mapper;
         }
 
-        async Task<List<RoleDto>> IRequestHandler<GetRoleListRequest, List<RoleDto>>.Handle(GetRoleListRequest request, CancellationToken cancellationToken)
+        public async Task<Response<List<RoleDto>>> Handle(GetRoleListRequest request, CancellationToken cancellationToken)
         {
             var users = await roleRepository.GetAllAsync();
-            return mapper.Map<List<RoleDto>>(users);
+            return Response<List<RoleDto>>.OkResponse(mapper.Map<List<RoleDto>>(users), "Success");
         }
     }
 }

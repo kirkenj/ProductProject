@@ -7,10 +7,11 @@ using Application.Contracts.Infrastructure;
 using System.Text;
 using Application.Models.Email;
 using Application.Models.User;
+using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class LoginHandler : IRequestHandler<LoginDto, string?>
+    public class LoginHandler : IRequestHandler<LoginDto, Response<string?>>
     {
         private readonly IUserRepository userRepository;
         private readonly IHashProvider hashProvider;
@@ -27,13 +28,13 @@ namespace Application.Features.User.Handlers.Queries
             this.jwtService = jwtService;
         }
 
-        public async Task<string?> Handle(LoginDto request, CancellationToken cancellationToken)
+        public async Task<Response<string?>> Handle(LoginDto request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetAsync(new UserFilter { AccurateLogin = request.Login }, true);
 
             if (user == null)
             {
-                return null;
+                return Response<string?>.NotFoundResponse(request.Login, true);
             }
 
             hashProvider.HashAlgorithmName = user.HashAlgorithm;
@@ -49,10 +50,10 @@ namespace Application.Features.User.Handlers.Queries
                 }
 
                 var mapped = mapper.Map<UserDto>(user);
-                return jwtService.GetToken(mapped);
+                return Response<string?>.OkResponse(jwtService.GetToken(mapped), "Success");
             }
 
-            return null;
+            return Response<string?>.BadRequestResponse("Wrong password");
         }
     }
 }

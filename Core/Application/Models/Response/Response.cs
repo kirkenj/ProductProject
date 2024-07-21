@@ -27,6 +27,14 @@ namespace Application.Models.Response
             Result = default
         };
 
+        public static Response<T> ServerErrorResponse(string message) => new()
+        { 
+            Message = message,
+            Success = false,
+            StatusCode = HttpStatusCode.InternalServerError,
+            Result = default
+        };
+
         public static Response<T> NotFoundResponse(string message, bool messageIsArgumentName = false) => new()
         {
             Success = false,

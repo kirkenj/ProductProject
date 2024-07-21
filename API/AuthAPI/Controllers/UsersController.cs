@@ -24,37 +24,40 @@ namespace AuthAPI.Controllers
 
         // GET: api/<AuthController2>
         [HttpGet("Users")]
-        public async Task<IEnumerable<UserListDto>> Get() => await _mediator.Send(new GetUserListRequest());
-
+        public async Task<ActionResult<IEnumerable<UserListDto>>> Get()
+        {
+            var result = await _mediator.Send(new GetUserListRequest());
+            return result.GetActionResult();
+        }
 
         // GET api/<AuthController2>/5
         [HttpGet("Users/{id}")]
         public async Task<ActionResult<UserDto>> Get(Guid id)
         {
             var result = await _mediator.Send(new GetUserDtoRequest() { Id = id });
-            return result == null ? NotFound() : result;
+            return result.GetActionResult();
         }
 
 
         [HttpPut("Users")]
         [Authorize()]
-        public async Task UpdatePassword(UpdateUserPasswordDto request)
+        public async Task<ActionResult<string>> UpdatePassword(UpdateUserPasswordDto request)
         {
-            await _mediator.Send(new UpdateUserPasswordComand
+            var result = await _mediator.Send(new UpdateUserPasswordComand
             {
                 UpdateUserPasswordDto = new UpdateUserPasswordDto
                 {
                     Id = User.GetUserId(),
-                    OldPassword = request.OldPassword,
                     NewPassword = request.NewPassword
                 }
             });
+            return result.GetActionResult();
         }
 
         [HttpPut("Email")]
-        public async Task UpdateEmail(UpdateUserEmailDto request)
+        public async Task<ActionResult<string>> UpdateEmail(UpdateUserEmailDto request)
         {
-            await _mediator.Send(new UpdateUserEmailComand
+            var result = await _mediator.Send(new UpdateUserEmailComand
             {
                 UpdateUserEmailDto = new UpdateUserEmailDto
                 {
@@ -62,24 +65,28 @@ namespace AuthAPI.Controllers
                     Id = request.Id
                 }
             });
+
+            return result.GetActionResult();
         }
 
         [HttpPost("SendEmailConfirmationToken")]
         public async Task<ActionResult<string>> SendEmailConfirmationToken(Guid userId)
         {
-            return await _mediator.Send(new SendEmailConfirmationTokenQuery
+            var result = await _mediator.Send(new SendEmailConfirmationTokenQuery
             {
                 SendEmailConfirmationTokenDto = new SendEmailConfirmationTokenDto
                 {
                     UserID = userId
                 }
             });
+
+            return result.GetActionResult();
         }
 
         [HttpPost("ConfirmEmail")]
-        public async Task<string> ConfirmEmail(Guid userId, string code)
+        public async Task<ActionResult<string>> ConfirmEmail(Guid userId, string code)
         {
-            return await _mediator.Send(new ConfirmEmailComand
+            var result = await _mediator.Send(new ConfirmEmailComand
             {
                 ConfirmEmailDto = new ConfirmEmailDto
                 {
@@ -87,6 +94,8 @@ namespace AuthAPI.Controllers
                     UserId = userId
                 }
             });
+
+            return result.GetActionResult();
         }
     }
 }

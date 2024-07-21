@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Role;
 using Application.Features.User.Requests.Queries;
+using AuthAPI.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,16 +19,18 @@ namespace AuthAPI.Controllers
             _mediator = mediator;
         }
 
-
         [HttpGet("Roles")]
-        public async Task<IEnumerable<RoleDto>> GetRolesList() => await _mediator.Send(new GetRoleListRequest());
-
+        public async Task<ActionResult<IEnumerable<RoleDto>>> GetRolesList()
+        {
+            var result = await _mediator.Send(new GetRoleListRequest());
+            return result.GetActionResult();
+        }
 
         [HttpGet("Roles/{id}")]
         public async Task<ActionResult<RoleDto>> GetRole(int id)
         {
             var result = await _mediator.Send(new GetRoleDtoRequest() { Id = id });
-            return result == null ? NotFound() : result;
+            return result.GetActionResult();
         }
     }
 }

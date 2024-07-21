@@ -4,10 +4,11 @@ using Application.Models.Email;
 using Application.Contracts.Infrastructure;
 using Application.Features.User.Requests.Queries;
 using Microsoft.Extensions.Caching.Memory;
+using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class SendEmailConfirmationTokenQueryHandler : IRequestHandler<SendEmailConfirmationTokenQuery, string>
+    public class SendEmailConfirmationTokenQueryHandler : IRequestHandler<SendEmailConfirmationTokenQuery, Response<string>>
     {
         private readonly IUserRepository _userRepository;
         private readonly IEmailSender _emailSender;
@@ -21,23 +22,23 @@ namespace Application.Features.User.Handlers.Queries
             _memoryCache = memoryCache;
         }
 
-        public async Task<string> Handle(SendEmailConfirmationTokenQuery request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(SendEmailConfirmationTokenQuery request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetAsync(request.SendEmailConfirmationTokenDto.UserID);
 
             if (user == null)
             {
-                return $"user not found with id = {request.SendEmailConfirmationTokenDto.UserID}";
+                return Response<string>.NotFoundResponse(nameof(request.SendEmailConfirmationTokenDto.UserID), true);
             }
 
             if (user.IsEmailConfirmed)
             {
-                return "Email is already confirmed";
+                return Response<string>.BadRequestResponse("Email is already confirmed");
             }
 
             if (string.IsNullOrEmpty(user.Email))
             {
-                return "Email not set";
+                return Response<string>.BadRequestResponse("Email not set");
             }
 
             var token = Guid.NewGuid().ToString();
@@ -54,10 +55,10 @@ namespace Application.Features.User.Handlers.Queries
             if (isEmailSent) 
             {
                 _memoryCache.Set(user.Email, token, DateTimeOffset.UtcNow.AddMinutes(10));
-                return "Check emails";
+                return Response<string>.OkResponse("Ok", "Check emails");
             }
-            
-            return "Confirmation token was not sent";
+
+            return Response<string>.ServerErrorResponse("Confirmation token was not sent");
         }
     }
 }
