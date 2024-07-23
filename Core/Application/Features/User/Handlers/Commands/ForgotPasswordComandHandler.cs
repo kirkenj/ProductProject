@@ -37,16 +37,16 @@ namespace Application.Features.User.Handlers.Commands
                 return Response<string>.NotFoundResponse(nameof(user.Id), true);
             }
 
-            var newPassword = _passwordGenerator.Generate(_passwordGenerator.StandartLength);
+            var newPassword = _passwordGenerator.Generate();
 
-            if (user.IsEmailConfirmed == false || user.Email == null)
+            if (user.Email == null)
             { 
-                return Response<string>.BadRequestResponse("Your email was not set or not confirmed. Contact administration");
+                return Response<string>.BadRequestResponse("Your email is null. Contact administration");
             }
 
             var emailResult = await _emailSender.SendEmailAsync( new Email
                     {
-                        Body = $"Dear {user.Login}. Your new password is: {newPassword}",
+                        Body = $"Dear {user.Name}. Your new password is: {newPassword}",
                         Subject = "Password recovery",
                         To = user.Email
                     });

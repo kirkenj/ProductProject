@@ -19,6 +19,10 @@ namespace Persistence
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<User>().HasIndex(u => u.Login).IsUnique();
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+
+
             Role adminRole = new() { Id = 1, Name = "Admin" };
             Role regularRole = new() { Id = 2, Name = "Regular" };
             modelBuilder.Entity<Role>().HasData(adminRole);
@@ -28,18 +32,29 @@ namespace Persistence
             HashAlgorithm hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? throw new Exception($"Hash algorithm not found {hashAlgorithmName}");
             Encoding encoding = Encoding.UTF8;
             
-            ((string login, string password) userData, int roleID)[] startUsersArray = new [] 
+            ((string login, string password, string name, string email) userData, int roleID)[] startUsersArray = new [] 
             {
-                (("admin", "admin"), adminRole.Id), 
-                (("user", "user"), regularRole.Id)
+                (("admin", "admin", "seeding admin", "kirkenj@bk.ru"), adminRole.Id), 
+                (("user", "user", "seeding user", "kirkend@bk.ru"), regularRole.Id)
             };
 
             foreach (var item in startUsersArray)
             {
-                var adminPwdBytes = encoding.GetBytes(item.userData.password);
-                var adminPwdHash = hashAlgorithm.ComputeHash(adminPwdBytes);
-                var adminPwdHashString = encoding.GetString(adminPwdHash);
-                modelBuilder.Entity<User>().HasData(new User { Address = "Confidential", Email = null, Login = item.userData.login, PasswordHash = adminPwdHashString, StringEncoding = encoding.EncodingName, Id = Guid.NewGuid(), HashAlgorithm = hashAlgorithmName, RoleID = item.roleID });
+                var pwdBytes = encoding.GetBytes(item.userData.password);
+                var pwdHash = hashAlgorithm.ComputeHash(pwdBytes);
+                var pwdHashString = encoding.GetString(pwdHash);
+                modelBuilder.Entity<User>().HasData(new User 
+                { 
+                    Id = Guid.NewGuid(), 
+                    Login = item.userData.login, 
+                    RoleID = item.roleID, 
+                    Email = item.userData.email, 
+                    Name = item.userData.name, 
+                    Address = "Confidential", 
+                    PasswordHash = pwdHashString, 
+                    StringEncoding = encoding.BodyName, 
+                    HashAlgorithm = hashAlgorithmName
+                });
             }
 
 

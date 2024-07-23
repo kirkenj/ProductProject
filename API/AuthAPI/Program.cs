@@ -3,7 +3,7 @@ using Infrastructure;
 using AuthAPI.JwtAuthentication;
 using Persistence;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
+using AuthAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,10 +32,15 @@ builder.Services.AddCors(o =>
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<TokenBlacklistMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -2,9 +2,9 @@
 
 namespace Application.DTOs.User.Validators
 {
-    public class UpdateUserEmailValidator : AbstractValidator<UpdateUserEmailDto>
+    public class UpdateUserEmailDtoValidator : AbstractValidator<SendTokenToUpdateUserEmailDto>
     {
-        public UpdateUserEmailValidator()
+        public UpdateUserEmailDtoValidator()
         {
             RuleFor(o => o.Email).EmailAddress();
         }

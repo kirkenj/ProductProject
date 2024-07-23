@@ -1,8 +1,7 @@
-﻿namespace Application.DTOs.User
+﻿namespace AuthAPI.Models
 {
-    public class CreateUserDto
+    public class UpdateUserModel
     {
-        public string Email { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Address { get; set; } = null!;
     }

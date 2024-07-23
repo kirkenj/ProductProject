@@ -2,8 +2,6 @@
 {
     public interface IPasswordGenerator
     {
-        public int StandartLength { get => 8; }
-
-        public string Generate(int length);
+        public string Generate(int length = 8);
     }
 }

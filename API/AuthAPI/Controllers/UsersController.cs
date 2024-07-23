@@ -2,9 +2,7 @@
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using AuthAPI.Extensions;
-using AuthAPI.Models;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,7 +20,6 @@ namespace AuthAPI.Controllers
             _mediator = mediator;
         }
 
-        // GET: api/<AuthController2>
         [HttpGet("Users")]
         public async Task<ActionResult<IEnumerable<UserListDto>>> Get()
         {
@@ -30,7 +27,6 @@ namespace AuthAPI.Controllers
             return result.GetActionResult();
         }
 
-        // GET api/<AuthController2>/5
         [HttpGet("Users/{id}")]
         public async Task<ActionResult<UserDto>> Get(Guid id)
         {
@@ -39,60 +35,45 @@ namespace AuthAPI.Controllers
         }
 
 
-        [HttpPut("Users")]
-        [Authorize()]
+        [HttpPut]
+        public async Task<ActionResult<string>> UpdateUser(UpdateNotSensetiveInfoDto request)
+        {
+            var result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
+            {
+                UpdateUserAddressDto = request
+            });
+
+            return result.GetActionResult();
+        }
+
+        [HttpPut("Password")]
         public async Task<ActionResult<string>> UpdatePassword(UpdateUserPasswordDto request)
         {
             var result = await _mediator.Send(new UpdateUserPasswordComand
             {
-                UpdateUserPasswordDto = new UpdateUserPasswordDto
-                {
-                    Id = User.GetUserId(),
-                    NewPassword = request.NewPassword
-                }
+                UpdateUserPasswordDto = request
             });
+
             return result.GetActionResult();
         }
 
         [HttpPut("Email")]
-        public async Task<ActionResult<string>> UpdateEmail(UpdateUserEmailDto request)
+        public async Task<ActionResult<string>> UpdateEmail([FromBody] SendTokenToUpdateUserEmailDto request)
         {
-            var result = await _mediator.Send(new UpdateUserEmailComand
+            var result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {
-                UpdateUserEmailDto = new UpdateUserEmailDto
-                {
-                    Email = request.Email,
-                    Id = request.Id
-                }
+                UpdateUserEmailDto = request
             });
 
             return result.GetActionResult();
         }
 
-        [HttpPost("SendEmailConfirmationToken")]
-        public async Task<ActionResult<string>> SendEmailConfirmationToken(Guid userId)
+        [HttpPost("Email")]
+        public async Task<ActionResult<string>> ConfirmEmailUpdate(ConfirmEmailChangeDto request)
         {
-            var result = await _mediator.Send(new SendEmailConfirmationTokenQuery
+            var result = await _mediator.Send(new ConfirmEmailChangeComand
             {
-                SendEmailConfirmationTokenDto = new SendEmailConfirmationTokenDto
-                {
-                    UserID = userId
-                }
-            });
-
-            return result.GetActionResult();
-        }
-
-        [HttpPost("ConfirmEmail")]
-        public async Task<ActionResult<string>> ConfirmEmail(Guid userId, string code)
-        {
-            var result = await _mediator.Send(new ConfirmEmailComand
-            {
-                ConfirmEmailDto = new ConfirmEmailDto
-                {
-                    Key = code,
-                    UserId = userId
-                }
+                ConfirmEmailChangeDto = request
             });
 
             return result.GetActionResult();

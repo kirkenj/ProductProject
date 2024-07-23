@@ -62,16 +62,18 @@ namespace Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("HashAlgorithm")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsEmailConfirmed")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -88,6 +90,12 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Login")
+                        .IsUnique();
+
                     b.HasIndex("RoleID");
 
                     b.ToTable("Users");
@@ -95,25 +103,27 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("edd3adc8-3f65-4dd2-acfd-1a2e0add186a"),
+                            Id = new Guid("6aad971c-fdda-4fb6-8cc1-0575af3bddbf"),
                             Address = "Confidential",
+                            Email = "kirkenj@bk.ru",
                             HashAlgorithm = "MD5",
-                            IsEmailConfirmed = false,
                             Login = "admin",
+                            Name = "seeding admin",
                             PasswordHash = "!#/)zW��C�JJ��",
                             RoleID = 1,
-                            StringEncoding = "Unicode (UTF-8)"
+                            StringEncoding = "utf-8"
                         },
                         new
                         {
-                            Id = new Guid("68f6d052-a320-4f27-9950-373b175b29e8"),
+                            Id = new Guid("66959d00-7d6d-48b3-8f72-8f2d3fc53389"),
                             Address = "Confidential",
+                            Email = "kirkend@bk.ru",
                             HashAlgorithm = "MD5",
-                            IsEmailConfirmed = false,
                             Login = "user",
+                            Name = "seeding user",
                             PasswordHash = "�˱�R����#�",
                             RoleID = 2,
-                            StringEncoding = "Unicode (UTF-8)"
+                            StringEncoding = "utf-8"
                         });
                 });
 

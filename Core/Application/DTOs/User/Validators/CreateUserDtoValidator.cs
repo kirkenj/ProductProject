@@ -8,24 +8,22 @@ namespace Application.DTOs.User.Validators
     {
         public CreateUserDtoValidator(IUserRepository userRepository)
         {
-            Include(new IUpdateUserPasswordDtoValidator());
+            RuleFor(x => x.Name).NotEmpty().NotNull();
 
-            RuleFor(p => p.Login)
-                .MustAsync(async (Login, cancellationToken) =>
+            RuleFor(x => x.Address).NotEmpty().NotNull();
+
+            RuleFor(p => p.Email)
+                .MustAsync(async (Email, cancellationToken) =>
                 {
-                    var resultUser = await userRepository.GetAsync(new UserFilter { AccurateLogin = Login });
+                    var resultUser = await userRepository.GetAsync(new UserFilter { Email = Email});
                     if (resultUser == null)
                     {
                         return true;
                     }
 
-                    return resultUser.Login != Login;
+                    return resultUser.Email != Email;
                 })
                 .WithMessage("{PropertyName} is taken");
-
-            RuleFor(p => p.Login)
-                .NotEmpty().WithMessage("{PropertyName} can not be null or empty")
-                .NotNull().WithMessage("{PropertyName} can not be null or empty");
         }
     }
 }

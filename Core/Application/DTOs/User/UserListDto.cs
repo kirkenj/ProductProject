@@ -7,9 +7,8 @@ namespace Application.DTOs.User
     {
         public Guid Id { get; set; }
         public string Login { get; set; } = null!;
-        public string? Email { get; set; }
-        public bool IsEmailConfirmed { get; set; } = false;
+        public string Email { get; set; } = null!;
         public string Address { get; set; } = null!;
-        public int RoleID { get; set; }
+        public RoleDto Role { get; set; } = null!;
     }
 }

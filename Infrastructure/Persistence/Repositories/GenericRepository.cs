@@ -18,25 +18,25 @@ namespace Persistence.Repositories
 
         //protected abstract Action<T, T> Copy(T source, T destination);
 
-        public async Task AddAsync(T obj)
+        public virtual async Task AddAsync(T obj)
         {
             _dbSet.Add(obj);
             await _saveChangesAsync(CancellationToken.None);
         }
 
-        public async Task DeleteAsync(T obj)
+        public virtual async Task DeleteAsync(T obj)
         {
             _dbSet.Remove(obj); 
             await _saveChangesAsync(CancellationToken.None);
         }
 
-        public async Task<bool> ExistsAsync(TIdType id) => await _dbSet.AnyAsync(o => o.Id.Equals(id));
+        public virtual async Task<bool> ExistsAsync(TIdType id) => await _dbSet.AnyAsync(o => o.Id.Equals(id));
 
-        public async Task<IReadOnlyCollection<T>> GetAllAsync() => await _dbSet.ToArrayAsync();
+        public virtual async Task<IReadOnlyCollection<T>> GetAllAsync() => await _dbSet.ToArrayAsync();
 
-        public async Task<T?> GetAsync(TIdType id) => await _dbSet.FirstOrDefaultAsync(o => o.Id.Equals(id));
+        public virtual async Task<T?> GetAsync(TIdType id) => await _dbSet.FirstOrDefaultAsync(o => o.Id.Equals(id));
         
-        public async Task UpdateAsync(T obj)
+        public virtual async Task UpdateAsync(T obj)
         {
             _dbSet.Entry(obj).State = EntityState.Modified;
 

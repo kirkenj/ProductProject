@@ -5,55 +5,77 @@ using AutoMapper;
 using MediatR;
 using Application.Contracts.Infrastructure;
 using System.Text;
-using Application.Models.Email;
 using Application.Models.User;
 using Application.Models.Response;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class LoginHandler : IRequestHandler<LoginDto, Response<string?>>
+    public class LoginHandler : IRequestHandler<LoginRequest, Response<string?>>
     {
-        private readonly IUserRepository userRepository;
-        private readonly IHashProvider hashProvider;
-        private readonly IMapper mapper;
-        private readonly IEmailSender emailSender;
-        private readonly IJwtService jwtService;
+        private readonly IUserRepository _userRepository;
+        private readonly IHashProvider _hashProvider;
+        private readonly IMapper _mapper;
+        private readonly IEmailSender _emailSender;
+        private readonly IJwtService _jwtService;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IRoleRepository _roleRepository;
 
-        public LoginHandler(IUserRepository userRepository, IHashProvider hashProvider, IMapper mapper, IEmailSender emailSender, IJwtService jwtService)
+        public LoginHandler(IUserRepository userRepository, IRoleRepository roleRepository, IHashProvider hashProvider, IMapper mapper, IMemoryCache memoryCache, IEmailSender emailSender, IJwtService jwtService)
         {
-            this.userRepository = userRepository;
-            this.hashProvider = hashProvider;
-            this.mapper = mapper;
-            this.emailSender = emailSender;
-            this.jwtService = jwtService;
+            _userRepository = userRepository;
+            _hashProvider = hashProvider;
+            _roleRepository = roleRepository;
+            _mapper = mapper;
+            _emailSender = emailSender;
+            _jwtService = jwtService;
+            _memoryCache = memoryCache;
         }
 
-        public async Task<Response<string?>> Handle(LoginDto request, CancellationToken cancellationToken)
+        public async Task<Response<string?>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetAsync(new UserFilter { AccurateLogin = request.Login }, true);
+            var loginEmail = request.LoginDto.Email;
+            var cacheAccessKey = CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
+            var cachedUserValue = _memoryCache.Get(cacheAccessKey);
 
-            if (user == null)
+            bool isRegistration = cachedUserValue != null && cachedUserValue is Domain.Models.User;
+
+            Domain.Models.User? userToHandle = isRegistration ? 
+                (Domain.Models.User?)cachedUserValue 
+                : await _userRepository.GetAsync(new UserFilter { Email = loginEmail }, true);
+
+            if (userToHandle == null)
             {
-                return Response<string?>.NotFoundResponse(request.Login, true);
+                return Response<string?>.NotFoundResponse(nameof(loginEmail), true);
             }
 
-            hashProvider.HashAlgorithmName = user.HashAlgorithm;
-            hashProvider.Encoding = Encoding.GetEncoding(user.StringEncoding);
+            _hashProvider.HashAlgorithmName = userToHandle.HashAlgorithm;
+            _hashProvider.Encoding = Encoding.GetEncoding(userToHandle.StringEncoding);
 
-            string hash = hashProvider.GetHash(request.Password);
+            string loginPasswordHash = _hashProvider.GetHash(request.LoginDto.Password);
 
-            if (hash == user.PasswordHash) 
+            if (loginPasswordHash != userToHandle.PasswordHash)
+            { 
+                return Response<string?>.BadRequestResponse("Wrong password");
+            }
+
+            if (isRegistration == true)
             {
-                if (user.IsEmailConfirmed && user.Email != null)
+                await _userRepository.AddAsync(userToHandle);
+                _memoryCache.Remove(cacheAccessKey);
+                userToHandle.Role = await _roleRepository.GetAsync(userToHandle.RoleID) ?? throw new ApplicationException();
+
+                await _emailSender.SendEmailAsync(new()
                 {
-                    await emailSender.SendEmailAsync(new Email { Body = "Someone logged in your acc", Subject = "New login", To = user.Email });
-                }
-
-                var mapped = mapper.Map<UserDto>(user);
-                return Response<string?>.OkResponse(jwtService.GetToken(mapped), "Success");
+                    To = userToHandle.Email ?? throw new ApplicationException($"User email is null, Id = {userToHandle.Id}, userFromCache = {isRegistration}"),
+                    Subject = "First login",
+                    Body = "Account confirmed"
+                });
             }
 
-            return Response<string?>.BadRequestResponse("Wrong password");
+            var mapped = _mapper.Map<UserDto>(userToHandle);
+
+            return Response<string?>.OkResponse(_jwtService.GetToken(mapped), "Success");
         }
     }
 }

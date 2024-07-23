@@ -4,9 +4,9 @@ using Application.Features.User.Requests.Queries;
 using Application.Features.User.Requests.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using AuthAPI.Extensions;
+using System.ComponentModel.DataAnnotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,23 +27,40 @@ namespace AuthAPI.Controllers
         }
         
 
-        // POST api/<AuthController2>
         [HttpPost("Register")]
         public async Task<ActionResult<Guid>> Post([FromBody] CreateUserDto createUserDto)
         {
             var result = await _mediator.Send(new CreateUserCommand() { CreateUserDto = createUserDto });
+            if (result.Success)
+            {
+                return Ok(result.Message);
+            }
+
             return result.GetActionResult();
         }
 
         [HttpPost("Login")]
         public async Task<ActionResult<string>> Login(LoginDto loginDto) 
         {
-            var result = await _mediator.Send(loginDto);
+            var result = await _mediator.Send(new LoginRequest { LoginDto = loginDto });
             if (result == null)
             {
                 return false.ToString();
             }
 
+            return result.GetActionResult();
+        }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<ActionResult<string>> ForgotPassword([FromBody][EmailAddress] string email)
+        {
+            var result = await _mediator.Send(new ForgotPasswordComand
+            {
+                ForgotPasswordDto = new ForgotPasswordDto
+                {
+                    Email = email
+                }
+            });
             return result.GetActionResult();
         }
 
@@ -58,7 +75,7 @@ namespace AuthAPI.Controllers
         { 
             if (string.IsNullOrEmpty(key))
             {
-                return _memoryCache.GetCurrentStatistics().CurrentEntryCount.ToString();
+                return _memoryCache.GetCurrentStatistics()?.CurrentEntryCount.ToString() ?? "Something wrong";
             }
 
             return _memoryCache.Get(key)?.ToString() ?? "Not found";

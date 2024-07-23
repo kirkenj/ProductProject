@@ -2,7 +2,7 @@
 
 namespace Application.DTOs.User
 {
-    public class UpdateUserEmailDto : IRequest<Unit>
+    public class SendTokenToUpdateUserEmailDto : IRequest<Unit>
     {
         public Guid Id { get; set; }
         public string Email { get; set; } = null!;

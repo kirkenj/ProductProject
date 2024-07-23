@@ -4,9 +4,9 @@ using MediatR;
 
 namespace Application.Features.User.Requests.Commands
 {
-    public class UpdateUserEmailComand : IRequest<Response<string>>
+    public class ConfirmEmailChangeComand : IRequest<Response<string>>
     {
-        public UpdateUserEmailDto UpdateUserEmailDto { get; set; } = null!;
+        public ConfirmEmailChangeDto ConfirmEmailChangeDto { get; set; } = null!;
     }
 }
 

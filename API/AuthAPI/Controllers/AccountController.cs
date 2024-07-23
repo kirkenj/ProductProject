@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.User;
+using Application.Features.Tokens.Requests.Commands;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using AuthAPI.Extensions;
@@ -34,15 +35,16 @@ namespace AuthAPI.Controllers
             return result.GetActionResult();
         }
 
-        [HttpPut("Address")]
-        public async Task<ActionResult<string>> UpdateUser(string newAddress)
+        [HttpPut]
+        public async Task<ActionResult<string>> UpdateUser(UpdateUserModel updateUserModel)
         {
             var result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand 
             { 
-                UpdateUserAddressDto = new UpdateUserAddressDto 
+                UpdateUserAddressDto = new UpdateNotSensetiveInfoDto 
                 { 
                     Id = User.GetUserId(), 
-                    Address = newAddress
+                    Address = updateUserModel.Address,
+                    Name = updateUserModel.Name
                 }
             });
 
@@ -63,11 +65,11 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("Email")]
-        public async Task<ActionResult<string>> UpdateEmail(string newEmail)
+        public async Task<ActionResult<string>> UpdateEmail([FromBody]string newEmail)
         {
-            var result = await _mediator.Send(new UpdateUserEmailComand
+            var result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {
-                UpdateUserEmailDto = new UpdateUserEmailDto
+                UpdateUserEmailDto = new SendTokenToUpdateUserEmailDto
                 {
                     Email = newEmail,
                     Id = User.GetUserId()
@@ -77,45 +79,26 @@ namespace AuthAPI.Controllers
             return result.GetActionResult();
         }
 
-        [HttpPost("SendEmailConfirmationToken")]
-        public async Task<ActionResult<string>> SendEmailConfirmationToken()
+        [HttpPost("Email")]
+        public async Task<ActionResult<string>> ConfirmEmailUpdate([FromBody]string confirmationToken)
         {
-            var result = await _mediator.Send(new SendEmailConfirmationTokenQuery 
-            { 
-                SendEmailConfirmationTokenDto = new SendEmailConfirmationTokenDto 
-                { 
-                    UserID = User.GetUserId() 
-                } 
-            });
-
-            return result.GetActionResult();
-        }
-
-        [HttpPost("ConfirmEmail")]
-        public async Task<ActionResult<string>> ConfirmEmail(string code)
-        {
-            var result = await _mediator.Send(new ConfirmEmailComand 
-            { 
-                ConfirmEmailDto = new ConfirmEmailDto 
-                { 
-                    Key = code, 
-                    UserId = User.GetUserId() 
-                } 
-            });
-            return result.GetActionResult();
-        }
-
-
-        [HttpPost("ForgotPassword")]
-        public async Task<ActionResult<string>> ForgotPassword(string email)
-        {
-            var result = await _mediator.Send(new ForgotPasswordComand
+            var result = await _mediator.Send(new ConfirmEmailChangeComand
             {
-                ForgotPasswordDto = new ForgotPasswordDto
+                ConfirmEmailChangeDto = new ConfirmEmailChangeDto
                 {
-                    Email = email
+                    UserId = User.GetUserId(),
+                    Token = confirmationToken
                 }
             });
+
+            if (result.Success)
+            {
+                await _mediator.Send(new InvalidateTokenCommand 
+                { 
+                    InvalidateTokenDto = new () { Token = Request.Headers.Authorization.ToString().Split(' ')[1] } 
+                });
+            }
+
             return result.GetActionResult();
         }
     }

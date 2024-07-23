@@ -31,11 +31,11 @@ namespace Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsEmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    Login = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HasgAlgorithm = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HashAlgorithm = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StringEncoding = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RoleID = table.Column<int>(type: "int", nullable: false)
@@ -62,12 +62,24 @@ namespace Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Address", "Email", "HasgAlgorithm", "IsEmailConfirmed", "Login", "PasswordHash", "RoleID", "StringEncoding" },
+                columns: new[] { "Id", "Address", "Email", "HashAlgorithm", "Login", "Name", "PasswordHash", "RoleID", "StringEncoding" },
                 values: new object[,]
                 {
-                    { new Guid("0128a68d-0e6a-47bb-a312-4ea911146dbf"), "Confidential", null, "MD5", false, "admin", "!#/)zW��C�JJ��", 1, "Unicode (UTF-8)" },
-                    { new Guid("548dde6c-714e-4a6c-9fae-f2c99e2ee312"), "Confidential", null, "MD5", false, "user", "�˱�R����#�", 2, "Unicode (UTF-8)" }
+                    { new Guid("66959d00-7d6d-48b3-8f72-8f2d3fc53389"), "Confidential", "kirkend@bk.ru", "MD5", "user", "seeding user", "�˱�R����#�", 2, "utf-8" },
+                    { new Guid("6aad971c-fdda-4fb6-8cc1-0575af3bddbf"), "Confidential", "kirkenj@bk.ru", "MD5", "admin", "seeding admin", "!#/)zW��C�JJ��", 1, "utf-8" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Login",
+                table: "Users",
+                column: "Login",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleID",

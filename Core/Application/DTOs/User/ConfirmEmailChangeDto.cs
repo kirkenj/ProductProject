@@ -1,8 +1,8 @@
 ﻿namespace Application.DTOs.User
 {
-    public class ConfirmEmailDto
+    public class ConfirmEmailChangeDto
     {
         public Guid UserId { get; set; }
-        public string Key { get; set; } = null!;
+        public string Token { get; set; } = null!;
     }
 }
