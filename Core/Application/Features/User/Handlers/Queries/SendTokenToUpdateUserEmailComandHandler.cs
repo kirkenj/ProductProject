@@ -5,7 +5,6 @@ using Application.Contracts.Infrastructure;
 using Application.Models.Response;
 using Application.Features.User.Requests.Queries;
 using Application.DTOs.User;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Application.Features.User.Handlers.Queries
 {
@@ -14,9 +13,9 @@ namespace Application.Features.User.Handlers.Queries
         private readonly IUserRepository _userRepository;
         private readonly IEmailSender _emailSender;
         private readonly IPasswordGenerator _passwordGenerator;
-        private readonly IMemoryCache _memoryCache;
+        private readonly ICustomMemoryCache _memoryCache;
 
-        public SendTokenToUpdateUserEmailComandHandler(IUserRepository userRepository, IMemoryCache memoryCache, IEmailSender emailSender, IPasswordGenerator passwordGenerator)
+        public SendTokenToUpdateUserEmailComandHandler(IUserRepository userRepository, ICustomMemoryCache memoryCache, IEmailSender emailSender, IPasswordGenerator passwordGenerator)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;

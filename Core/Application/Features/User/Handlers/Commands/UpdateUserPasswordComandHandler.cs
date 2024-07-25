@@ -1,12 +1,10 @@
 ﻿using Application.DTOs.User.Validators;
-using Application.Exceptions;
 using Application.Features.User.Requests.Commands;
 using Application.Contracts.Persistence;
 using MediatR;
 using Application.Contracts.Infrastructure;
 using Application.Contracts.Application;
 using Application.Models.Response;
-using System.Net;
 
 namespace Application.Features.User.Handlers.Commands
 {

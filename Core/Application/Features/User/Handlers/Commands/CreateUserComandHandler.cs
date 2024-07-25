@@ -9,7 +9,6 @@ using Application.Models.User;
 using Application.Models.Email;
 using Application.Contracts.Application;
 using Application.Models.Response;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Application.Features.User.Handlers.Commands
 {
@@ -18,11 +17,11 @@ namespace Application.Features.User.Handlers.Commands
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper; 
         private readonly CreateUserSettings _createUserSettings;
-        private readonly IMemoryCache _memoryCache;
+        private readonly ICustomMemoryCache _memoryCache;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly IEmailSender _emailSender;
 
-        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IUserRepository userRepository, IMapper mapper, IHashProvider passwordSetter, IPasswordGenerator passwordGenerator, IEmailSender emailSender, IMemoryCache memoryCache)
+        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IUserRepository userRepository, IMapper mapper, IHashProvider passwordSetter, IPasswordGenerator passwordGenerator, IEmailSender emailSender, ICustomMemoryCache memoryCache)
         {
             _userRepository = userRepository;
             _mapper = mapper;

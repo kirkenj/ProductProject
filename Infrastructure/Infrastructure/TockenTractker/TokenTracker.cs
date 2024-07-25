@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Application.Contracts.Infrastructure;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 namespace Infrastructure.TockenTractker
@@ -6,10 +7,10 @@ namespace Infrastructure.TockenTractker
     public class TokenTracker
     {
         private readonly TokenTrackingSettings _settings = null!;
-        private readonly IMemoryCache _memoryCache;
+        private readonly ICustomMemoryCache _memoryCache;
         private readonly Func<string, string> _keyGeneratingDelegate;
 
-        public TokenTracker(IOptions<TokenTrackingSettings> options, IMemoryCache memoryCache)
+        public TokenTracker(IOptions<TokenTrackingSettings> options, ICustomMemoryCache memoryCache)
         {
             _settings = options.Value;
             _memoryCache = memoryCache;
@@ -48,7 +49,7 @@ namespace Infrastructure.TockenTractker
             }
 
             var key = _keyGeneratingDelegate(token);
-            var trackingResult = _memoryCache.Get(key);
+            var trackingResult = _memoryCache.Get(key, typeof(AssignedTokenInfo));
 
             if (trackingResult == null)
             {
@@ -60,7 +61,7 @@ namespace Infrastructure.TockenTractker
                 throw new InvalidOperationException();
             }
 
-            var banResult = _memoryCache.Get(_keyGeneratingDelegate(trackInfo.UserId.ToString()));
+            var banResult = _memoryCache.Get(_keyGeneratingDelegate(trackInfo.UserId.ToString()), typeof(DateTime));
 
             if (banResult == null)
             {

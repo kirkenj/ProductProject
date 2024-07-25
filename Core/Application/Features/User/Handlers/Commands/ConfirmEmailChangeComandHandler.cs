@@ -5,17 +5,16 @@ using Application.Features.User.Requests.Commands;
 using Application.Models.Email;
 using Application.Models.Response;
 using MediatR;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Application.Features.User.Handlers.Commands
 {
     public class ConfirmEmailChangeComandHandler : IRequestHandler<ConfirmEmailChangeComand, Response<string>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMemoryCache _memoryCache;
+        private readonly ICustomMemoryCache _memoryCache;
         private readonly IEmailSender _emailSender;
 
-        public ConfirmEmailChangeComandHandler(IUserRepository userRepository, IMemoryCache memoryCache, IEmailSender emailSender)
+        public ConfirmEmailChangeComandHandler(IUserRepository userRepository, ICustomMemoryCache memoryCache, IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _memoryCache = memoryCache;
@@ -31,7 +30,7 @@ namespace Application.Features.User.Handlers.Commands
                 return Response<string>.BadRequestResponse(validationResult.Errors);
             }
 
-            var cachedValue = _memoryCache.Get(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(request.ConfirmEmailChangeDto.Token));
+            var cachedValue = _memoryCache.Get(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(request.ConfirmEmailChangeDto.Token), typeof(EmailUpdateDetails));
 
             if (cachedValue == null)
             {
