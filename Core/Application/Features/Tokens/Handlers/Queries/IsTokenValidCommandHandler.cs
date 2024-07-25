@@ -1,4 +1,5 @@
-﻿using Application.Features.Tokens.Requests.Queries;
+﻿using Application.DTOs.Tokens;
+using Application.Features.Tokens.Requests.Queries;
 using Application.Models.Response;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
@@ -18,12 +19,35 @@ namespace Application.Features.Tokens.Handlers.Commands
         {
             if (request == null || request.IsTokenValidDto == null || request.IsTokenValidDto.Token == null)
             {
-                return await Task.Run(() => Response<bool>.OkResponse(true, string.Empty));
+                return await Task.FromResult(Response<bool>.OkResponse(false, string.Empty));
             }
 
-            var result = _memoryCache.Get(CacheKeyGenerator.CacheKeyGenerator.KeyForTokenInvalidationCaching(request.IsTokenValidDto.Token));
+            var key = CacheKeyGenerator.CacheKeyGenerator.KeyForTokenTrackingCaching(request.IsTokenValidDto.Token);
+            var trackingResult = _memoryCache.Get(key);
 
-            return await Task.Run(() => Response<bool>.OkResponse(result == null, string.Empty));
+            if (trackingResult == null)
+            { 
+                return await Task.FromResult(Response<bool>.OkResponse(false, "Token is not tracked"));
+            }
+
+            if (trackingResult is not AssignedTokenInfoDto trackInfo)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var banResult = _memoryCache.Get(CacheKeyGenerator.CacheKeyGenerator.KeyForUserTokensInvalidationCaching(trackInfo.UserId.ToString()));
+            
+            if (banResult == null)
+            {
+                return await Task.FromResult(Response<bool>.OkResponse(true, string.Empty));
+            }
+
+            if (banResult is not DateTime banDateTime)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return await Task.FromResult(Response<bool>.OkResponse(trackInfo.DateTime >= banDateTime, string.Empty));
         }
     }
 }

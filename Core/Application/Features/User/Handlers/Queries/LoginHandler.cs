@@ -11,7 +11,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class LoginHandler : IRequestHandler<LoginRequest, Response<string?>>
+    public class LoginHandler : IRequestHandler<LoginRequest, Response<LoginResult>>
     {
         private readonly IUserRepository _userRepository;
         private readonly IHashProvider _hashProvider;
@@ -32,7 +32,7 @@ namespace Application.Features.User.Handlers.Queries
             _memoryCache = memoryCache;
         }
 
-        public async Task<Response<string?>> Handle(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<Response<LoginResult>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             var loginEmail = request.LoginDto.Email;
             var cacheAccessKey = CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
@@ -46,7 +46,7 @@ namespace Application.Features.User.Handlers.Queries
 
             if (userToHandle == null)
             {
-                return Response<string?>.NotFoundResponse(nameof(loginEmail), true);
+                return Response<LoginResult>.NotFoundResponse(nameof(loginEmail), true);
             }
 
             _hashProvider.HashAlgorithmName = userToHandle.HashAlgorithm;
@@ -56,7 +56,7 @@ namespace Application.Features.User.Handlers.Queries
 
             if (loginPasswordHash != userToHandle.PasswordHash)
             { 
-                return Response<string?>.BadRequestResponse("Wrong password");
+                return Response<LoginResult>.BadRequestResponse("Wrong password");
             }
 
             if (isRegistration == true)
@@ -75,7 +75,13 @@ namespace Application.Features.User.Handlers.Queries
 
             var mapped = _mapper.Map<UserDto>(userToHandle);
 
-            return Response<string?>.OkResponse(_jwtService.GetToken(mapped), "Success");
+            var result = new LoginResult()
+            {
+                Token = _jwtService.GetToken(mapped),
+                UserId = userToHandle.Id
+            };
+
+            return Response<LoginResult>.OkResponse(result, "Success");
         }
     }
 }

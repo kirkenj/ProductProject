@@ -93,10 +93,10 @@ namespace AuthAPI.Controllers
 
             if (result.Success)
             {
-                await _mediator.Send(new InvalidateTokenCommand 
-                { 
-                    InvalidateTokenDto = new () { Token = Request.Headers.Authorization.ToString().Split(' ')[1] } 
-                });
+                //await _mediator.Send(new InvalidateUserTokensCommand 
+                //{ 
+                //    InvalidateUserTokensDto = new () { Token = Request.Headers.Authorization.ToString().Split(' ')[1] } 
+                //});
             }
 
             return result.GetActionResult();

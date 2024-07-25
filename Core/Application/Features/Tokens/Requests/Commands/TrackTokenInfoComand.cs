@@ -4,8 +4,8 @@ using MediatR;
 
 namespace Application.Features.Tokens.Requests.Commands
 {
-    public class InvalidateTokenCommand : IRequest<Response<Unit>>
+    public class TrackTokenInfoComand : IRequest<Response<Unit>>
     {
-        public InvalidateTokenDto InvalidateTokenDto { get; set; } = null!;
+        public KeyValuePair<string, AssignedTokenInfoDto> KeyValuePair { get; set; }
     }
 }

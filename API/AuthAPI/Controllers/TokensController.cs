@@ -26,10 +26,20 @@ namespace AuthAPI.Controllers
             return result.GetActionResult();
         }
 
-        [HttpPost("InvalidateToken")]
-        public async Task<ActionResult> InvalidateToken(string token)
+        [HttpPost("InvalidateUsersToken")]
+        public async Task<ActionResult> InvalidateToken(Guid userId)
         {
-            var result = await _mediator.Send(new InvalidateTokenCommand { InvalidateTokenDto = new() { Token = token } });
+            var result = await _mediator.Send(new InvalidateUserTokensCommand
+            {
+                InvalidateUserTokensDto = new()
+                {
+                    AssigedTokenInfo = new() 
+                    { 
+                        UserId = userId, 
+                        DateTime = DateTime.UtcNow 
+                    }
+                }
+            });
             return result.GetActionResult();
         }
     }

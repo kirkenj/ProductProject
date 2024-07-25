@@ -8,10 +8,10 @@ using AuthAPI.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigurePersistenceServices(builder.Configuration);
 builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 builder.Services.ConfigureJwtAuthentication(builder.Configuration);
+builder.Services.ConfigureApplicationServices(builder.Configuration);
 
 builder.Services.AddMemoryCache();
  

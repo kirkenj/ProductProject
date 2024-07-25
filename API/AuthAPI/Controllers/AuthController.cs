@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using AuthAPI.Extensions;
 using System.ComponentModel.DataAnnotations;
+using Application.DTOs.Tokens;
+using Microsoft.AspNetCore.Identity;
+using Application.Models.Jwt;
+using Application.Features.Tokens.Requests.Commands;
+using Microsoft.Extensions.Options;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,12 +23,14 @@ namespace AuthAPI.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMemoryCache _memoryCache;
+        private readonly JwtSettings _jwtSettings;
 
 
-        public AuthController(IMediator mediator, IMemoryCache memoryCache)
+        public AuthController(IMediator mediator, IMemoryCache memoryCache, IOptions<JwtSettings> options)
         {
             _mediator = mediator;
             _memoryCache = memoryCache;
+            _jwtSettings = options.Value;
         }
         
 
@@ -48,6 +55,35 @@ namespace AuthAPI.Controllers
                 return false.ToString();
             }
 
+
+            if (result.Success)
+            {
+                if (result.Result == null)
+                {
+                    throw new ApplicationException();
+                }
+                
+                var trackResult = await _mediator.Send(
+                    new TrackTokenInfoComand
+                    { 
+                        KeyValuePair = new KeyValuePair<string, AssignedTokenInfoDto>
+                        (
+                            result.Result.Token, 
+                            new() 
+                            { 
+                                DateTime = DateTime.UtcNow, 
+                                UserId = result.Result.UserId
+                            }
+                        )
+                    }
+                    );
+
+                if (trackResult.Success == false)
+                {
+                    throw new ApplicationException("Could not track token info");
+                }
+
+            }
             return result.GetActionResult();
         }
 
