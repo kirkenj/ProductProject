@@ -1,9 +1,9 @@
 ﻿using Application.DTOs.User;
-using Application.Features.Tokens.Requests.Commands;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using AuthAPI.Extensions;
 using AuthAPI.Models;
+using Infrastructure.TockenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +19,11 @@ namespace AuthAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly TokenTracker _tokenTracker;
 
-        public AccountController(IMediator mediator)
+        public AccountController(IMediator mediator, TokenTracker tokenTracker)
         {
+            _tokenTracker = tokenTracker;
             _mediator = mediator;
         }
 
@@ -93,10 +95,7 @@ namespace AuthAPI.Controllers
 
             if (result.Success)
             {
-                //await _mediator.Send(new InvalidateUserTokensCommand 
-                //{ 
-                //    InvalidateUserTokensDto = new () { Token = Request.Headers.Authorization.ToString().Split(' ')[1] } 
-                //});
+                _tokenTracker.InvalidateUser(User.GetUserId(), DateTime.UtcNow);
             }
 
             return result.GetActionResult();

@@ -1,6 +1,5 @@
-﻿using Application.Features.Tokens.Requests.Commands;
-using Application.Features.Tokens.Requests.Queries;
-using AuthAPI.Extensions;
+﻿using AuthAPI.Extensions;
+using Infrastructure.TockenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,34 +12,26 @@ namespace AuthAPI.Controllers
     public class TokensController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly TokenTracker _tokenTracker;
 
-        public TokensController(IMediator mediator)
+        public TokensController(IMediator mediator, TokenTracker tokenTracker)
         {
             _mediator = mediator;
+            _tokenTracker = tokenTracker;
         }
 
         [HttpGet("IsTokenValid")]
         public async Task<ActionResult<bool>> Get(string token)
         {
-            var result = await _mediator.Send(new IsTokenValidRequest { IsTokenValidDto = new() { Token = token } });
-            return result.GetActionResult();
+            return await Task.FromResult(Ok(_tokenTracker.IsValid(token)));
         }
 
         [HttpPost("InvalidateUsersToken")]
         public async Task<ActionResult> InvalidateToken(Guid userId)
         {
-            var result = await _mediator.Send(new InvalidateUserTokensCommand
-            {
-                InvalidateUserTokensDto = new()
-                {
-                    AssigedTokenInfo = new() 
-                    { 
-                        UserId = userId, 
-                        DateTime = DateTime.UtcNow 
-                    }
-                }
-            });
-            return result.GetActionResult();
+            _tokenTracker.InvalidateUser(userId, DateTime.UtcNow); 
+
+            return await Task.FromResult(Ok());
         }
     }
 }

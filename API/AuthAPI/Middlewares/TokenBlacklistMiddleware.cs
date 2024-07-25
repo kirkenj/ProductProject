@@ -1,5 +1,4 @@
-﻿using Application.Features.Tokens.Requests.Queries;
-using MediatR;
+﻿using Infrastructure.TockenTractker;
 using Microsoft.Extensions.Primitives;
 
 namespace AuthAPI.Middlewares
@@ -7,11 +6,11 @@ namespace AuthAPI.Middlewares
     public class TokenBlacklistMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IMediator _mediator;
+        private readonly TokenTracker _tracker;
 
-        public TokenBlacklistMiddleware(RequestDelegate next, IMediator mediator)
+        public TokenBlacklistMiddleware(RequestDelegate next, TokenTracker mediator)
         {
-            _mediator = mediator;
+            _tracker = mediator;
             _next = next;
         }
 
@@ -20,10 +19,8 @@ namespace AuthAPI.Middlewares
             if (context.Request.Headers.Authorization.Any())
             {
                 var token = context.Request.Headers.Authorization.ToString().Split(' ')[1];
-
-                var result = await _mediator.Send(new IsTokenValidRequest { IsTokenValidDto = new() { Token = token } });
-                
-                if (result.Success && result.Result == false)
+                                
+                if (_tracker.IsValid(token) == false)
                 {
                     context.Request.Headers.Authorization = StringValues.Empty;
                 }

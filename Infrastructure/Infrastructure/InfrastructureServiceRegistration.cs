@@ -4,6 +4,7 @@ using Application.Models.Hash;
 using Application.Models.Jwt;
 using Infrastructure.Jwt;
 using Infrastructure.Mail;
+using Infrastructure.TockenTractker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +17,9 @@ namespace Infrastructure
             services.Configure<HashProviderSettings>(configuration.GetSection("HashProviderSettings"));
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+            services.Configure<TokenTrackingSettings>(configuration.GetSection("TokenTrackingSettings"));
+
+            services.AddSingleton<TokenTracker>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IHashProvider, HashProvider.HashProvider>();
             services.AddTransient<IJwtService, JwtService>();

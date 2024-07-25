@@ -1,6 +1,6 @@
-﻿namespace Application.DTOs.Tokens
+﻿namespace Infrastructure.TockenTractker
 {
-    public class AssignedTokenInfoDto
+    public class AssignedTokenInfo
     {
         public Guid UserId { get; set; }
         public DateTime DateTime { get; set; }

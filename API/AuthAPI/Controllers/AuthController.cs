@@ -1,5 +1,4 @@
-﻿using Application.DTOs.Role;
-using Application.DTOs.User;
+﻿using Application.DTOs.User;
 using Application.Features.User.Requests.Queries;
 using Application.Features.User.Requests.Commands;
 using MediatR;
@@ -7,11 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using AuthAPI.Extensions;
 using System.ComponentModel.DataAnnotations;
-using Application.DTOs.Tokens;
-using Microsoft.AspNetCore.Identity;
 using Application.Models.Jwt;
-using Application.Features.Tokens.Requests.Commands;
 using Microsoft.Extensions.Options;
+using Infrastructure.TockenTractker;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,13 +21,14 @@ namespace AuthAPI.Controllers
         private readonly IMediator _mediator;
         private readonly IMemoryCache _memoryCache;
         private readonly JwtSettings _jwtSettings;
+        private readonly TokenTracker _tokenTracker;
 
-
-        public AuthController(IMediator mediator, IMemoryCache memoryCache, IOptions<JwtSettings> options)
+        public AuthController(IMediator mediator, IMemoryCache memoryCache, IOptions<JwtSettings> options, TokenTracker tokenTracker)
         {
             _mediator = mediator;
             _memoryCache = memoryCache;
             _jwtSettings = options.Value;
+            _tokenTracker = tokenTracker;
         }
         
 
@@ -62,26 +60,17 @@ namespace AuthAPI.Controllers
                 {
                     throw new ApplicationException();
                 }
-                
-                var trackResult = await _mediator.Send(
-                    new TrackTokenInfoComand
-                    { 
-                        KeyValuePair = new KeyValuePair<string, AssignedTokenInfoDto>
+
+
+                _tokenTracker.Track(new KeyValuePair<string, AssignedTokenInfo>
                         (
-                            result.Result.Token, 
-                            new() 
-                            { 
-                                DateTime = DateTime.UtcNow, 
+                            result.Result.Token,
+                            new()
+                            {
+                                DateTime = DateTime.UtcNow,
                                 UserId = result.Result.UserId
                             }
-                        )
-                    }
-                    );
-
-                if (trackResult.Success == false)
-                {
-                    throw new ApplicationException("Could not track token info");
-                }
+                        ));
 
             }
             return result.GetActionResult();
