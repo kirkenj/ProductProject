@@ -23,7 +23,7 @@ namespace Infrastructure
             services.Configure<RedisCacheOptions>(configuration.GetSection("RedisCacheOptions"));
 
             services.AddSingleton<ICustomMemoryCache, RedisAsMemoryCache>();
-            services.AddSingleton<TokenTracker>();
+            services.AddSingleton<TokenTracker<Guid>>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IHashProvider, HashProvider.HashProvider>();
             services.AddTransient<IJwtService, JwtService>();

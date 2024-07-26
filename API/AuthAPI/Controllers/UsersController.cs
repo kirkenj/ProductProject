@@ -2,6 +2,7 @@
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using AuthAPI.Extensions;
+using Infrastructure.TockenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,12 @@ namespace AuthAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly TokenTracker<Guid> _tokenTracker;
 
-        public UsersController(IMediator mediator)
+        public UsersController(IMediator mediator, TokenTracker<Guid> tokenTracker)
         {
             _mediator = mediator;
+            _tokenTracker = tokenTracker;
         }
 
         [HttpGet("Users")]
@@ -54,6 +57,11 @@ namespace AuthAPI.Controllers
                 UpdateUserPasswordDto = request
             });
 
+            if (result.Success)
+            {
+                _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
+            }
+
             return result.GetActionResult();
         }
 
@@ -75,6 +83,27 @@ namespace AuthAPI.Controllers
             {
                 ConfirmEmailChangeDto = request
             });
+
+            if (result.Success)
+            {
+                _tokenTracker.InvalidateUser(request.UserId, DateTime.UtcNow);
+            }
+
+            return result.GetActionResult();
+        }
+
+        [HttpPut("UserTag")]
+        public async Task<ActionResult<string>> UpdateLogin(UpdateUserLoginDto request)
+        {
+            var result = await _mediator.Send(new UpdateUserLoginComand
+            {
+                UpdateUserLoginDto = request
+            });
+
+            if (result.Success)
+            {
+                _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
+            }
 
             return result.GetActionResult();
         }

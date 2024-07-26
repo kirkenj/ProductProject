@@ -6,9 +6,9 @@ namespace AuthAPI.Middlewares
     public class TokenBlacklistMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly TokenTracker _tracker;
+        private readonly TokenTracker<Guid> _tracker;
 
-        public TokenBlacklistMiddleware(RequestDelegate next, TokenTracker mediator)
+        public TokenBlacklistMiddleware(RequestDelegate next, TokenTracker<Guid> mediator)
         {
             _tracker = mediator;
             _next = next;

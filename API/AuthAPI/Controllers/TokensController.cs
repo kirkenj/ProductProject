@@ -12,9 +12,9 @@ namespace AuthAPI.Controllers
     public class TokensController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly TokenTracker _tokenTracker;
+        private readonly TokenTracker<Guid> _tokenTracker;
 
-        public TokensController(IMediator mediator, TokenTracker tokenTracker)
+        public TokensController(IMediator mediator, TokenTracker<Guid> tokenTracker)
         {
             _mediator = mediator;
             _tokenTracker = tokenTracker;

@@ -1,8 +1,8 @@
 ﻿namespace Infrastructure.TockenTractker
 {
-    public class AssignedTokenInfo
+    public class AssignedTokenInfo<TUserIdType>
     {
-        public Guid UserId { get; set; }
+        public TUserIdType UserId { get; set; } = default!;
         public DateTime DateTime { get; set; }
     }
 }

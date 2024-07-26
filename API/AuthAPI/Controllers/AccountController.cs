@@ -19,9 +19,9 @@ namespace AuthAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly TokenTracker _tokenTracker;
+        private readonly TokenTracker<Guid> _tokenTracker;
 
-        public AccountController(IMediator mediator, TokenTracker tokenTracker)
+        public AccountController(IMediator mediator, TokenTracker<Guid> tokenTracker)
         {
             _tokenTracker = tokenTracker;
             _mediator = mediator;
@@ -66,6 +66,25 @@ namespace AuthAPI.Controllers
             return result.GetActionResult();
         }
 
+        [HttpPut("UserTag")]
+        public async Task<ActionResult<string>> UpdateLogin(string newLogin)
+        {
+            var result = await _mediator.Send(new UpdateUserLoginComand { UpdateUserLoginDto = new()
+            { 
+                Id = User.GetUserId(),
+                NewLogin = newLogin
+            }
+            });
+
+            if (result.Success)
+            {
+                result.Result += "Relogin needed.";
+                _tokenTracker.InvalidateUser(User.GetUserId(), DateTime.UtcNow);
+            }
+
+            return result.GetActionResult();
+        }
+
         [HttpPut("Email")]
         public async Task<ActionResult<string>> UpdateEmail([FromBody]string newEmail)
         {
@@ -77,6 +96,13 @@ namespace AuthAPI.Controllers
                     Id = User.GetUserId()
                 }
             });
+
+
+            if (result.Success)
+            {
+                result.Result += "Relogin needed.";
+                _tokenTracker.InvalidateUser(User.GetUserId(), DateTime.UtcNow);
+            }
 
             return result.GetActionResult();
         }
@@ -95,6 +121,7 @@ namespace AuthAPI.Controllers
 
             if (result.Success)
             {
+                result.Result += "Relogin needed.";
                 _tokenTracker.InvalidateUser(User.GetUserId(), DateTime.UtcNow);
             }
 

@@ -59,7 +59,7 @@ namespace Application.Features.User.Handlers.Commands
 
             _memoryCache.Remove(request.ConfirmEmailChangeDto.Token);
             
-            return Response<string>.OkResponse("Email updated. Relogin needed", string.Empty);
+            return Response<string>.OkResponse("Email updated.", string.Empty);
         }
     }
 }

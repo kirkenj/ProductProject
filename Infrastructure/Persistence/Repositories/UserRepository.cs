@@ -46,6 +46,20 @@ namespace Persistence.Repositories
                 set = set.Where(obj => obj.Email!= null && obj.Email.Contains(filter.Email));
                 #pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.
             }
+
+            if (!filter.LoginPart.IsNullOrEmpty())
+            {
+                #pragma warning disable CS8602 // Разыменование вероятной пустой ссылки.
+                set = set.Where(obj => obj.Login!= null && obj.Login.Contains(filter.LoginPart));
+                #pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.
+            }
+
+            if (!filter.AccurateLogin.IsNullOrEmpty())
+            {
+                #pragma warning disable CS8602 // Разыменование вероятной пустой ссылки.
+                set = set.Where(obj => obj.Login != null && obj.Login == filter.AccurateLogin);
+                #pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.
+            }
             #pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
 
             return set;

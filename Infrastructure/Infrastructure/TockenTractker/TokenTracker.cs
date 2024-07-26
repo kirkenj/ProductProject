@@ -1,10 +1,9 @@
 ﻿using Application.Contracts.Infrastructure;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 namespace Infrastructure.TockenTractker
 {
-    public class TokenTracker
+    public class TokenTracker<TUserIdType>
     {
         private readonly TokenTrackingSettings _settings = null!;
         private readonly ICustomMemoryCache _memoryCache;
@@ -17,7 +16,7 @@ namespace Infrastructure.TockenTractker
             _keyGeneratingDelegate = (value) => _settings.CacheSeed + value;
         }
 
-        public void Track(KeyValuePair<string, AssignedTokenInfo> pair)
+        public void Track(KeyValuePair<string, AssignedTokenInfo<TUserIdType>> pair)
         {
             if (pair.Value == null || pair.Key == null)
                 throw new ArgumentNullException(nameof(pair));
@@ -49,19 +48,26 @@ namespace Infrastructure.TockenTractker
             }
 
             var key = _keyGeneratingDelegate(token);
-            var trackingResult = _memoryCache.Get(key, typeof(AssignedTokenInfo));
+            var trackingResult = _memoryCache.Get(key, typeof(AssignedTokenInfo<TUserIdType>));
 
             if (trackingResult == null)
             {
                 throw new InvalidOperationException("Tocken is not tracked");
             }
 
-            if (trackingResult is not AssignedTokenInfo trackInfo)
+            if (trackingResult is not AssignedTokenInfo<TUserIdType> trackInfo)
             {
                 throw new InvalidOperationException();
             }
 
-            var banResult = _memoryCache.Get(_keyGeneratingDelegate(trackInfo.UserId.ToString()), typeof(DateTime));
+            if (trackInfo == null || trackInfo.UserId == null)
+            {
+                throw new InvalidOperationException(nameof(trackInfo));
+            }
+
+            var banResult = _memoryCache.Get(
+                _keyGeneratingDelegate(trackInfo.UserId?.ToString() ?? throw new InvalidOperationException(nameof(trackInfo))), 
+                typeof(DateTime));
 
             if (banResult == null)
             {

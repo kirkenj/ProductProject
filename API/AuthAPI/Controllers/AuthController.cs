@@ -21,9 +21,9 @@ namespace AuthAPI.Controllers
         private readonly IMediator _mediator;
         private readonly IMemoryCache _memoryCache;
         private readonly JwtSettings _jwtSettings;
-        private readonly TokenTracker _tokenTracker;
+        private readonly TokenTracker<Guid> _tokenTracker;
 
-        public AuthController(IMediator mediator, IMemoryCache memoryCache, IOptions<JwtSettings> options, TokenTracker tokenTracker)
+        public AuthController(IMediator mediator, IMemoryCache memoryCache, IOptions<JwtSettings> options, TokenTracker<Guid> tokenTracker)
         {
             _mediator = mediator;
             _memoryCache = memoryCache;
@@ -62,7 +62,7 @@ namespace AuthAPI.Controllers
                 }
 
 
-                _tokenTracker.Track(new KeyValuePair<string, AssignedTokenInfo>
+                _tokenTracker.Track(new KeyValuePair<string, AssignedTokenInfo<Guid>>
                         (
                             result.Result.Token,
                             new()
