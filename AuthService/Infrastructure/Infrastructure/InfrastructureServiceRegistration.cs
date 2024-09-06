@@ -1,0 +1,44 @@
+﻿using Application.Contracts.Infrastructure;
+using Application.Models.Hash;
+using Application.Models.Jwt;
+using Cache.Contracts;
+using Cache.Models;
+using Infrastructure.Jwt;
+using EmailSender.Models;
+using Infrastructure.TockenTractker;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using EmailSender.Contracts;
+
+namespace Infrastructure
+{
+    public static class InfrastructureServiceRegistration
+    {
+        public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<HashProviderSettings>(configuration.GetSection("HashProviderSettings"));
+
+            services.AddSingleton(new EmailSettings
+            {
+                ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new ApplicationException(),
+                ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new ApplicationException(),
+                ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new ApplicationException(),
+                ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new ApplicationException()),
+                FromName = configuration["EmailSettings:FromName"] ?? throw new ApplicationException()
+            });
+
+
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+            services.Configure<TokenTrackingSettings>(configuration.GetSection("TokenTrackingSettings"));
+            services.Configure<CustomCacheOptions>(configuration.GetSection("CustomCacheOptions"));
+            services.AddScoped<ICustomMemoryCache, RedisAsMemoryCache>();
+            services.AddScoped<TokenTracker<Guid>>();
+            services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
+            services.AddTransient<IHashProvider, HashProvider.HashProvider>();
+            services.AddTransient<IJwtProviderService, JwtProviderService>();
+            services.AddTransient<IPasswordGenerator, PasswordGenerator.PasswordGenerator>();
+
+            return services;
+        }
+    }
+}
