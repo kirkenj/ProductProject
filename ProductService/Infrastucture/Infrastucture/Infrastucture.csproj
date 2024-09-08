@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Clients\Clients.csproj" />
     <ProjectReference Include="..\..\..\Common\Cache\Cache.csproj" />
     <ProjectReference Include="..\..\..\Common\EmailSender\EmailSender.csproj" />
     <ProjectReference Include="..\..\Core\Application\Application.csproj" />

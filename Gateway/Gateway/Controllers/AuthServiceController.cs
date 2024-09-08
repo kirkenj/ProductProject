@@ -23,18 +23,18 @@
 namespace CustomGateway.Controllers.Auth
 {
     using System = global::System;
-    using CustomGateway.Clients;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using global::Clients.AuthClientService;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     [ApiController]
 
     public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.ControllerBase
     {
-        private IAuthClient _implementation;
+        private IAuthMicroserviseClient _implementation;
 
-        public AuthServiceController(IAuthClient implementation)
+        public AuthServiceController(IAuthMicroserviseClient implementation)
         {
             _implementation = implementation;
         }
@@ -167,9 +167,8 @@ namespace CustomGateway.Controllers.Auth
 
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Tokens/GetHashDefaults", Name = "GetHashDefaults")]
-        public async System.Threading.Tasks.Task<GetHashDefaultsResponse> GetHashDefaults()
+        public async System.Threading.Tasks.Task<GetHashDefaultsResponce> GetHashDefaults()
         {
-
             return await _implementation.GetHashDefaultsAsync();
         }
 

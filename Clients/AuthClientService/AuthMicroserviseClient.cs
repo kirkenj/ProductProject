@@ -18,239 +18,237 @@
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable 8765 // Disable "CS8765 Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes)."
 
-
-namespace CustomGateway.Clients
+namespace Clients.AuthClientService
 {
-    using CustomGateway.Models.AuthClient;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using System = global::System;
-    using CustomGateway.Models.Exceptions;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface IAuthClient
+    public partial interface IAuthMicroserviseClient
     {
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<StringStringKeyValuePair>> TokenClaimsAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<StringStringKeyValuePair>> TokenClaimsAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserDto> AccountGETAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserDto> AccountGETAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> AccountPUTAsync(UpdateUserModel body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> AccountPUTAsync(UpdateUserModel body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> PasswordAsync(AuthorizedUserUpdatePassword body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> PasswordAsync(AuthorizedUserUpdatePassword body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> UserTagAsync(string newLogin);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> UserTagAsync(string newLogin, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> EmailPUTAsync(string body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> EmailPUTAsync(string body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> EmailPOSTAsync(string body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> EmailPOSTAsync(string body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<LoginResult> LoginAsync(LoginDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<LoginResult> LoginAsync(LoginDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> ForgotPasswordAsync(string body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> ForgotPasswordAsync(string body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<RoleDto>> RolesAllAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<RoleDto>> RolesAllAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<RoleDto> RolesAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<RoleDto> RolesAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> IsTokenValidPOSTAsync(string body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> IsTokenValidPOSTAsync(string body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> IsTokenValidGETAsync(string token);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> IsTokenValidGETAsync(string token, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task InvalidateUsersTokenAsync(System.Guid? userId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task InvalidateUsersTokenAsync(System.Guid? userId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetHashDefaultsResponse> GetHashDefaultsAsync();
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetHashDefaultsResponce> GetHashDefaultsAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetHashDefaultsResponse> GetHashDefaultsAsync(System.Threading.CancellationToken cancellationToken);
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetHashDefaultsResponce> GetHashDefaultsAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserListDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserListDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserDto> UsersGETAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserDto> UsersGETAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> UsersPUTAsync(UpdateNotSensetiveInfoDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> UsersPUTAsync(UpdateNotSensetiveInfoDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> EmailPOST2Async(ConfirmEmailChangeDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> EmailPOST2Async(ConfirmEmailChangeDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> UserTag2Async(UpdateUserLoginDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> UserTag2Async(UpdateUserLoginDto body, System.Threading.CancellationToken cancellationToken);
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class AuthClient : IAuthClient
+    public partial class AuthMicroserviseClient : IAuthMicroserviseClient
     {
-#pragma warning disable 8618
+        #pragma warning disable 8618
         private string _baseUrl;
-#pragma warning restore 8618
+        #pragma warning restore 8618
 
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public AuthClient(IOptions<AuthClientSettings> clientSettings, System.Net.Http.HttpClient httpClient, IHttpContextAccessor contextAccessor)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
+    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public AuthMicroserviseClient(IOptions<AuthClientSettings> baseUrl, System.Net.Http.HttpClient httpClient, IHttpContextAccessor contextAccessor)
+    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = clientSettings.Value.Uri;
+            BaseUrl = baseUrl.Value.Uri;
             _httpClient = httpClient;
 
-            var authResult = contextAccessor.HttpContext.Request.Headers.Authorization.ToString();
-            if (!string.IsNullOrEmpty(authResult))
+            var authResult = contextAccessor.HttpContext.Request.Headers.FirstOrDefault(h => h.Key == "Authorization");
+            if (authResult.Value.Any())
             {
-                var r = authResult.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var r = authResult.Value.First().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
                 if (r.Length != 2)
                 {
@@ -259,7 +257,6 @@ namespace CustomGateway.Clients
 
                 httpClient.DefaultRequestHeaders.Authorization = new(r[0], r[1]);
             }
-
             Initialize();
         }
 
@@ -292,7 +289,7 @@ namespace CustomGateway.Clients
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<StringStringKeyValuePair>> TokenClaimsAsync()
         {
             return TokenClaimsAsync(System.Threading.CancellationToken.None);
@@ -300,7 +297,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<StringStringKeyValuePair>> TokenClaimsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -345,14 +342,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<StringStringKeyValuePair>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -370,7 +367,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<UserDto> AccountGETAsync()
         {
             return AccountGETAsync(System.Threading.CancellationToken.None);
@@ -378,7 +375,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<UserDto> AccountGETAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -423,14 +420,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<UserDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -448,7 +445,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> AccountPUTAsync(UpdateUserModel body)
         {
             return AccountPUTAsync(body, System.Threading.CancellationToken.None);
@@ -456,7 +453,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> AccountPUTAsync(UpdateUserModel body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -502,17 +499,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -530,7 +524,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> PasswordAsync(AuthorizedUserUpdatePassword body)
         {
             return PasswordAsync(body, System.Threading.CancellationToken.None);
@@ -538,7 +532,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> PasswordAsync(AuthorizedUserUpdatePassword body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -584,17 +578,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -612,7 +603,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> UserTagAsync(string newLogin)
         {
             return UserTagAsync(newLogin, System.Threading.CancellationToken.None);
@@ -620,7 +611,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> UserTagAsync(string newLogin, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -669,17 +660,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -697,7 +685,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> EmailPUTAsync(string body)
         {
             return EmailPUTAsync(body, System.Threading.CancellationToken.None);
@@ -705,7 +693,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> EmailPUTAsync(string body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -751,17 +739,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -779,7 +764,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> EmailPOSTAsync(string body)
         {
             return EmailPOSTAsync(body, System.Threading.CancellationToken.None);
@@ -787,7 +772,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> EmailPOSTAsync(string body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -833,17 +818,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -861,7 +843,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body)
         {
             return RegisterAsync(body, System.Threading.CancellationToken.None);
@@ -869,7 +851,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -918,14 +900,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<System.Guid>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -943,7 +925,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<LoginResult> LoginAsync(LoginDto body)
         {
             return LoginAsync(body, System.Threading.CancellationToken.None);
@@ -951,7 +933,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<LoginResult> LoginAsync(LoginDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1000,14 +982,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<LoginResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1025,7 +1007,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> ForgotPasswordAsync(string body)
         {
             return ForgotPasswordAsync(body, System.Threading.CancellationToken.None);
@@ -1033,7 +1015,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> ForgotPasswordAsync(string body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1079,17 +1061,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1107,7 +1086,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<RoleDto>> RolesAllAsync()
         {
             return RolesAllAsync(System.Threading.CancellationToken.None);
@@ -1115,7 +1094,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<RoleDto>> RolesAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1160,14 +1139,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<RoleDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1185,7 +1164,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<RoleDto> RolesAsync(int id)
         {
             return RolesAsync(id, System.Threading.CancellationToken.None);
@@ -1193,7 +1172,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<RoleDto> RolesAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
@@ -1242,14 +1221,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<RoleDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1267,7 +1246,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<bool> IsTokenValidPOSTAsync(string body)
         {
             return IsTokenValidPOSTAsync(body, System.Threading.CancellationToken.None);
@@ -1275,7 +1254,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<bool> IsTokenValidPOSTAsync(string body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1324,14 +1303,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1349,7 +1328,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<bool> IsTokenValidGETAsync(string token)
         {
             return IsTokenValidGETAsync(token, System.Threading.CancellationToken.None);
@@ -1357,7 +1336,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<bool> IsTokenValidGETAsync(string token, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1408,14 +1387,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1433,7 +1412,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task InvalidateUsersTokenAsync(System.Guid? userId)
         {
             return InvalidateUsersTokenAsync(userId, System.Threading.CancellationToken.None);
@@ -1441,7 +1420,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task InvalidateUsersTokenAsync(System.Guid? userId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1494,7 +1473,7 @@ namespace CustomGateway.Clients
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1512,16 +1491,16 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetHashDefaultsResponse> GetHashDefaultsAsync()
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<GetHashDefaultsResponce> GetHashDefaultsAsync()
         {
             return GetHashDefaultsAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetHashDefaultsResponse> GetHashDefaultsAsync(System.Threading.CancellationToken cancellationToken)
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GetHashDefaultsResponce> GetHashDefaultsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1562,17 +1541,17 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GetHashDefaultsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetHashDefaultsResponce>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1590,7 +1569,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserListDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize)
         {
             return ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize, System.Threading.CancellationToken.None);
@@ -1598,7 +1577,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserListDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1677,14 +1656,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<UserListDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1702,7 +1681,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<UserDto> UsersGETAsync(System.Guid id)
         {
             return UsersGETAsync(id, System.Threading.CancellationToken.None);
@@ -1710,7 +1689,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<UserDto> UsersGETAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
@@ -1759,14 +1738,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<UserDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1784,7 +1763,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> UsersPUTAsync(UpdateNotSensetiveInfoDto body)
         {
             return UsersPUTAsync(body, System.Threading.CancellationToken.None);
@@ -1792,7 +1771,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> UsersPUTAsync(UpdateNotSensetiveInfoDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1838,17 +1817,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1866,7 +1842,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body)
         {
             return EmailPUT2Async(body, System.Threading.CancellationToken.None);
@@ -1874,7 +1850,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -1920,17 +1896,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1948,7 +1921,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> EmailPOST2Async(ConfirmEmailChangeDto body)
         {
             return EmailPOST2Async(body, System.Threading.CancellationToken.None);
@@ -1956,7 +1929,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> EmailPOST2Async(ConfirmEmailChangeDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -2002,17 +1975,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2030,7 +2000,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> UserTag2Async(UpdateUserLoginDto body)
         {
             return UserTag2Async(body, System.Threading.CancellationToken.None);
@@ -2038,7 +2008,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> UserTag2Async(UpdateUserLoginDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -2084,17 +2054,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2144,7 +2111,7 @@ namespace CustomGateway.Clients
                 catch (System.Text.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
-                    throw new ApiException(message, (int)response.StatusCode, responseText, headers, exception);
+                    throw new AuthApiException(message, (int)response.StatusCode, responseText, headers, exception);
                 }
             }
             else
@@ -2160,7 +2127,7 @@ namespace CustomGateway.Clients
                 catch (System.Text.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
-                    throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                    throw new AuthApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
                 }
             }
         }
@@ -2180,7 +2147,7 @@ namespace CustomGateway.Clients
                     var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
                     if (field != null)
                     {
-                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute))
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
                             as System.Runtime.Serialization.EnumMemberAttribute;
                         if (attribute != null)
                         {
@@ -2192,13 +2159,13 @@ namespace CustomGateway.Clients
                     return converted == null ? string.Empty : converted;
                 }
             }
-            else if (value is bool)
+            else if (value is bool) 
             {
                 return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
             }
             else if (value is byte[])
             {
-                return System.Convert.ToBase64String((byte[])value);
+                return System.Convert.ToBase64String((byte[]) value);
             }
             else if (value is string[])
             {
@@ -2260,160 +2227,200 @@ namespace CustomGateway.Clients
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class GetHashDefaultsResponse
+    public partial class GetHashDefaultsResponce
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("hashAlgorithmName")]
-        public string HashAlgorithmName { get; set; } = null!;
+        public string HashAlgorithmName { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("encodingName")]
-        public string EncodingName { get; set; } = null!;
+        public string EncodingName { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LoginDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("password")]
+        public string Password { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LoginResult
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("token")]
+        public string Token { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("userId")]
+        public System.Guid UserId { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RoleDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SendTokenToUpdateUserEmailDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class StringStringKeyValuePair
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("key")]
+        public string Key { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public string Value { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateNotSensetiveInfoDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
+        public string Address { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateUserLoginDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("newLogin")]
+        public string NewLogin { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateUserModel
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
+        public string Address { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UserDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("login")]
+        public string Login { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
+        public string Address { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("role")]
+        public RoleDto Role { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UserListDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("login")]
+        public string Login { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("role")]
+        public RoleDto Role { get; set; }
+
+    }
+
+
+
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class AuthApiException : System.Exception
+    {
+        public int StatusCode { get; private set; }
+
+        public string Response { get; private set; }
+
+        public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
+
+        public AuthApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
+            : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
+        {
+            StatusCode = statusCode;
+            Response = response;
+            Headers = headers;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("HTTP Response: \n\n{0}\n\n{1}", Response, base.ToString());
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiException<TResult> : AuthApiException
+    {
+        public TResult Result { get; private set; }
+
+        public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
+            : base(message, statusCode, response, headers, innerException)
+        {
+            Result = result;
+        }
     }
 }
 
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class LoginDto
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("email")]
-    public string Email { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("password")]
-    public string Password { get; set; }
-
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class LoginResult
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("token")]
-    public string Token { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("userId")]
-    public System.Guid UserId { get; set; }
-
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class RoleDto
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("id")]
-    public int Id { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("name")]
-    public string Name { get; set; }
-
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class SendTokenToUpdateUserEmailDto
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("id")]
-    public System.Guid Id { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("email")]
-    public string Email { get; set; }
-
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class StringStringKeyValuePair
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("key")]
-    public string Key { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("value")]
-    public string Value { get; set; }
-
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class UpdateNotSensetiveInfoDto
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("id")]
-    public System.Guid Id { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("address")]
-    public string Address { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("name")]
-    public string Name { get; set; }
-
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class UpdateUserLoginDto
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("id")]
-    public System.Guid Id { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("newLogin")]
-    public string NewLogin { get; set; }
-
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class UpdateUserModel
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("name")]
-    public string Name { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("address")]
-    public string Address { get; set; }
-
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class UserDto
-{
-    [System.Text.Json.Serialization.JsonPropertyName("id")]
-    public System.Guid Id { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("login")]
-    public string Login { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("email")]
-    public string Email { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("name")]
-    public string Name { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("address")]
-    public string Address { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("role")]
-    public RoleDto Role { get; set; }
-}
-
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class UserListDto
-{
-
-    [System.Text.Json.Serialization.JsonPropertyName("id")]
-    public System.Guid Id { get; set; }
-
-    [System.Text.Json.Serialization.JsonPropertyName("login")]
-    public string Login { get; set; } = null!;
-
-    [System.Text.Json.Serialization.JsonPropertyName("email")]
-    public string Email { get; set; } = null!;
-
-    [System.Text.Json.Serialization.JsonPropertyName("role")]
-    public RoleDto Role { get; set; } = null!;
-}
-
-
-#pragma warning restore 108
-#pragma warning restore 114
-#pragma warning restore 472
-#pragma warning restore 612
+#pragma warning restore  108
+#pragma warning restore  114
+#pragma warning restore  472
+#pragma warning restore  612
 #pragma warning restore 1573
 #pragma warning restore 1591
 #pragma warning restore 8073

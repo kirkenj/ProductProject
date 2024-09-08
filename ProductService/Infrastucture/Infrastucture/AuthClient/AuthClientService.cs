@@ -1,20 +1,24 @@
 ﻿using Application.Contracts.Infrastructure;
 using Application.DTOs.UserClient;
+using AutoMapper;
 using Cache.Contracts;
+using Clients.AuthClientService;
 using System.Text;
 
 namespace Infrastucture.AuthClient
 {
     public class AuthClientService : IAuthClientService
     {
-        private readonly IClient _authClient;
+        private readonly IAuthMicroserviseClient _authClient;
         private readonly ICustomMemoryCache _customMemoryCache;
         private readonly string cacheKeyPrefix = "ProductAPI_AuthService_";
+        private readonly IMapper _mapper;
 
-        public AuthClientService(IClient authClient, ICustomMemoryCache customMemoryCache)
+        public AuthClientService(IAuthMicroserviseClient authClient, ICustomMemoryCache customMemoryCache, IMapper mapper)
         {
             _customMemoryCache = customMemoryCache;
             _authClient = authClient;
+            _mapper = mapper;
         }
 
         public async Task<ClientResponse<bool>> IsTokenValid(string token)
@@ -59,7 +63,7 @@ namespace Infrastucture.AuthClient
                     Console.WriteLine($"Sending request to {nameof(AuthClientService)}");
                     var qresult = await _authClient.ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
 
-                    result = qresult.Select(q => new Application.DTOs.UserClient.UserListDto { Email = q.Email, Id = q.Id, Login = q.Login, Role = q.Role }).ToArray();
+                    result = qresult.Select(q => new Application.DTOs.UserClient.UserListDto { Email = q.Email, Id = q.Id, Login = q.Login, Role = _mapper.Map<Application.DTOs.UserClient.RoleDto>(q.Role) }).ToArray();
                 }
 
                 _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));
@@ -73,15 +77,15 @@ namespace Infrastucture.AuthClient
             }
         }
 
-        async Task<ClientResponse<Application.DTOs.UserClient.GetHashDefaultsResponse>> IAuthClientService.GetHashAlgorithmName()
+        async Task<ClientResponse<GetHashDefaultsResponse>> IAuthClientService.GetHashAlgorithmName()
         {
             try
             {
-                return new ClientResponse<Application.DTOs.UserClient.GetHashDefaultsResponse> { Result = await _authClient.GetHashDefaultsAsync(), Success = true };
+                return new ClientResponse<GetHashDefaultsResponse> { Result = _mapper.Map<GetHashDefaultsResponse>(await _authClient.GetHashDefaultsAsync()), Success = true };
             }
             catch (Exception ex)
             {
-                return new ClientResponse<Application.DTOs.UserClient.GetHashDefaultsResponse> { Message = ex.Message, Success = false };
+                return new ClientResponse<GetHashDefaultsResponse> { Message = ex.Message, Success = false };
             }
         }
 
@@ -103,7 +107,7 @@ namespace Infrastucture.AuthClient
                 else
                 {
                     Console.WriteLine($"Sending request to {nameof(AuthClientService)}");
-                    result = await _authClient.UsersGETAsync(userId);
+                    result = _mapper.Map<Application.DTOs.UserClient.UserDto>(await _authClient.UsersGETAsync(userId));
                 }
 
                 _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));

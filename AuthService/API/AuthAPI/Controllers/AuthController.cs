@@ -60,6 +60,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost("ForgotPassword")]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> ForgotPassword([FromBody][EmailAddress] string email)
         {
             var result = await _mediator.Send(new ForgotPasswordComand

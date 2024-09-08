@@ -1,4 +1,4 @@
-﻿using CustomGateway.Clients;
+﻿using Clients.AuthClientService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Cryptography;
 
@@ -6,13 +6,13 @@ namespace CustomGateway.Models.JWT
 {
     public class CustomJwtBearerEvents : JwtBearerEvents
     {
-        private readonly IAuthClient _authClientService;
+        private readonly IAuthMicroserviseClient _authClientService;
 
         private static HashAlgorithm? _hashAlgorithm;
         private static System.Text.Encoding? _hashEncoding;
 
 
-        public CustomJwtBearerEvents(IAuthClient authClientService)
+        public CustomJwtBearerEvents(IAuthMicroserviseClient authClientService)
         {
             _authClientService = authClientService;
         }

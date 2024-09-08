@@ -49,6 +49,7 @@ namespace AuthAPI.Controllers
 
         [HttpPut]
         [Authorize(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME)]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateUser(UpdateNotSensetiveInfoDto request)
         {
             var result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
@@ -61,6 +62,7 @@ namespace AuthAPI.Controllers
 
         [HttpPut("Email")]
         [Authorize(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME)]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateEmail([FromBody] SendTokenToUpdateUserEmailDto request)
         {
             var result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
@@ -73,6 +75,7 @@ namespace AuthAPI.Controllers
 
         [HttpPost("Email")]
         [Authorize(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME)]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> ConfirmEmailUpdate(ConfirmEmailChangeDto request)
         {
             var result = await _mediator.Send(new ConfirmEmailChangeComand
@@ -90,6 +93,7 @@ namespace AuthAPI.Controllers
 
         [HttpPut("UserTag")]
         [Authorize(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME)]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateLogin(UpdateUserLoginDto request)
         {
             var result = await _mediator.Send(new UpdateUserLoginComand

@@ -1,5 +1,4 @@
-﻿
-using CustomGateway.Models.Exceptions;
+﻿using Clients.AuthClientService;
 using System.Text;
 
 namespace CustomGateway.Middlewares
@@ -21,11 +20,11 @@ namespace CustomGateway.Middlewares
             {
                 await _next(context);
             }
-            catch (ApiException apiEx)
+            catch (AuthApiException apiEx)
             {
                 if (apiEx.StatusCode == 200)
                 {
-                    throw new ApplicationException("Got api exception with status code 200:", apiEx);
+                    throw new ApplicationException($"Got {nameof(AuthApiException)} with status code 200:", apiEx);
                 }
 
                 context.Response.StatusCode = apiEx.StatusCode;

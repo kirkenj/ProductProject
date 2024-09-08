@@ -1,4 +1,6 @@
-﻿using CustomGateway.Clients;
+﻿using Clients;
+using Clients.AuthClientService;
+using CustomGateway.Clients;
 using CustomGateway.Models.AuthClient;
 
 namespace CustomGateway.Registrations
@@ -7,10 +9,10 @@ namespace CustomGateway.Registrations
     {
         public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<AuthClientSettings>(configuration.GetSection("AuthClientSettings"));
+            services.Configure<IAuthMicroserviseClient>(configuration.GetSection("AuthClientSettings"));
             services.Configure<ProductClientSettings>(configuration.GetSection("ProductClientSettings"));
             services.AddScoped<HttpClient>((a) => new HttpClient());
-            services.AddTransient<IAuthClient, AuthClient>();
+            services.AddTransient<IAuthMicroserviseClient, AuthMicroserviseClient>();
             services.AddTransient<IProductClient, ProductClient>();
 
             return services;

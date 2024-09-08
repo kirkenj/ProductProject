@@ -1,4 +1,4 @@
-﻿namespace Infrastucture.AuthClient
+﻿namespace Clients.AuthClientService
 {
     public class AuthClientSettings
     {

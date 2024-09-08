@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.Infrastructure;
 using Cache.Contracts;
 using Cache.Models;
+using Clients.AuthClientService;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using Infrastucture.AuthClient;
@@ -15,13 +16,13 @@ namespace Infrastructure
         {
             services.Configure<AuthClientSettings>(configuration.GetSection("AuthClientSettings"));
             services.AddScoped<HttpClient>((a) => new HttpClient());
-            services.AddTransient<IClient, Client>();
+            services.AddScoped<IAuthMicroserviseClient, AuthMicroserviseClient>();
             services.AddScoped<IAuthClientService, AuthClientService>();
 
             services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
 
 
-            services.AddSingleton<EmailSettings>(new EmailSettings
+            services.AddSingleton(new EmailSettings
             {
                 ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new ApplicationException(),
                 ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new ApplicationException(),

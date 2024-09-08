@@ -44,6 +44,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateUser(UpdateUserModel updateUserModel)
         {
             var userId = User.GetUserId();
@@ -66,6 +67,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("Password")]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdatePassword(AuthorizedUserUpdatePassword request)
         {
 
@@ -88,6 +90,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("UserTag")]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateLogin(string newLogin)
         {
             var userId = User.GetUserId();
@@ -115,6 +118,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("Email")]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateEmail([FromBody] string newEmail)
         {
             var userId = User.GetUserId();
@@ -136,6 +140,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost("Email")]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> ConfirmEmailUpdate([FromBody] string confirmationToken)
         {
             var userId = User.GetUserId();
