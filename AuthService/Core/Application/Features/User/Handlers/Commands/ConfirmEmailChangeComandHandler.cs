@@ -32,7 +32,7 @@ namespace Application.Features.User.Handlers.Commands
                 return Response<string>.BadRequestResponse(validationResult.Errors);
             }
 
-            var cachedValue = _memoryCache.Get<EmailUpdateDetails>(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(request.ConfirmEmailChangeDto.Token));
+            var cachedValue = await _memoryCache.GetAsync<EmailUpdateDetails>(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(request.ConfirmEmailChangeDto.Token));
 
             if (cachedValue == null)
             {
@@ -59,8 +59,8 @@ namespace Application.Features.User.Handlers.Commands
             userToUpdate.Email = updateDetails.NewEmail;
             await _userRepository.UpdateAsync(userToUpdate);
 
-            _memoryCache.Remove(request.ConfirmEmailChangeDto.Token);
-            
+            _ = Task.Run(() => _memoryCache.RemoveAsync(request.ConfirmEmailChangeDto.Token), cancellationToken);
+
             return Response<string>.OkResponse("Email updated.", string.Empty);
         }
     }

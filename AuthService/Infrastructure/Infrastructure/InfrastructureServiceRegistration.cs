@@ -3,12 +3,12 @@ using Application.Models.Hash;
 using Application.Models.Jwt;
 using Cache.Contracts;
 using Cache.Models;
-using Infrastructure.Jwt;
+using EmailSender.Contracts;
 using EmailSender.Models;
+using Infrastructure.Jwt;
 using Infrastructure.TockenTractker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using EmailSender.Contracts;
 
 namespace Infrastructure
 {
@@ -24,7 +24,8 @@ namespace Infrastructure
                 ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new ApplicationException(),
                 ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new ApplicationException(),
                 ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new ApplicationException()),
-                FromName = configuration["EmailSettings:FromName"] ?? throw new ApplicationException()
+                FromName = configuration["EmailSettings:FromName"] ?? throw new ApplicationException(),
+                ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new ApplicationException())
             });
 
 

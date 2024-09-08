@@ -6,7 +6,7 @@ namespace Application.Features.Product.Requests.Queries
 {
     public class GetProducListtDtoRequest : IRequest<Response<IEnumerable<ProductListDto>>>
     {
-        public int? Page {  get; set; }
-        public int? PageSize {  get; set; }
+        public int? Page { get; set; }
+        public int? PageSize { get; set; }
     }
 }

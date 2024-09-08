@@ -7,9 +7,9 @@ namespace Persistence
 {
     public class AuthDbContext : DbContext
     {
-        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options) 
+        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
         {
-                
+
         }
 
         public DbSet<User> Users { get; set; }
@@ -32,10 +32,10 @@ namespace Persistence
             string hashAlgorithmName = "MD5";
             HashAlgorithm hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? throw new Exception($"Hash algorithm not found {hashAlgorithmName}");
             Encoding encoding = Encoding.UTF8;
-            
-            ((string login, string password, string name, string email) userData, int roleID)[] startUsersArray = new [] 
+
+            ((string login, string password, string name, string email) userData, int roleID)[] startUsersArray = new[]
             {
-                (("admin", "admin", "seeding admin", "kirkenj@bk.ru"), adminRole.Id), 
+                (("admin", "admin", "seeding admin", "kirkenj@bk.ru"), adminRole.Id),
                 (("user", "user", "seeding user", "kirkend@bk.ru"), regularRole.Id)
             };
 
@@ -44,16 +44,16 @@ namespace Persistence
                 var pwdBytes = encoding.GetBytes(item.userData.password);
                 var pwdHash = hashAlgorithm.ComputeHash(pwdBytes);
                 var pwdHashString = encoding.GetString(pwdHash);
-                modelBuilder.Entity<User>().HasData(new User 
-                { 
-                    Id = Guid.NewGuid(), 
-                    Login = item.userData.login, 
-                    RoleID = item.roleID, 
-                    Email = item.userData.email, 
-                    Name = item.userData.name, 
-                    Address = "Confidential", 
-                    PasswordHash = pwdHashString, 
-                    StringEncoding = encoding.BodyName, 
+                modelBuilder.Entity<User>().HasData(new User
+                {
+                    Id = Guid.NewGuid(),
+                    Login = item.userData.login,
+                    RoleID = item.roleID,
+                    Email = item.userData.email,
+                    Name = item.userData.name,
+                    Address = "Confidential",
+                    PasswordHash = pwdHashString,
+                    StringEncoding = encoding.BodyName,
                     HashAlgorithm = hashAlgorithmName
                 });
             }

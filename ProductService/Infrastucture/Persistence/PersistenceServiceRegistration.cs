@@ -3,14 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Repositories;
-using Repository.Models;
-using Repository.Contracts;
 
 namespace Persistence
 {
     public static class PersistenceServiceRegistration
     {
-        public static IServiceCollection ConfigurePersistenceServices (this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigurePersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IProductRepository, ProductRepository>();
 

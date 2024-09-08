@@ -17,7 +17,7 @@ namespace Infrastructure.TockenTractker
             _keyGeneratingDelegate = (value) => _settings.CacheSeed + value;
             HashProvider = hashProvider;
         }
-        public IHashProvider HashProvider {  get; private set; }
+        public IHashProvider HashProvider { get; private set; }
 
         public void Track(KeyValuePair<string, AssignedTokenInfo<TUserIdType>> pair)
         {
@@ -27,7 +27,7 @@ namespace Infrastructure.TockenTractker
             var jwtHash = HashProvider.GetHash(pair.Key);
 
             var cahceKey = _keyGeneratingDelegate(jwtHash);
-            _memoryCache.Set(
+            _memoryCache.SetAsync(
             cahceKey,
                 pair.Value,
                 DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes
@@ -38,7 +38,7 @@ namespace Infrastructure.TockenTractker
 
         public void InvalidateUser(Guid userId, DateTime time)
         {
-            _memoryCache.Set(
+            _memoryCache.SetAsync(
                 _keyGeneratingDelegate(userId.ToString()),
                 time,
                 DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes));
@@ -46,7 +46,7 @@ namespace Infrastructure.TockenTractker
             return;
         }
 
-        public bool IsValid(string tokenHash)
+        public async Task<bool> IsValid(string tokenHash)
         {
             if (tokenHash == null)
             {
@@ -54,7 +54,7 @@ namespace Infrastructure.TockenTractker
             }
 
             var key = _keyGeneratingDelegate(tokenHash);
-            var trackingResult = _memoryCache.Get<AssignedTokenInfo<TUserIdType>>(key);
+            var trackingResult = _memoryCache.GetAsync<AssignedTokenInfo<TUserIdType>>(key);
 
             if (trackingResult == null)
             {
@@ -71,7 +71,7 @@ namespace Infrastructure.TockenTractker
                 throw new InvalidOperationException(nameof(trackInfo));
             }
 
-            var banResult = _memoryCache.Get<DateTime>(
+            var banResult = await _memoryCache.GetAsync<DateTime>(
                 _keyGeneratingDelegate(trackInfo.UserId?.ToString() ?? throw new InvalidOperationException(nameof(trackInfo))));
 
             if (banResult == default)

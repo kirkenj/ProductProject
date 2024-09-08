@@ -1,8 +1,8 @@
 using Application;
-using Infrastructure;
 using AuthAPI.JwtAuthentication;
-using Persistence;
 using AuthAPI.Middlewares;
+using Infrastructure;
+using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +12,7 @@ builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureJwtAuthentication(builder.Configuration);
 
-builder.Services.AddMemoryCache(); 
+builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

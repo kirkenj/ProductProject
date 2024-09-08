@@ -1,6 +1,6 @@
 ﻿using Application.Contracts.Persistence;
-using FluentValidation;
 using Application.Models.User;
+using FluentValidation;
 
 namespace Application.DTOs.User.Validators
 {
@@ -15,7 +15,7 @@ namespace Application.DTOs.User.Validators
             RuleFor(p => p.Email)
                 .MustAsync(async (Email, cancellationToken) =>
                 {
-                    var resultUser = await userRepository.GetAsync(new UserFilter { Email = Email});
+                    var resultUser = await userRepository.GetAsync(new UserFilter { Email = Email });
                     if (resultUser == null)
                     {
                         return true;

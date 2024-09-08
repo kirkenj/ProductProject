@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using CustomGateway.Models.JWT;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using CustomGateway.Models.JWT;
 using System.Text;
 
 namespace CustomGateway.JwtAuthentication

@@ -1,8 +1,8 @@
-﻿using Application.Features.User.Requests.Commands;
-using Application.Contracts.Persistence;
+﻿using Application.Contracts.Persistence;
+using Application.Features.User.Requests.Commands;
+using Application.Models.Response;
 using AutoMapper;
 using MediatR;
-using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Commands
 {

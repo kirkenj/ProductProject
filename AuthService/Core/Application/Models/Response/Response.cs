@@ -12,7 +12,7 @@ namespace Application.Models.Response
 
 
         public static Response<T> BadRequestResponse(string message) => new()
-        { 
+        {
             Message = message,
             Success = false,
             StatusCode = HttpStatusCode.BadRequest,
@@ -20,7 +20,7 @@ namespace Application.Models.Response
         };
 
         public static Response<T> BadRequestResponse(IEnumerable<ValidationFailure> validationFailures) => new()
-        { 
+        {
             Message = string.Join(";", validationFailures.Select(e => e.ErrorMessage)),
             Success = false,
             StatusCode = HttpStatusCode.BadRequest,
@@ -28,7 +28,7 @@ namespace Application.Models.Response
         };
 
         public static Response<T> ServerErrorResponse(string message) => new()
-        { 
+        {
             Message = message,
             Success = false,
             StatusCode = HttpStatusCode.InternalServerError,

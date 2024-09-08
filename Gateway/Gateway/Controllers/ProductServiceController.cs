@@ -78,14 +78,6 @@ namespace CustomGateway.Controllers.Product
             return await _implementation.ProductDELETEAsync(id);
         }
 
-        /// <returns>Success</returns>
-        [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Product/meow", Name = "meow")]
-        public async System.Threading.Tasks.Task Meow([Microsoft.AspNetCore.Mvc.FromQuery] int? page, [Microsoft.AspNetCore.Mvc.FromQuery] int? pageSize)
-        {
-
-            await _implementation.MeowAsync(page, pageSize);
-        }
-
     }
 
 }

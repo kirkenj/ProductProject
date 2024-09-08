@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Cache.Contracts;
+﻿using Cache.Contracts;
+using Microsoft.EntityFrameworkCore;
 using Repository.Contracts;
 
 namespace Repository.Models
@@ -33,7 +33,7 @@ namespace Repository.Models
             _dbSet.Add(obj);
             await _saveChangesAsync(CancellationToken.None);
             var cacheKey = CacheKeyPrefix + obj.Id;
-            _customMemoryCache.Set(cacheKey, obj, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+            _ = Task.Run(()=> _customMemoryCache.SetAsync(cacheKey, obj, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
             Console.WriteLine($"Set key {cacheKey}");
         }
 
@@ -42,7 +42,7 @@ namespace Repository.Models
             _dbSet.Remove(obj);
             await _saveChangesAsync(CancellationToken.None);
             var cacheKey = CacheKeyPrefix + obj.Id;
-            _customMemoryCache.Remove(cacheKey);
+            _ = Task.Run(() => _customMemoryCache.RemoveAsync(cacheKey));
             Console.WriteLine($"Removed the key {cacheKey}");
         }
 
@@ -50,11 +50,11 @@ namespace Repository.Models
         {
             Console.Write($"Got request for {typeof(T)}  with id = '{id}'. ");
             var cacheKey = CacheKeyPrefix + id;
-            var cacheResult = _customMemoryCache.Get<T>(cacheKey);
+            var cacheResult = _customMemoryCache.GetAsync<T>(cacheKey);
             if (cacheResult != null)
             {
                 Console.WriteLine($"Found in it cache.\nReset the key {cacheKey}");
-                _customMemoryCache.Set(cacheKey, cacheResult, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, cacheResult, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
                 return true;
             }
 
@@ -82,11 +82,11 @@ namespace Repository.Models
         {
             Console.Write($"Got request for {typeof(T).Name} with id = '{id}'. ");
             var cacheKey = CacheKeyPrefix + id;
-            var result = _customMemoryCache.Get<T>(cacheKey);
+            var result = await _customMemoryCache.GetAsync<T>(cacheKey);
             if (result != null)
             {
                 Console.WriteLine($"Found in it cache.");
-                _customMemoryCache.Set(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
             }
             else
             {
@@ -96,7 +96,7 @@ namespace Repository.Models
 
             if (result != null)
             {
-                _customMemoryCache.Set(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
                 Console.WriteLine($"Set cache with key '{cacheKey}'");
             }
 
@@ -111,7 +111,7 @@ namespace Repository.Models
 
             var cacheKey = CacheKeyPrefix + obj.Id;
 
-            _customMemoryCache.Set(cacheKey, obj, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+            _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, obj, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
             Console.WriteLine($"Set cache with key '{cacheKey}'");
         }
     }

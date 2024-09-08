@@ -1,6 +1,6 @@
 ﻿using Cache.Contracts;
-using Repository.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Repository.Contracts;
 
 namespace Repository.Models
 {

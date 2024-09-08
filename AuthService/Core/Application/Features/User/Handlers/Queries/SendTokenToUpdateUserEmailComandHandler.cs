@@ -1,13 +1,13 @@
-﻿using Application.Contracts.Persistence;
-using MediatR;
-using Application.Models.Email;
-using Application.Contracts.Infrastructure;
-using Application.Models.Response;
-using Application.Features.User.Requests.Queries;
+﻿using Application.Contracts.Infrastructure;
+using Application.Contracts.Persistence;
 using Application.DTOs.User;
+using Application.Features.User.Requests.Queries;
+using Application.Models.Email;
+using Application.Models.Response;
 using Cache.Contracts;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using MediatR;
 
 namespace Application.Features.User.Handlers.Queries
 {
@@ -66,7 +66,7 @@ namespace Application.Features.User.Handlers.Queries
 
             if (emailSent == false) throw new ApplicationException("Email was not sent");
 
-            _memoryCache.Set(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, DateTimeOffset.UtcNow.AddHours(1));
+            _ = Task.Run(() => _memoryCache.SetAsync(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, DateTimeOffset.UtcNow.AddHours(1)), cancellationToken);
 
             return Response<string>.OkResponse("Check emails to get further details", string.Empty);
         }

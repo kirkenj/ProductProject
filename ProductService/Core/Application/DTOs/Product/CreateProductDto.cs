@@ -1,6 +1,8 @@
-﻿namespace Application.DTOs.Product
+﻿using Application.DTOs.Product.Contracts;
+
+namespace Application.DTOs.Product
 {
-    public class CreateProductDto
+    public class CreateProductDto : IEditProductObject
     {
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;

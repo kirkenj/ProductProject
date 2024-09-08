@@ -1,5 +1,5 @@
-using CustomGateway.Middlewares;
 using CustomGateway.JwtAuthentication;
+using CustomGateway.Middlewares;
 using CustomGateway.Registrations;
 
 var builder = WebApplication.CreateBuilder(args);

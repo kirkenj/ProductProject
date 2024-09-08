@@ -8,7 +8,6 @@ using Infrastructure.TockenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Validations.Rules;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,14 +28,14 @@ namespace AuthAPI.Controllers
 
         [HttpGet("list")]
         [GetUserActionFilter]
-        public async Task<ActionResult<IEnumerable<UserListDto>>> Get([FromQuery]UserFilter filter, int? page, int? pageSize)
+        public async Task<ActionResult<IEnumerable<UserListDto>>> Get([FromQuery] UserFilter filter, int? page, int? pageSize)
         {
             if (!User.IsInRole(Constants.Constants.ADMIN_ROLE_NAME))
             {
                 filter.RoleIds = null;
             }
 
-            var result = await _mediator.Send(new GetUserPagedFilteredListRequest() { UserFilter = filter, Page = page, PageSize = pageSize});
+            var result = await _mediator.Send(new GetUserPagedFilteredListRequest() { UserFilter = filter, Page = page, PageSize = pageSize });
             return result.GetActionResult();
         }
 

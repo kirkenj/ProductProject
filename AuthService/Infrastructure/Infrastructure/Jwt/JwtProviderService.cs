@@ -44,8 +44,8 @@ namespace Infrastructure.Jwt
             };
 
 
-            SymmetricSecurityKey key = new (Encoding.UTF8.GetBytes(_jwtSettings.Key));
-            SigningCredentials signingCredentials = new (key, _jwtSettings.SecurityAlgorithm);
+            SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            SigningCredentials signingCredentials = new(key, _jwtSettings.SecurityAlgorithm);
 
             var jwtToken = new JwtSecurityToken
                 (

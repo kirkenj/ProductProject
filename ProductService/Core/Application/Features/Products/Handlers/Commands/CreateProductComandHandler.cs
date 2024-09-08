@@ -1,12 +1,12 @@
-﻿using Application.DTOs.Product.Validators;
-using Application.Features.Product.Requests.Commands;
+﻿using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
-using AutoMapper;
-using MediatR;
+using Application.DTOs.Product.Validators;
+using Application.Features.Product.Requests.Commands;
 using Application.Models.Response;
-using Application.Contracts.Infrastructure;
+using AutoMapper;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using MediatR;
 
 
 namespace Application.Features.Product.Handlers.Commands
@@ -14,7 +14,7 @@ namespace Application.Features.Product.Handlers.Commands
     public class CreateProductComandHandler : IRequestHandler<CreateProductCommand, Response<Guid>>
     {
         private readonly IProductRepository _productRepository;
-        private readonly IMapper _mapper; 
+        private readonly IMapper _mapper;
         private readonly IAuthClientService _authClientService;
         private readonly IEmailSender _emailSender;
 
@@ -45,10 +45,10 @@ namespace Application.Features.Product.Handlers.Commands
 
             if (userRequest.Result != null)
             {
-                await _emailSender.SendEmailAsync(new Email 
-                { 
-                    Body = $"You added a product with id '{product.Id}'", 
-                    Subject = "Product creation", 
+                await _emailSender.SendEmailAsync(new Email
+                {
+                    Body = $"You added a product with id '{product.Id}'",
+                    Subject = "Product creation",
                     To = userRequest.Result.Email ?? throw new ApplicationException()
                 });
             }

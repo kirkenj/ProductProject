@@ -1,10 +1,9 @@
 ﻿using Application.Contracts.Persistence;
+using Application.Models.User;
+using Cache.Contracts;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Application.Models.User;
 using Repository.Models;
-using Repository.Contracts;
-using Cache.Contracts;
 
 namespace Persistence.Repositories
 {
@@ -14,7 +13,7 @@ namespace Persistence.Repositories
         {
         }
 
-        public UserRepository(DbSet<User> dbSet, Func<CancellationToken, Task<int>> saveDelegate, ICustomMemoryCache customMemoryCache) : base(dbSet, saveDelegate, customMemoryCache )
+        public UserRepository(DbSet<User> dbSet, Func<CancellationToken, Task<int>> saveDelegate, ICustomMemoryCache customMemoryCache) : base(dbSet, saveDelegate, customMemoryCache)
         {
         }
         protected override IQueryable<User> GetFilteredSet(IQueryable<User> set, UserFilter filter)
@@ -24,12 +23,12 @@ namespace Persistence.Repositories
                 return set;
             }
 
-            if (filter.Ids != null && filter.Ids.Any()) 
+            if (filter.Ids != null && filter.Ids.Any())
             {
                 set = set.Where(obj => filter.Ids.Contains(obj.Id));
             }
 
-            if (filter.RoleIds != null && filter.RoleIds.Any()) 
+            if (filter.RoleIds != null && filter.RoleIds.Any())
             {
                 set = set.Where(obj => filter.RoleIds.Contains(obj.RoleID));
             }
@@ -41,12 +40,12 @@ namespace Persistence.Repositories
 
             if (!string.IsNullOrEmpty(filter.Email))
             {
-                set = set.Where(obj => obj.Email!= null && obj.Email.Contains(filter.Email));
+                set = set.Where(obj => obj.Email != null && obj.Email.Contains(filter.Email));
             }
 
             if (!string.IsNullOrEmpty(filter.LoginPart))
             {
-                set = set.Where(obj => obj.Login!= null && obj.Login.Contains(filter.LoginPart));
+                set = set.Where(obj => obj.Login != null && obj.Login.Contains(filter.LoginPart));
             }
 
             if (!string.IsNullOrEmpty(filter.AccurateLogin))

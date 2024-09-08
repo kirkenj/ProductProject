@@ -1,23 +1,23 @@
-﻿using Application.DTOs.User.Validators;
-using Application.Features.User.Requests.Commands;
-using Application.Contracts.Persistence;
-using AutoMapper;
-using MediatR;
+﻿using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
-using Microsoft.Extensions.Options;
-using Application.Models.User;
-using Application.Contracts.Application;
+using Application.Contracts.Persistence;
+using Application.DTOs.User.Validators;
+using Application.Features.User.Requests.Commands;
 using Application.Models.Response;
+using Application.Models.User;
+using AutoMapper;
 using Cache.Contracts;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Application.Features.User.Handlers.Commands
 {
     public class CreateUserComandHandler : IRequestHandler<CreateUserCommand, Response<Guid>>, IPasswordSettingHandler
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper; 
+        private readonly IMapper _mapper;
         private readonly CreateUserSettings _createUserSettings;
         private readonly ICustomMemoryCache _memoryCache;
         private readonly IPasswordGenerator _passwordGenerator;
@@ -56,7 +56,7 @@ namespace Application.Features.User.Handlers.Commands
 
             (this as IPasswordSettingHandler).SetPassword(password, user);
 
-            _memoryCache.Set(CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(1));
+            _ = Task.Run(() => _memoryCache.SetAsync(CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(1)), cancellationToken);
 
             var emailResult = await _emailSender.SendEmailAsync(new Email
             {

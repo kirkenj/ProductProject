@@ -1,10 +1,10 @@
-﻿using Application.Features.Product.Requests.Commands;
+﻿using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
-using MediatR;
+using Application.Features.Product.Requests.Commands;
 using Application.Models.Response;
-using Application.Contracts.Infrastructure;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using MediatR;
 
 namespace Application.Features.Product.Handlers.Commands
 {

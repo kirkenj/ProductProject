@@ -75,13 +75,13 @@ namespace ProductAPI.Controllers
             }
 
             UpdateProductCommand updateProductCommand = new() { UpdateProductDto = updateProductDto };
-            
+
             if (User.IsInRole(Constants.Constants.ADMIN_ROLE_NAME) == false)
             {
                 if (productRequestResult.Result.ProducerId != User.GetUserId())
                 {
                     return BadRequest("You are not the owner of this product");
-                } 
+                }
 
                 updateProductDto.ProducerId = productRequestResult.Result.ProducerId;
             }

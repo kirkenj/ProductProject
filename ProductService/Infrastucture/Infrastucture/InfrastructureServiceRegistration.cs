@@ -1,13 +1,11 @@
 ﻿using Application.Contracts.Infrastructure;
-using Cache.Models;
 using Cache.Contracts;
+using Cache.Models;
+using EmailSender.Contracts;
+using EmailSender.Models;
 using Infrastucture.AuthClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using EmailSender.Contracts;
-using EmailSender.Models;
-using System.Text.Json;
-using Microsoft.Extensions.Options;
 
 namespace Infrastructure
 {
@@ -19,17 +17,18 @@ namespace Infrastructure
             services.AddScoped<HttpClient>((a) => new HttpClient());
             services.AddTransient<IClient, Client>();
             services.AddScoped<IAuthClientService, AuthClientService>();
-            
+
             services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
-      
+
 
             services.AddSingleton<EmailSettings>(new EmailSettings
-            { 
+            {
                 ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new ApplicationException(),
                 ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new ApplicationException(),
                 ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new ApplicationException(),
                 ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new ApplicationException()),
-                FromName = configuration["EmailSettings:FromName"] ?? throw new ApplicationException()
+                FromName = configuration["EmailSettings:FromName"] ?? throw new ApplicationException(),
+                ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new ApplicationException())
             });
             services.Configure<CustomCacheOptions>(configuration.GetSection("RedisCacheOptions"));
             services.AddSingleton<ICustomMemoryCache, RedisAsMemoryCache>();

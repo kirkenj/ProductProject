@@ -14,11 +14,11 @@ namespace AuthAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-                await _next(context);
+            await _next(context);
             try
             {
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsJsonAsync(_environment.IsDevelopment() ? ex.Message : "Ooopsie", typeof(string));

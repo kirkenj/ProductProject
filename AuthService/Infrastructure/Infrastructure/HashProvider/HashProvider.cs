@@ -19,23 +19,23 @@ namespace Infrastructure.HashProvider
                 throw new ArgumentNullException(nameof(options));
             }
 
-            _hashFunction =  HashAlgorithm.Create(options.Value.HashAlgorithmName) ?? throw new ArgumentException(nameof(options.Value.HashAlgorithmName));
+            _hashFunction = HashAlgorithm.Create(options.Value.HashAlgorithmName) ?? throw new ArgumentException(nameof(options.Value.HashAlgorithmName));
             _hashAlgorithmName = options.Value.HashAlgorithmName;
             Encoding = Encoding.GetEncoding(options.Value.EncodingName);
         }
 
-        public string HashAlgorithmName 
-        { 
-            get => _hashAlgorithmName; 
+        public string HashAlgorithmName
+        {
+            get => _hashAlgorithmName;
             set
-            { 
-                _hashFunction =  HashAlgorithm.Create(value) ?? throw new ArgumentException($"Hash algorithm with name {value} not found");
+            {
+                _hashFunction = HashAlgorithm.Create(value) ?? throw new ArgumentException($"Hash algorithm with name {value} not found");
                 _hashAlgorithmName = value;
             }
         }
 
         public HashAlgorithm HashFunction { get => _hashFunction; }
 
-        public Encoding Encoding { get;  set; }
+        public Encoding Encoding { get; set; }
     }
 }

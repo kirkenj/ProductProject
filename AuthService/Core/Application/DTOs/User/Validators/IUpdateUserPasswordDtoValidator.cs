@@ -8,9 +8,9 @@ namespace Application.DTOs.User.Validators
         public IUpdateUserPasswordDtoValidator()
         {
             RuleFor(o => o.NewPassword)
-                .NotEmpty().WithMessage("{PropertyName} can not be null or empty")
-                .NotNull().WithMessage("{PropertyName} can not be null or empty")
-                .MinimumLength(8).WithMessage("{PropertyName} minimal length is {ComparisonValue}")
+                .NotEmpty()
+                .NotNull()
+                .MinimumLength(8)
                 .Matches("^[a-zA-Z0-9]+$").WithMessage("{PropertyName} can contaim A-Z, a-z, 0-9 symbols");
         }
     }

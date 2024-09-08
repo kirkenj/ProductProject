@@ -1,9 +1,9 @@
-﻿using Application.DTOs.Product;
+﻿using Application.Contracts.Persistence;
+using Application.DTOs.Product;
 using Application.Features.Product.Requests.Queries;
-using Application.Contracts.Persistence;
+using Application.Models.Response;
 using AutoMapper;
 using MediatR;
-using Application.Models.Response;
 
 namespace Application.Features.Product.Handlers.Queries
 {
@@ -23,7 +23,7 @@ namespace Application.Features.Product.Handlers.Queries
             var user = await _producrRepository.GetAsync(request.Id);
 
             if (user == null)
-            { 
+            {
                 return Response<ProductDto>.NotFoundResponse(nameof(request.Id), true);
             }
 

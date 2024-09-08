@@ -6,7 +6,7 @@ namespace Application.Exceptions
     {
         public IEnumerable<string> Errors { get; set; }
 
-        public ValidationException(ValidationResult validationResult) 
+        public ValidationException(ValidationResult validationResult)
             : base(string.Join('\n', validationResult.Errors.Select(e => e.ErrorMessage)))
         {
             Errors = validationResult.Errors.Select(e => e.ErrorMessage);

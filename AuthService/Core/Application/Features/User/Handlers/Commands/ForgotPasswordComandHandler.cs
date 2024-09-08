@@ -1,13 +1,12 @@
-﻿using Application.Features.User.Requests.Commands;
-using Application.Contracts.Persistence;
-using MediatR;
-using Application.Models.Email;
+﻿using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
+using Application.Contracts.Persistence;
+using Application.Features.User.Requests.Commands;
 using Application.Models.Response;
 using Application.Models.User;
-using Application.Contracts.Application;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using MediatR;
 
 
 namespace Application.Features.User.Handlers.Commands
@@ -32,7 +31,7 @@ namespace Application.Features.User.Handlers.Commands
         {
             var emailAddress = request.ForgotPasswordDto.Email;
 
-            var user = await _userRepository.GetAsync(new UserFilter { Email = emailAddress});
+            var user = await _userRepository.GetAsync(new UserFilter { Email = emailAddress });
 
             if (user == null)
             {
@@ -42,16 +41,16 @@ namespace Application.Features.User.Handlers.Commands
             var newPassword = _passwordGenerator.Generate();
 
             if (user.Email == null)
-            { 
+            {
                 return Response<string>.BadRequestResponse("Your email is null. Contact administration");
             }
 
-            var emailResult = await _emailSender.SendEmailAsync( new Email
-                    {
-                        Body = $"Dear {user.Name}. Your new password is: {newPassword}",
-                        Subject = "Password recovery",
-                        To = user.Email
-                    });
+            var emailResult = await _emailSender.SendEmailAsync(new Email
+            {
+                Body = $"Dear {user.Name}. Your new password is: {newPassword}",
+                Subject = "Password recovery",
+                To = user.Email
+            });
 
             if (emailResult == true)
             {

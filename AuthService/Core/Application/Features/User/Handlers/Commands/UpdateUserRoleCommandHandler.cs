@@ -1,8 +1,8 @@
-﻿using Application.DTOs.User.Validators;
+﻿using Application.Contracts.Persistence;
+using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
-using Application.Contracts.Persistence;
-using MediatR;
 using Application.Models.Response;
+using MediatR;
 
 namespace Application.Features.User.Handlers.Commands
 {
@@ -36,7 +36,7 @@ namespace Application.Features.User.Handlers.Commands
             }
 
             user.RoleID = request.UpdateUserRoleDTO.RoleID;
-            
+
             await _userRepository.UpdateAsync(user);
 
             return Response<string>.OkResponse("Ok", "Role updated");

@@ -19,27 +19,27 @@ namespace Persistence.Repositories
 
             Console.Write($"Gor request for all {typeof(Role).Name}. ");
 
-            IReadOnlyCollection<Role>? arrRes = _customMemoryCache.Get<IReadOnlyCollection<Role>>(key);
+            IReadOnlyCollection<Role>? arrRes = await _customMemoryCache.GetAsync<IReadOnlyCollection<Role>>(key);
 
             if (arrRes == null)
             {
                 Console.WriteLine("Sending request to the database");
                 var dbRes = await base.GetAllAsync();
 
-                foreach (var singleEntry in dbRes) 
+                foreach (var singleEntry in dbRes)
                 {
                     var singleKey = CacheKeyPrefix + singleEntry.Id;
                     Console.WriteLine("Set cache with key " + singleKey);
-                    _customMemoryCache.Set(singleKey, singleEntry, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+                    _ = Task.Run(() => _customMemoryCache.SetAsync(singleKey, singleEntry, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
                 }
 
-                _customMemoryCache.Set(key, dbRes, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+                _ = Task.Run(() => _customMemoryCache.SetAsync(key, dbRes, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
                 Console.WriteLine("Set cache with key " + key);
                 return dbRes;
             }
 
             Console.WriteLine("Found it in cache. Updated cache with key " + key);
-            _customMemoryCache.Set(key, arrRes, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+            _ = Task.Run(() => _customMemoryCache.SetAsync(key, arrRes, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
 
             return arrRes;
         }

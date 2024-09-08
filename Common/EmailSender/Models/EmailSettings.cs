@@ -7,5 +7,6 @@
         public int ApiPort { get; set; }
         public string ApiLogin { get; set; } = null!;
         public string ApiPassword { get; set; } = null!;
+        public bool ConsoleMode { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace Infrastructure.PasswordGenerator
     {
         public string Generate(int length)
         {
-            Random random = new ();
+            Random random = new();
 
             var result = string.Join("",                                // создаем строку
                 Enumerable.Range(0, length)                             // из последовательности длины length

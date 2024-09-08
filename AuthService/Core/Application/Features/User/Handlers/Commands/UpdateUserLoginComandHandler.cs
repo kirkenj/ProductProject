@@ -1,10 +1,10 @@
-﻿using Application.DTOs.User.Validators;
-using Application.Features.User.Requests.Commands;
-using Application.Contracts.Persistence;
-using MediatR;
+﻿using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
-using Application.Contracts.Application;
+using Application.Contracts.Persistence;
+using Application.DTOs.User.Validators;
+using Application.Features.User.Requests.Commands;
 using Application.Models.Response;
+using MediatR;
 
 namespace Application.Features.User.Handlers.Commands
 {
@@ -43,7 +43,7 @@ namespace Application.Features.User.Handlers.Commands
             var foundUser = await _userRepository.GetAsync(new Models.User.UserFilter() { AccurateLogin = newLogin });
 
             if (foundUser != null)
-            { 
+            {
                 return Response<string>.BadRequestResponse("This login is already taken");
             }
 

@@ -1,6 +1,6 @@
-﻿using MimeKit;
+﻿using EmailSender.Contracts;
 using MailKit.Net.Smtp;
-using EmailSender.Contracts;
+using MimeKit;
 
 namespace EmailSender.Models
 {
@@ -15,6 +15,7 @@ namespace EmailSender.Models
 
         public async Task<bool> SendEmailAsync(Email email)
         {
+            WriteMessageToConsole($"Sending email to {email.To}");
             using var emailMessage = new MimeMessage();
 
             emailMessage.From.Add(new MailboxAddress(Settings.FromName, Settings.ApiLogin));
@@ -27,21 +28,36 @@ namespace EmailSender.Models
 
             using var client = new SmtpClient();
 
+            if (Settings.ConsoleMode)
+            {
+                WriteMessageToConsole($"Message to {email.To}\nSubject: {email.Subject}.\nBody: {email.Body}");
+                Thread.Sleep(80);
+                return true;
+            }
+
             try
             {
                 await client.ConnectAsync(Settings.ApiAdress, Settings.ApiPort, true);
                 await client.AuthenticateAsync(Settings.ApiLogin, Settings.ApiPassword);
                 await client.SendAsync(emailMessage);
 
-                await client.DisconnectAsync(true);
+                _ = Task.Run(() => client.DisconnectAsync(true));
 
+                WriteMessageToConsole($"Message to {email.To}. Success");
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                WriteMessageToConsole($"Message to {email.To}. Fail:" + ex.ToString());
                 return false;
             }
+        }
+
+        private void WriteMessageToConsole(string message)
+        {
+            Console.WriteLine($"--------------------------------------------------------------------");
+            Console.WriteLine($"{nameof(EmailSender)}: {message}");
+            Console.WriteLine($"--------------------------------------------------------------------");
         }
     }
 }

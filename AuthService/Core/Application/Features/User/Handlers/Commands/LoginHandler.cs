@@ -1,14 +1,14 @@
-﻿using Application.DTOs.User;
-using Application.Features.User.Requests.Queries;
+﻿using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
-using AutoMapper;
-using MediatR;
-using Application.Contracts.Infrastructure;
-using System.Text;
-using Application.Models.User;
+using Application.DTOs.User;
+using Application.Features.User.Requests.Queries;
 using Application.Models.Response;
+using Application.Models.User;
+using AutoMapper;
 using Cache.Contracts;
 using EmailSender.Contracts;
+using MediatR;
+using System.Text;
 
 namespace Application.Features.User.Handlers.Commands
 {
@@ -37,12 +37,12 @@ namespace Application.Features.User.Handlers.Commands
         {
             var loginEmail = request.LoginDto.Email;
             var cacheAccessKey = CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
-            var cachedUserValue = _memoryCache.Get<Domain.Models.User>(cacheAccessKey);
+            var cachedUserValue = await _memoryCache.GetAsync<Domain.Models.User>(cacheAccessKey);
 
 
-            bool isRegistration = cachedUserValue != null && cachedUserValue is Domain.Models.User;
+            bool isRegistration = cachedUserValue != null;
 
-            Domain.Models.User? userToHandle = isRegistration ?
+            var userToHandle = isRegistration ?
                 cachedUserValue
                 : await _userRepository.GetAsync(new UserFilter { Email = loginEmail });
 
@@ -64,7 +64,7 @@ namespace Application.Features.User.Handlers.Commands
             if (isRegistration == true)
             {
                 await _userRepository.AddAsync(userToHandle);
-                _memoryCache.Remove(cacheAccessKey);
+                _ = Task.Run(() => _memoryCache.RemoveAsync(cacheAccessKey), cancellationToken);
                 userToHandle.Role = await _roleRepository.GetAsync(userToHandle.RoleID) ?? throw new ApplicationException();
 
                 await _emailSender.SendEmailAsync(new()

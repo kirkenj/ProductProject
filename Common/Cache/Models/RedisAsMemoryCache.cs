@@ -13,16 +13,13 @@ namespace Cache.Models
         {
         }
 
-        void ICustomMemoryCache.Remove(object key) => RemoveAsync(JsonSerializer.Serialize(key), CancellationToken.None).Wait();
+        public Task RemoveAsync(object key) => RemoveAsync(JsonSerializer.Serialize(key), CancellationToken.None);
 
-        public void Set<T>(object key, T value, DateTimeOffset offset)
-        {
-            this.SetString(JsonSerializer.Serialize(key), JsonSerializer.Serialize(value), new DistributedCacheEntryOptions { AbsoluteExpiration = offset });
-        }
+        public Task SetAsync<T>(object key, T value, DateTimeOffset offset) => this.SetStringAsync(JsonSerializer.Serialize(key), JsonSerializer.Serialize(value), new DistributedCacheEntryOptions { AbsoluteExpiration = offset });
 
-        public T? Get<T>(object key)
+        public async Task<T?> GetAsync<T>(object key)
         {
-            var result = this.GetString(JsonSerializer.Serialize(key));
+            var result = await this.GetStringAsync(JsonSerializer.Serialize(key));
             return result == null ? default : JsonSerializer.Deserialize<T>(result);
         }
     }

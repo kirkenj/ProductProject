@@ -1,10 +1,9 @@
 ﻿using Application.Contracts.Persistence;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
 using Application.Models.User;
 using Cache.Contracts;
+using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using Repository.Models;
-using Repository.Contracts;
 
 
 namespace Persistence.Repositories
@@ -49,7 +48,7 @@ namespace Persistence.Repositories
 
             if (filter.IsAvailable != null)
             {
-                set = set.Where(obj => obj.IsAvailable ==  filter.IsAvailable);
+                set = set.Where(obj => obj.IsAvailable == filter.IsAvailable);
             }
 
             if (filter.ProducerIds != null && filter.ProducerIds.Any())

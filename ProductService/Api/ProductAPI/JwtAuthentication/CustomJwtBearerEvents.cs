@@ -11,7 +11,7 @@ namespace ProductAPI.JwtAuthentication
         private static HashAlgorithm? _hashAlgorithm;
         private static System.Text.Encoding? _hashEncoding;
 
-        
+
         public CustomJwtBearerEvents(IAuthClientService authClientService)
         {
             _authClientService = authClientService;
@@ -43,7 +43,7 @@ namespace ProductAPI.JwtAuthentication
             }
         }
 
-        private void UpdateEncodingAndHashAlgoritm() 
+        private void UpdateEncodingAndHashAlgoritm()
         {
             Console.Write("Sending request to auth client for hashDefaults. ");
 

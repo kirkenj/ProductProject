@@ -1,12 +1,12 @@
 ﻿using Application.DTOs.User;
-using Application.Features.User.Requests.Queries;
 using Application.Features.User.Requests.Commands;
+using Application.Features.User.Requests.Queries;
+using Application.Models.User;
+using AuthAPI.Extensions;
+using Infrastructure.TockenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using AuthAPI.Extensions;
 using System.ComponentModel.DataAnnotations;
-using Infrastructure.TockenTractker;
-using Application.Models.User;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,7 +24,7 @@ namespace AuthAPI.Controllers
             _mediator = mediator;
             _tokenTracker = tokenTracker;
         }
-        
+
 
         [HttpPost("Register")]
         public async Task<ActionResult<Guid>> Register([FromBody] CreateUserDto createUserDto)
@@ -39,10 +39,10 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<LoginResult>> Login(LoginDto loginDto) 
+        public async Task<ActionResult<LoginResult>> Login(LoginDto loginDto)
         {
             var result = await _mediator.Send(new LoginRequest { LoginDto = loginDto });
-            
+
             if (result.Success)
             {
                 _tokenTracker.Track(new KeyValuePair<string, AssignedTokenInfo<Guid>>

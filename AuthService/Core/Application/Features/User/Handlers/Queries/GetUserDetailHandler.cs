@@ -1,9 +1,9 @@
-﻿using Application.DTOs.User;
+﻿using Application.Contracts.Persistence;
+using Application.DTOs.User;
 using Application.Features.User.Requests.Queries;
-using Application.Contracts.Persistence;
+using Application.Models.Response;
 using AutoMapper;
 using MediatR;
-using Application.Models.Response;
 
 namespace Application.Features.User.Handlers.Queries
 {
@@ -23,7 +23,7 @@ namespace Application.Features.User.Handlers.Queries
             var user = await _userRepository.GetAsync(request.Id);
 
             if (user == null)
-            { 
+            {
                 return Response<UserDto>.NotFoundResponse(nameof(request.Id), true);
             }
 

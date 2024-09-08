@@ -52,11 +52,11 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand 
-            { 
-                UpdateUserAddressDto = new UpdateNotSensetiveInfoDto 
-                { 
-                    Id = userId.Value, 
+            var result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
+            {
+                UpdateUserAddressDto = new UpdateNotSensetiveInfoDto
+                {
+                    Id = userId.Value,
                     Address = updateUserModel.Address,
                     Name = updateUserModel.Name
                 }
@@ -75,11 +75,13 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new UpdateUserPasswordComand { UpdateUserPasswordDto = new UpdateUserPasswordDto
-            { 
-                Id = userId.Value,
-                NewPassword = request.NewPassword
-            }
+            var result = await _mediator.Send(new UpdateUserPasswordComand
+            {
+                UpdateUserPasswordDto = new UpdateUserPasswordDto
+                {
+                    Id = userId.Value,
+                    NewPassword = request.NewPassword
+                }
             });
 
             return result.GetActionResult();
@@ -94,11 +96,13 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new UpdateUserLoginComand { UpdateUserLoginDto = new()
-            { 
-                Id = userId.Value,
-                NewLogin = newLogin
-            }
+            var result = await _mediator.Send(new UpdateUserLoginComand
+            {
+                UpdateUserLoginDto = new()
+                {
+                    Id = userId.Value,
+                    NewLogin = newLogin
+                }
             });
 
             if (result.Success)
@@ -111,7 +115,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("Email")]
-        public async Task<ActionResult<string>> UpdateEmail([FromBody]string newEmail)
+        public async Task<ActionResult<string>> UpdateEmail([FromBody] string newEmail)
         {
             var userId = User.GetUserId();
             if (!userId.HasValue)
@@ -132,7 +136,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost("Email")]
-        public async Task<ActionResult<string>> ConfirmEmailUpdate([FromBody]string confirmationToken)
+        public async Task<ActionResult<string>> ConfirmEmailUpdate([FromBody] string confirmationToken)
         {
             var userId = User.GetUserId();
             if (!userId.HasValue)

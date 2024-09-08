@@ -43,11 +43,11 @@ namespace Infrastucture.AuthClient
                 stringBuilder.Append(roleIds != null && roleIds.Any() ? $"roleIds: {string.Join(',', roleIds)}; " : string.Empty);
                 stringBuilder.Append(page.HasValue ? $"page: {page.Value}; " : string.Empty);
                 stringBuilder.Append(pageSize.HasValue ? $"pageSize: {pageSize.Value}; " : string.Empty);
-                
+
                 var cacheKey = stringBuilder.ToString();
                 Console.WriteLine($"Trying to get a {nameof(Application.DTOs.UserClient.UserListDto)} from {nameof(AuthClientService)} with {stringBuilder}");
                 ICollection<Application.DTOs.UserClient.UserListDto> result;
-                var a = _customMemoryCache.Get<ICollection<Application.DTOs.UserClient.UserListDto>>(cacheKey);
+                var a = await _customMemoryCache.GetAsync<ICollection<Application.DTOs.UserClient.UserListDto>>(cacheKey);
 
                 if (a != null)
                 {
@@ -62,7 +62,7 @@ namespace Infrastucture.AuthClient
                     result = qresult.Select(q => new Application.DTOs.UserClient.UserListDto { Email = q.Email, Id = q.Id, Login = q.Login, Role = q.Role }).ToArray();
                 }
 
-                _customMemoryCache.Set(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000));
+                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));
 
                 Console.WriteLine("Success");
                 return new ClientResponse<ICollection<Application.DTOs.UserClient.UserListDto>> { Result = result, Success = true };
@@ -93,7 +93,7 @@ namespace Infrastucture.AuthClient
 
                 Console.WriteLine($"Trying to get a {nameof(Application.DTOs.UserClient.UserDto)} from {nameof(AuthClientService)} with {nameof(userId)} = {userId}");
                 Application.DTOs.UserClient.UserDto result;
-                var a = _customMemoryCache.Get<Application.DTOs.UserClient.UserDto>(cacheKey);
+                var a = await _customMemoryCache.GetAsync<Application.DTOs.UserClient.UserDto>(cacheKey);
 
                 if (a != null)
                 {
@@ -106,7 +106,7 @@ namespace Infrastucture.AuthClient
                     result = await _authClient.UsersGETAsync(userId);
                 }
 
-                _customMemoryCache.Set(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000));
+                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));
 
                 Console.WriteLine("Success");
                 return new ClientResponse<Application.DTOs.UserClient.UserDto?> { Result = result, Success = true };

@@ -21,13 +21,13 @@ namespace CustomGateway.Middlewares
             {
                 await _next(context);
             }
-            catch(ApiException apiEx)
+            catch (ApiException apiEx)
             {
                 context.Response.StatusCode = apiEx.StatusCode;
                 await context.Response.WriteAsJsonAsync(apiEx.Response);
                 return;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 context.Response.StatusCode = 500;
                 await context.Response.BodyWriter.WriteAsync(Encoding.UTF8.GetBytes(ex.Message));

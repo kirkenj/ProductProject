@@ -1,6 +1,6 @@
 ﻿using Application.Models.Response;
-using Repository.Contracts;
 using MediatR;
+using Repository.Contracts;
 
 namespace Application.Features.User.Requests.Queries
 {
