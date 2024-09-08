@@ -23,6 +23,11 @@ namespace CustomGateway.Middlewares
             }
             catch (ApiException apiEx)
             {
+                if (apiEx.StatusCode == 200)
+                {
+                    throw new ApplicationException("Got api exception with status code 200:", apiEx);
+                }
+
                 context.Response.StatusCode = apiEx.StatusCode;
                 await context.Response.WriteAsJsonAsync(apiEx.Response);
                 return;

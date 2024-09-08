@@ -121,7 +121,8 @@ namespace CustomGateway.Controllers.Auth
         [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Auth/ForgotPassword", Name = "ForgotPassword")]
         public async System.Threading.Tasks.Task<string> ForgotPassword([Microsoft.AspNetCore.Mvc.FromBody] string? body)
         {
-            return await _implementation.ForgotPasswordAsync(body);
+            var q = await _implementation.ForgotPasswordAsync(body);
+            return q;
         }
 
         /// <returns>Success</returns>

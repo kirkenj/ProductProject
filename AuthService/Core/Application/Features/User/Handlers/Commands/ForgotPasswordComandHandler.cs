@@ -35,39 +35,33 @@ namespace Application.Features.User.Handlers.Commands
 
             if (user == null)
             {
-                return Response<string>.NotFoundResponse(nameof(user.Id), true);
+                return Response<string>.NotFoundResponse(nameof(request.ForgotPasswordDto.Email), true);
             }
 
             var newPassword = _passwordGenerator.Generate();
 
-            if (user.Email == null)
-            {
-                return Response<string>.BadRequestResponse("Your email is null. Contact administration");
-            }
-
-            var emailResult = await _emailSender.SendEmailAsync(new Email
+            var isEmailSent = await _emailSender.SendEmailAsync(new Email
             {
                 Body = $"Dear {user.Name}. Your new password is: {newPassword}",
                 Subject = "Password recovery",
-                To = user.Email
+                To = user.Email ?? throw new ApplicationException($"User's email is null. User id: '{user.Id}'"),
             });
 
-            if (emailResult == true)
+            if (isEmailSent == false)
             {
-                try
-                {
-                    (this as IPasswordSettingHandler).SetPassword(newPassword, user);
-                    await _userRepository.UpdateAsync(user);
-                }
-                catch (Exception ex)
-                {
-                    throw new ApplicationException($"EMAIL WAS SENT, BUT PASSWORD WAS NOT UPDATED. USERID: {user.Id}", ex);
-                }
-
-                return Response<string>.OkResponse("Success", "New password was sent on your emial");
+                throw new ApplicationException("Couldn't send email");
             }
 
-            return Response<string>.ServerErrorResponse("Server side error");
+            try
+            {
+                (this as IPasswordSettingHandler).SetPassword(newPassword, user);
+                await _userRepository.UpdateAsync(user);
+                return Response<string>.OkResponse("New password was sent on your emial", "Success");
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"EMAIL WAS SENT, BUT PASSWORD WAS NOT UPDATED. USERID: {user.Id}", ex);
+            }
         }
     }
 }
