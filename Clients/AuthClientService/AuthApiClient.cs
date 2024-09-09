@@ -18,14 +18,15 @@
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable 8765 // Disable "CS8765 Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes)."
 
-namespace Clients.AuthClientService
+namespace Clients.AuthApi
 {
+    using Microsoft.Extensions.Http;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface IAuthMicroserviseClient
+    public partial interface IAuthApiClient
     {
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
@@ -228,7 +229,7 @@ namespace Clients.AuthClientService
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class AuthMicroserviseClient : IAuthMicroserviseClient
+    public partial class AuthApiClient : IAuthApiClient
     {
         #pragma warning disable 8618
         private string _baseUrl;
@@ -239,13 +240,14 @@ namespace Clients.AuthClientService
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public AuthMicroserviseClient(IOptions<AuthClientSettings> baseUrl, System.Net.Http.HttpClient httpClient, IHttpContextAccessor contextAccessor)
+        public AuthApiClient(IOptions<AuthClientSettings> baseUrl, IHttpClientFactory httpClient, IHttpContextAccessor contextAccessor)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = baseUrl.Value.Uri;
-            _httpClient = httpClient;
+            _httpClient = httpClient.CreateClient();
 
             var authResult = contextAccessor.HttpContext.Request.Headers.FirstOrDefault(h => h.Key == "Authorization");
+            
             if (authResult.Value.Any())
             {
                 var r = authResult.Value.First().Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -255,7 +257,7 @@ namespace Clients.AuthClientService
                     throw new ApplicationException();
                 }
 
-                httpClient.DefaultRequestHeaders.Authorization = new(r[0], r[1]);
+                _httpClient.DefaultRequestHeaders.Authorization = new(r[0], r[1]);
             }
             Initialize();
         }

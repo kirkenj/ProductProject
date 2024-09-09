@@ -25,16 +25,16 @@ namespace CustomGateway.Controllers.Auth
     using System = global::System;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using global::Clients.AuthClientService;
+    using global::Clients.AuthApi;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     [ApiController]
 
     public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.ControllerBase
     {
-        private IAuthMicroserviseClient _implementation;
+        private IAuthApiClient _implementation;
 
-        public AuthServiceController(IAuthMicroserviseClient implementation)
+        public AuthServiceController(IAuthApiClient implementation)
         {
             _implementation = implementation;
         }

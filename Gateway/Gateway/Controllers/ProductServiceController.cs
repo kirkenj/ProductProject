@@ -22,7 +22,7 @@
 
 namespace CustomGateway.Controllers.Product
 {
-    using CustomGateway.Clients;
+    using Clients.ProductApi;
     using Microsoft.AspNetCore.Mvc;
     using System = global::System;
 
@@ -31,9 +31,9 @@ namespace CustomGateway.Controllers.Product
 
     public partial class ProductServiceController : Microsoft.AspNetCore.Mvc.ControllerBase
     {
-        private IProductClient _implementation;
+        private Clients.ProductApi.IProductApiClient _implementation;
 
-        public ProductServiceController(IProductClient implementation)
+        public ProductServiceController(IProductApiClient implementation)
         {
             _implementation = implementation;
         }

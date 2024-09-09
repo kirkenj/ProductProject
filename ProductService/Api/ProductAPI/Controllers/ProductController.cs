@@ -36,7 +36,6 @@ namespace ProductAPI.Controllers
         }
 
         // GET api/<ValuesController>/5
-        //[Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> Get(Guid id)
         {
@@ -61,6 +60,7 @@ namespace ProductAPI.Controllers
         // PUT api/<ValuesController>/5
         [HttpPut]
         [Authorize]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> Put([FromBody] UpdateProductDto updateProductDto)
         {
             Response<ProductDto> productRequestResult = await _mediator.Send(new GetProductDtoRequest() { Id = updateProductDto.Id });
@@ -94,6 +94,7 @@ namespace ProductAPI.Controllers
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
         [Authorize]
+        [Produces("text/plain")]
         public async Task<ActionResult<string>> Delete(Guid id)
         {
             Response<ProductDto> productRequestResult = await _mediator.Send(new GetProductDtoRequest() { Id = id });

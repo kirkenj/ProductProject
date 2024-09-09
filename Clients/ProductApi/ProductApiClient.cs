@@ -18,64 +18,64 @@
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable 8765 // Disable "CS8765 Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes)."
 
-namespace CustomGateway.Clients
+namespace Clients.ProductApi
 {
-    using CustomGateway.Models.AuthClient;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using System = global::System;
-    using CustomGateway.Models.Exceptions;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface IProductClient
+    public partial interface IProductApiClient
     {
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Guid> ProductPOSTAsync(CreateProductDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Guid> ProductPOSTAsync(CreateProductDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> ProductPUTAsync(UpdateProductDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> ProductPUTAsync(UpdateProductDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ProductDto> ProductGETAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ProductDto> ProductGETAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> ProductDELETEAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> ProductDELETEAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ProductClient : IProductClient
+    public partial class ProductApiClient : IProductApiClient
     {
         #pragma warning disable 8618
         private string _baseUrl;
@@ -86,15 +86,15 @@ namespace CustomGateway.Clients
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public ProductClient(IOptions<ProductClientSettings> clientSettings, IHttpContextAccessor httpContextAccessor, System.Net.Http.HttpClient httpClient)
+        public ProductApiClient(IOptions<ProductClientSettings> baseUrl, System.Net.Http.HttpClient httpClient, IHttpContextAccessor contextAccessor)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = clientSettings.Value.Uri;
+            BaseUrl = baseUrl.Value.Uri;
             _httpClient = httpClient;
-            var authResult = httpContextAccessor.HttpContext.Request.Headers.Authorization.ToString();
-            if (!string.IsNullOrEmpty(authResult))
+            var authResult = contextAccessor.HttpContext.Request.Headers.FirstOrDefault(h => h.Key == "Authorization");
+            if (authResult.Value.Any())
             {
-                var r = authResult.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var r = authResult.Value.First().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
                 if (r.Length != 2)
                 {
@@ -103,7 +103,6 @@ namespace CustomGateway.Clients
 
                 httpClient.DefaultRequestHeaders.Authorization = new(r[0], r[1]);
             }
-
             Initialize();
         }
 
@@ -136,7 +135,7 @@ namespace CustomGateway.Clients
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync()
         {
             return ProductAllAsync(System.Threading.CancellationToken.None);
@@ -144,7 +143,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -189,14 +188,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ProductListDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new ProductApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new ProductApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -214,7 +213,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Guid> ProductPOSTAsync(CreateProductDto body)
         {
             return ProductPOSTAsync(body, System.Threading.CancellationToken.None);
@@ -222,7 +221,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Guid> ProductPOSTAsync(CreateProductDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -271,14 +270,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<System.Guid>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new ProductApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new ProductApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -296,7 +295,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> ProductPUTAsync(UpdateProductDto body)
         {
             return ProductPUTAsync(body, System.Threading.CancellationToken.None);
@@ -304,7 +303,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> ProductPUTAsync(UpdateProductDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -350,17 +349,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new ProductApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -378,7 +374,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<ProductDto> ProductGETAsync(System.Guid id)
         {
             return ProductGETAsync(id, System.Threading.CancellationToken.None);
@@ -386,7 +382,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<ProductDto> ProductGETAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
@@ -435,14 +431,14 @@ namespace CustomGateway.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<ProductDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new ProductApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new ProductApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -460,7 +456,7 @@ namespace CustomGateway.Clients
         }
 
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<string> ProductDELETEAsync(System.Guid id)
         {
             return ProductDELETEAsync(id, System.Threading.CancellationToken.None);
@@ -468,7 +464,7 @@ namespace CustomGateway.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
+        /// <exception cref="ProductApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> ProductDELETEAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
@@ -514,17 +510,14 @@ namespace CustomGateway.Clients
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new ProductApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -574,7 +567,7 @@ namespace CustomGateway.Clients
                 catch (System.Text.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
-                    throw new ApiException(message, (int)response.StatusCode, responseText, headers, exception);
+                    throw new ProductApiException(message, (int)response.StatusCode, responseText, headers, exception);
                 }
             }
             else
@@ -590,7 +583,7 @@ namespace CustomGateway.Clients
                 catch (System.Text.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
-                    throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                    throw new ProductApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
                 }
             }
         }
@@ -745,6 +738,44 @@ namespace CustomGateway.Clients
         public System.DateTimeOffset CreationDate { get; set; }
 
     }
+
+
+
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProductApiException : System.Exception
+    {
+        public int StatusCode { get; private set; }
+
+        public string Response { get; private set; }
+
+        public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
+
+        public ProductApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
+            : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
+        {
+            StatusCode = statusCode;
+            Response = response;
+            Headers = headers;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("HTTP Response: \n\n{0}\n\n{1}", Response, base.ToString());
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProductApiException<TResult> : ProductApiException
+    {
+        public TResult Result { get; private set; }
+
+        public ProductApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
+            : base(message, statusCode, response, headers, innerException)
+        {
+            Result = result;
+        }
+    }
+
 }
 
 #pragma warning restore  108

@@ -2,19 +2,19 @@
 using Application.DTOs.UserClient;
 using AutoMapper;
 using Cache.Contracts;
-using Clients.AuthClientService;
+using Clients.AuthApi;
 using System.Text;
 
 namespace Infrastucture.AuthClient
 {
     public class AuthClientService : IAuthClientService
     {
-        private readonly IAuthMicroserviseClient _authClient;
+        private readonly IAuthApiClient _authClient;
         private readonly ICustomMemoryCache _customMemoryCache;
         private readonly string cacheKeyPrefix = "ProductAPI_AuthService_";
         private readonly IMapper _mapper;
 
-        public AuthClientService(IAuthMicroserviseClient authClient, ICustomMemoryCache customMemoryCache, IMapper mapper)
+        public AuthClientService(IAuthApiClient authClient, ICustomMemoryCache customMemoryCache, IMapper mapper)
         {
             _customMemoryCache = customMemoryCache;
             _authClient = authClient;
@@ -51,19 +51,19 @@ namespace Infrastucture.AuthClient
                 var cacheKey = stringBuilder.ToString();
                 Console.WriteLine($"Trying to get a {nameof(Application.DTOs.UserClient.UserListDto)} from {nameof(AuthClientService)} with {stringBuilder}");
                 ICollection<Application.DTOs.UserClient.UserListDto> result;
-                var a = await _customMemoryCache.GetAsync<ICollection<Application.DTOs.UserClient.UserListDto>>(cacheKey);
+                var cacheResult = await _customMemoryCache.GetAsync<ICollection<Application.DTOs.UserClient.UserListDto>>(cacheKey);
 
-                if (a != null)
+                if (cacheResult != null)
                 {
                     Console.WriteLine("Found it into cache");
-                    result = a;
+                    result = cacheResult;
                 }
                 else
                 {
                     Console.WriteLine($"Sending request to {nameof(AuthClientService)}");
                     var qresult = await _authClient.ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
 
-                    result = qresult.Select(q => new Application.DTOs.UserClient.UserListDto { Email = q.Email, Id = q.Id, Login = q.Login, Role = _mapper.Map<Application.DTOs.UserClient.RoleDto>(q.Role) }).ToArray();
+                    result = _mapper.Map<List<Application.DTOs.UserClient.UserListDto>>(qresult) ?? throw new ApplicationException("Mapped result is null");
                 }
 
                 _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));

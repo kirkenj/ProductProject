@@ -3,15 +3,15 @@
     public class UserListDto
     {
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("login")]
-        public string Login { get; set; } = null!;
+        public string Login { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("email")]
-        public string Email { get; set; } = null!;
+        public string Email { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("role")]
-        public RoleDto Role { get; set; } = null!;
+        public RoleDto Role { get; set; } = default!;
     }
 }

@@ -1,12 +1,13 @@
 ﻿using Application.Contracts.Infrastructure;
 using Cache.Contracts;
 using Cache.Models;
-using Clients.AuthClientService;
+using Clients.AuthApi;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using Infrastucture.AuthClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Infrastructure
 {
@@ -15,10 +16,13 @@ namespace Infrastructure
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AuthClientSettings>(configuration.GetSection("AuthClientSettings"));
-            services.AddScoped<HttpClient>((a) => new HttpClient());
-            services.AddScoped<IAuthMicroserviseClient, AuthMicroserviseClient>();
+            services.AddHttpClient();
+            services.AddScoped<IAuthApiClient, AuthApiClient>();
             services.AddScoped<IAuthClientService, AuthClientService>();
 
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            
             services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
 
 

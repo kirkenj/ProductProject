@@ -11,10 +11,12 @@ namespace Persistence.Repositories
     {
         public UserRepository(AuthDbContext dbContext, ICustomMemoryCache customMemoryCache) : base(dbContext, customMemoryCache)
         {
+            _cacheTimeoutMiliseconds = 10000;
         }
 
         public UserRepository(DbSet<User> dbSet, Func<CancellationToken, Task<int>> saveDelegate, ICustomMemoryCache customMemoryCache) : base(dbSet, saveDelegate, customMemoryCache)
         {
+            _cacheTimeoutMiliseconds = 10000;
         }
         protected override IQueryable<User> GetFilteredSet(IQueryable<User> set, UserFilter filter)
         {

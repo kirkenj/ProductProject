@@ -1,5 +1,5 @@
 ﻿using Application.Contracts.Persistence;
-using Application.Models.User;
+using Application.Models.Product;
 using Cache.Contracts;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;

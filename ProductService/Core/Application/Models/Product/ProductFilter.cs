@@ -1,4 +1,4 @@
-﻿namespace Application.Models.User
+﻿namespace Application.Models.Product
 {
     public class ProductFilter
     {

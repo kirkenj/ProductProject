@@ -93,7 +93,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("UserTag")]
-        [Authorize(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME)]
+        [Authorize(Constants.Constants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateLogin(UpdateUserLoginDto request)
         {

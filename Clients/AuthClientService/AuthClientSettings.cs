@@ -1,4 +1,4 @@
-﻿namespace Clients.AuthClientService
+﻿namespace Clients.AuthApi
 {
     public class AuthClientSettings
     {

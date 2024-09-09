@@ -15,9 +15,13 @@
 	  <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
+	  <ProjectReference Include="..\..\..\Clients\Clients.csproj" />
 	  <ProjectReference Include="..\..\..\Common\EmailSender\EmailSender.csproj" />
 	  <ProjectReference Include="..\..\..\Common\Repository\Repository.csproj" />
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Contracts\Infrastructure\" />
   </ItemGroup>
 
 </Project>
