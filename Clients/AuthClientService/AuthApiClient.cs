@@ -20,7 +20,6 @@
 
 namespace Clients.AuthApi
 {
-    using Microsoft.Extensions.Http;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using System = global::System;
@@ -240,11 +239,11 @@ namespace Clients.AuthApi
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public AuthApiClient(IOptions<AuthClientSettings> baseUrl, IHttpClientFactory httpClient, IHttpContextAccessor contextAccessor)
+        public AuthApiClient(IOptions<AuthClientSettings> baseUrl, HttpClient httpClient, IHttpContextAccessor contextAccessor)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = baseUrl.Value.Uri;
-            _httpClient = httpClient.CreateClient();
+            _httpClient = httpClient;
 
             var authResult = contextAccessor.HttpContext.Request.Headers.FirstOrDefault(h => h.Key == "Authorization");
             

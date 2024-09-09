@@ -1,5 +1,6 @@
 ﻿using Clients.ProductApi;
 using Clients.AuthApi;
+using Clients.AuthApi.AuthApiIStokenValidClient;
 
 namespace CustomGateway.Registrations
 {
@@ -9,10 +10,13 @@ namespace CustomGateway.Registrations
         {
             services.Configure<AuthClientSettings>(configuration.GetSection("AuthClientSettings"));
             services.Configure<ProductClientSettings>(configuration.GetSection("ProductClientSettings"));
+            //services.AddTransient((_) => new HttpClient());
+
             services.AddHttpClient();
 
             services.AddScoped<IAuthApiClient, AuthApiClient>();
-            services.AddScoped<IProductApiClient, ProductApiClient>();
+            services.AddScoped<IAuthApiClient, AuthApiClient>();
+            services.AddScoped<ITokenValidationClient, TokenValidationClient>();
 
             return services;
         }

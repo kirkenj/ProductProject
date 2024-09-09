@@ -1,4 +1,5 @@
 ﻿using Clients.AuthApi;
+using Clients.AuthApi.AuthApiIStokenValidClient;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Cryptography;
 
@@ -6,13 +7,13 @@ namespace CustomGateway.Models.JWT
 {
     public class CustomJwtBearerEvents : JwtBearerEvents
     {
-        private readonly IAuthApiClient _authClientService;
+        private readonly ITokenValidationClient _authClientService;
 
         private static HashAlgorithm? _hashAlgorithm;
         private static System.Text.Encoding? _hashEncoding;
 
 
-        public CustomJwtBearerEvents(IAuthApiClient authClientService)
+        public CustomJwtBearerEvents(ITokenValidationClient authClientService)
         {
             _authClientService = authClientService;
         }
@@ -47,7 +48,7 @@ namespace CustomGateway.Models.JWT
         {
             Console.Write("Sending request to auth client for hashDefaults. ");
 
-            var task = _authClientService.GetHashDefaultsAsync();
+            var task = _authClientService.GetHashDefaultsResponce();
             task.Wait();
 
             _hashAlgorithm = HashAlgorithm.Create(task.Result.HashAlgorithmName) ?? throw new ApplicationException();
@@ -64,7 +65,7 @@ namespace CustomGateway.Models.JWT
 
             var tokenHashBytes = HashAlgorithm.ComputeHash(HashEncoding.GetBytes(token));
 
-            var result = await _authClientService.IsTokenValidPOSTAsync(HashEncoding.GetString(tokenHashBytes));
+            var result = await _authClientService.IsTokenValid(HashEncoding.GetString(tokenHashBytes));
 
             if (!result)
             {
