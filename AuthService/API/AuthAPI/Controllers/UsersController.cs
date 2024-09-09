@@ -8,6 +8,7 @@ using Infrastructure.TockenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Application.Models.Response;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,7 +36,7 @@ namespace AuthAPI.Controllers
                 filter.RoleIds = null;
             }
 
-            var result = await _mediator.Send(new GetUserPagedFilteredListRequest() { UserFilter = filter, Page = page, PageSize = pageSize });
+            Response<List<UserListDto>> result = await _mediator.Send(new GetUserPagedFilteredListRequest() { UserFilter = filter, Page = page, PageSize = pageSize });
             return result.GetActionResult();
         }
 
@@ -43,16 +44,16 @@ namespace AuthAPI.Controllers
         [GetUserActionFilter]
         public async Task<ActionResult<UserDto>> Get(Guid id)
         {
-            var result = await _mediator.Send(new GetUserDtoRequest() { Id = id });
+            Response<UserDto> result = await _mediator.Send(new GetUserDtoRequest() { Id = id });
             return result.GetActionResult();
         }
 
         [HttpPut]
-        [Authorize(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME)]
+        [Authorize(Constants.Constants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateUser(UpdateNotSensetiveInfoDto request)
         {
-            var result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
+            Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
                 UpdateUserAddressDto = request
             });
@@ -61,11 +62,11 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("Email")]
-        [Authorize(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME)]
+        [Authorize(Constants.Constants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateEmail([FromBody] SendTokenToUpdateUserEmailDto request)
         {
-            var result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
+            Response<string> result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {
                 UpdateUserEmailDto = request
             });
@@ -74,18 +75,18 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost("Email")]
-        [Authorize(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME)]
+        [Authorize(Constants.Constants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> ConfirmEmailUpdate(ConfirmEmailChangeDto request)
         {
-            var result = await _mediator.Send(new ConfirmEmailChangeComand
+            Response<string> result = await _mediator.Send(new ConfirmEmailChangeComand
             {
                 ConfirmEmailChangeDto = request
             });
 
             if (result.Success)
             {
-                _tokenTracker.InvalidateUser(request.UserId, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(request.UserId, DateTime.UtcNow);
             }
 
             return result.GetActionResult();
@@ -96,14 +97,14 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateLogin(UpdateUserLoginDto request)
         {
-            var result = await _mediator.Send(new UpdateUserLoginComand
+            Response<string> result = await _mediator.Send(new UpdateUserLoginComand
             {
                 UpdateUserLoginDto = request
             });
 
             if (result.Success)
             {
-                _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
             }
 
             return result.GetActionResult();

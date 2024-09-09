@@ -23,21 +23,22 @@ namespace AuthAPI.Controllers
         [HttpPost("IsTokenValid")]
         public async Task<ActionResult<bool>> IsTokenValid([FromBody] string tokenHash)
         {
-            return await Task.FromResult(Ok(_tokenTracker.IsValid(tokenHash)));
+            bool result = await _tokenTracker.IsValid(tokenHash);
+            return Ok(result);
         }
 
         [HttpGet("IsTokenValid")]
         public async Task<ActionResult<bool>> IsTokenValidGet(string token)
         {
-            return await Task.FromResult(Ok(_tokenTracker.IsValid(_hashProvider.GetHash(token))));
+            bool result = await _tokenTracker.IsValid(_hashProvider.GetHash(token));
+            return Ok(result);
         }
 
         [HttpPost("InvalidateUsersToken")]
         public async Task<ActionResult> InvalidateToken(Guid userId)
         {
-            _tokenTracker.InvalidateUser(userId, DateTime.UtcNow);
-
-            return await Task.FromResult(Ok());
+            await _tokenTracker.InvalidateUser(userId, DateTime.UtcNow);
+            return Ok();
         }
 
         [HttpGet("GetHashDefaults")]

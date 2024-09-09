@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.User;
+using Application.Models.Response;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using AuthAPI.Extensions;
@@ -39,7 +40,7 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new GetUserDtoRequest() { Id = userId.Value });
+            Response<UserDto> result = await _mediator.Send(new GetUserDtoRequest() { Id = userId.Value });
             return result.GetActionResult();
         }
 
@@ -53,7 +54,7 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
+            Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
                 UpdateUserAddressDto = new UpdateNotSensetiveInfoDto
                 {
@@ -77,7 +78,7 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new UpdateUserPasswordComand
+            Response<string> result = await _mediator.Send(new UpdateUserPasswordComand
             {
                 UpdateUserPasswordDto = new UpdateUserPasswordDto
                 {
@@ -99,7 +100,7 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new UpdateUserLoginComand
+            Response<string> result = await _mediator.Send(new UpdateUserLoginComand
             {
                 UpdateUserLoginDto = new()
                 {
@@ -111,7 +112,7 @@ namespace AuthAPI.Controllers
             if (result.Success)
             {
                 result.Result += "Relogin needed.";
-                _tokenTracker.InvalidateUser(userId.Value, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(userId.Value, DateTime.UtcNow);
             }
 
             return result.GetActionResult();
@@ -127,7 +128,7 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
+            Response<string> result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {
                 UpdateUserEmailDto = new SendTokenToUpdateUserEmailDto
                 {
@@ -149,7 +150,7 @@ namespace AuthAPI.Controllers
                 return BadRequest();
             }
 
-            var result = await _mediator.Send(new ConfirmEmailChangeComand
+            Response<string> result = await _mediator.Send(new ConfirmEmailChangeComand
             {
                 ConfirmEmailChangeDto = new ConfirmEmailChangeDto
                 {
@@ -161,7 +162,7 @@ namespace AuthAPI.Controllers
             if (result.Success)
             {
                 result.Result += "Relogin needed.";
-                _tokenTracker.InvalidateUser(userId.Value, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(userId.Value, DateTime.UtcNow);
             }
 
             return result.GetActionResult();

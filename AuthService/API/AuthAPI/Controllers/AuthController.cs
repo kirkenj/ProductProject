@@ -2,6 +2,7 @@
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using Application.Models.User;
+using Application.Models.Response;
 using AuthAPI.Extensions;
 using Infrastructure.TockenTractker;
 using MediatR;
@@ -29,7 +30,7 @@ namespace AuthAPI.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<Guid>> Register([FromBody] CreateUserDto createUserDto)
         {
-            var result = await _mediator.Send(new CreateUserCommand() { CreateUserDto = createUserDto });
+            Response<Guid> result = await _mediator.Send(new CreateUserCommand() { CreateUserDto = createUserDto });
             if (result.Success)
             {
                 return Ok(result.Message);
@@ -41,11 +42,11 @@ namespace AuthAPI.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<LoginResult>> Login(LoginDto loginDto)
         {
-            var result = await _mediator.Send(new LoginRequest { LoginDto = loginDto });
+            Response<LoginResult> result = await _mediator.Send(new LoginRequest { LoginDto = loginDto });
 
             if (result.Success)
             {
-                _tokenTracker.Track(new KeyValuePair<string, AssignedTokenInfo<Guid>>
+                await _tokenTracker.Track(new KeyValuePair<string, AssignedTokenInfo<Guid>>
                         (
                             result.Result?.Token ?? throw new ApplicationException(),
                             new()
@@ -63,7 +64,7 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> ForgotPassword([FromBody][EmailAddress] string email)
         {
-            var result = await _mediator.Send(new ForgotPasswordComand
+            Response<string> result = await _mediator.Send(new ForgotPasswordComand
             {
                 ForgotPasswordDto = new ForgotPasswordDto
                 {

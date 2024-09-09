@@ -47,30 +47,30 @@ namespace Application.Features.User.Handlers.Commands
                 return Response<Guid>.BadRequestResponse(validationResult.Errors);
             }
 
-            var user = _mapper.Map<Domain.Models.User>(request.CreateUserDto);
+            Domain.Models.User user = _mapper.Map<Domain.Models.User>(request.CreateUserDto);
             user.Id = Guid.NewGuid();
             user.Login = $"User{user.Id}";
             user.RoleID = _createUserSettings.DefaultRoleID;
 
-            var password = _passwordGenerator.Generate();
+            string password = _passwordGenerator.Generate();
 
             (this as IPasswordSettingHandler).SetPassword(password, user);
 
-            _ = Task.Run(() => _memoryCache.SetAsync(CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(1)), cancellationToken);
+            await _memoryCache.SetAsync(CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(1));
 
-            var emailResult = await _emailSender.SendEmailAsync(new Email
+            bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {
                 Subject = "Registration",
                 Body = $"Confirm registration by loggining in with email: {user.Email}, password {password}",
                 To = user.Email
             });
 
-            if (emailResult == true)
+            if (isEmailSent == false)
             {
-                return Response<Guid>.OkResponse(user.Id, $"Created user's id: {user.Id}. Further details sent on email");
+               throw new ApplicationException("User created, but email was not sent");
             }
 
-            throw new ApplicationException("User created, but email was not sent");
+            return Response<Guid>.OkResponse(user.Id, $"Created user's id: {user.Id}. Further details sent on email");
         }
     }
 }

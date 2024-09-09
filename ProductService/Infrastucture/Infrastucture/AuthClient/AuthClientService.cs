@@ -97,12 +97,12 @@ namespace Infrastucture.AuthClient
 
                 Console.WriteLine($"Trying to get a {nameof(Application.DTOs.UserClient.UserDto)} from {nameof(AuthClientService)} with {nameof(userId)} = {userId}");
                 Application.DTOs.UserClient.UserDto result;
-                var a = await _customMemoryCache.GetAsync<Application.DTOs.UserClient.UserDto>(cacheKey);
+                var cacheResult = await _customMemoryCache.GetAsync<Application.DTOs.UserClient.UserDto>(cacheKey);
 
-                if (a != null)
+                if (cacheResult != null)
                 {
                     Console.WriteLine("Found it into cache");
-                    result = a;
+                    result = cacheResult;
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace Infrastucture.AuthClient
                     result = _mapper.Map<Application.DTOs.UserClient.UserDto>(await _authClient.UsersGETAsync(userId));
                 }
 
-                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));
+                await  _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000));
 
                 Console.WriteLine("Success");
                 return new ClientResponse<Application.DTOs.UserClient.UserDto?> { Result = result, Success = true };

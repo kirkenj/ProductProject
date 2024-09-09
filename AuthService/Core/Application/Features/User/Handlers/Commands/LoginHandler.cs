@@ -9,6 +9,7 @@ using Cache.Contracts;
 using EmailSender.Contracts;
 using MediatR;
 using System.Text;
+using System.Threading;
 
 namespace Application.Features.User.Handlers.Commands
 {
@@ -35,10 +36,9 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<LoginResult>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
-            var loginEmail = request.LoginDto.Email;
-            var cacheAccessKey = CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
-            var cachedUserValue = await _memoryCache.GetAsync<Domain.Models.User>(cacheAccessKey);
-
+            string loginEmail = request.LoginDto.Email;
+            string cacheKey = CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
+            Domain.Models.User? cachedUserValue = await _memoryCache.GetAsync<Domain.Models.User>(cacheKey);
 
             bool isRegistration = cachedUserValue != null;
 
@@ -63,27 +63,38 @@ namespace Application.Features.User.Handlers.Commands
 
             if (isRegistration == true)
             {
-                await _userRepository.AddAsync(userToHandle);
-                _ = Task.Run(() => _memoryCache.RemoveAsync(cacheAccessKey), cancellationToken);
-                userToHandle.Role = await _roleRepository.GetAsync(userToHandle.RoleID) ?? throw new ApplicationException();
-
-                await _emailSender.SendEmailAsync(new()
-                {
-                    To = userToHandle.Email ?? throw new ApplicationException($"User email is null, Id = {userToHandle.Id}, userFromCache = {isRegistration}"),
-                    Subject = "First login",
-                    Body = "Account confirmed"
-                });
+                await RegisterUser(userToHandle);
+                await _memoryCache.RemoveAsync(cacheKey);
             }
 
-            var mapped = _mapper.Map<UserDto>(userToHandle);
+            UserDto userDto = _mapper.Map<UserDto>(userToHandle);
 
-            var result = new LoginResult()
+            LoginResult result = new()
             {
-                Token = _jwtService.GetToken(mapped),
+                Token = _jwtService.GetToken(userDto),
                 UserId = userToHandle.Id
             };
 
             return Response<LoginResult>.OkResponse(result, "Success");
+        }
+
+        private async Task RegisterUser(Domain.Models.User userToHandle)
+        {
+            await _userRepository.AddAsync(userToHandle);
+
+            userToHandle.Role = await _roleRepository.GetAsync(userToHandle.RoleID) ?? throw new ApplicationException();
+
+            var isEmailSent = await _emailSender.SendEmailAsync(new()
+            {
+                To = userToHandle.Email ?? throw new ApplicationException($"User email is null, Id = {userToHandle.Id}, userFromCache = {true}"),
+                Subject = "First login",
+                Body = "Account confirmed"
+            });
+
+            if (isEmailSent == false)
+            {
+                throw new ApplicationException("Couldn't send email");
+            }
         }
     }
 }

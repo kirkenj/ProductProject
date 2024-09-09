@@ -19,7 +19,7 @@ namespace Infrastructure.TockenTractker
         }
         public IHashProvider HashProvider { get; private set; }
 
-        public void Track(KeyValuePair<string, AssignedTokenInfo<TUserIdType>> pair)
+        public async Task Track(KeyValuePair<string, AssignedTokenInfo<TUserIdType>> pair)
         {
             if (pair.Value == null || pair.Key == null)
                 throw new ArgumentNullException(nameof(pair));
@@ -27,18 +27,16 @@ namespace Infrastructure.TockenTractker
             var jwtHash = HashProvider.GetHash(pair.Key);
 
             var cahceKey = _keyGeneratingDelegate(jwtHash);
-            _memoryCache.SetAsync(
+            await _memoryCache.SetAsync(
             cahceKey,
                 pair.Value,
                 DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes
                 ));
-
-            return;
         }
 
-        public void InvalidateUser(Guid userId, DateTime time)
+        public async Task InvalidateUser(Guid userId, DateTime time)
         {
-            _memoryCache.SetAsync(
+            await _memoryCache.SetAsync(
                 _keyGeneratingDelegate(userId.ToString()),
                 time,
                 DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes));
@@ -54,17 +52,7 @@ namespace Infrastructure.TockenTractker
             }
 
             var key = _keyGeneratingDelegate(tokenHash);
-            var trackingResult = _memoryCache.GetAsync<AssignedTokenInfo<TUserIdType>>(key);
-
-            if (trackingResult == null)
-            {
-                throw new InvalidOperationException("Tocken is not tracked");
-            }
-
-            if (trackingResult is not AssignedTokenInfo<TUserIdType> trackInfo)
-            {
-                throw new InvalidOperationException();
-            }
+            var trackInfo = await _memoryCache.GetAsync<AssignedTokenInfo<TUserIdType>>(key) ?? throw new InvalidOperationException("Tocken is not tracked");
 
             if (trackInfo == null || trackInfo.UserId == null)
             {

@@ -37,9 +37,9 @@ namespace Application.Features.User.Handlers.Queries
                 return Response<string>.BadRequestResponse(validationResult.Errors);
             }
 
-            var newEmail = request.UpdateUserEmailDto.Email;
+            string newEmail = request.UpdateUserEmailDto.Email;
 
-            var user = await _userRepository.GetAsync(request.UpdateUserEmailDto.Id);
+            Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserEmailDto.Id);
 
             if (user == null)
             {
@@ -53,20 +53,23 @@ namespace Application.Features.User.Handlers.Queries
                 Subject = "Email is being updated",
             });
 
-            var token = _passwordGenerator.Generate();
+            string token = _passwordGenerator.Generate();
 
-            var updateDetails = new EmailUpdateDetails { UserId = user.Id, NewEmail = newEmail };
+            EmailUpdateDetails updateDetails = new() { UserId = user.Id, NewEmail = newEmail };
 
-            var emailSent = await _emailSender.SendEmailAsync(new Email
+            bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {
                 To = newEmail,
                 Subject = "Change email confirmation",
                 Body = $"Confirmation token: '{token}'"
             });
 
-            if (emailSent == false) throw new ApplicationException("Email was not sent");
+            if (isEmailSent == false) 
+            { 
+                throw new ApplicationException("Email was not sent"); 
+            }
 
-            _ = Task.Run(() => _memoryCache.SetAsync(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, DateTimeOffset.UtcNow.AddHours(1)), cancellationToken);
+            await _memoryCache.SetAsync(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, DateTimeOffset.UtcNow.AddHours(1));
 
             return Response<string>.OkResponse("Check emails to get further details", string.Empty);
         }
