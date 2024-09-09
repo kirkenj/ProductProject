@@ -22,7 +22,7 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(UpdateUserPasswordComand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetAsync(request.UpdateUserPasswordDto.Id);
+            Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserPasswordDto.Id);
 
             if (user == null)
             {

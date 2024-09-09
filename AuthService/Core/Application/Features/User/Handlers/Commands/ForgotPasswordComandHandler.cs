@@ -29,18 +29,18 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(ForgotPasswordComand request, CancellationToken cancellationToken)
         {
-            var emailAddress = request.ForgotPasswordDto.Email;
+            string emailAddress = request.ForgotPasswordDto.Email;
 
-            var user = await _userRepository.GetAsync(new UserFilter { Email = emailAddress });
+            Domain.Models.User? user = await _userRepository.GetAsync(new UserFilter { Email = emailAddress });
 
             if (user == null)
             {
                 return Response<string>.NotFoundResponse(nameof(request.ForgotPasswordDto.Email), true);
             }
 
-            var newPassword = _passwordGenerator.Generate();
+            string newPassword = _passwordGenerator.Generate();
 
-            var isEmailSent = await _emailSender.SendEmailAsync(new Email
+            bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {
                 Body = $"Dear {user.Name}. Your new password is: {newPassword}",
                 Subject = "Password recovery",

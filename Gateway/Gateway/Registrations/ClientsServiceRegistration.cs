@@ -9,7 +9,7 @@ namespace CustomGateway.Registrations
     {
         public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<IAuthMicroserviseClient>(configuration.GetSection("AuthClientSettings"));
+            services.Configure<AuthClientSettings>(configuration.GetSection("AuthClientSettings"));
             services.Configure<ProductClientSettings>(configuration.GetSection("ProductClientSettings"));
             services.AddScoped<HttpClient>((a) => new HttpClient());
             services.AddTransient<IAuthMicroserviseClient, AuthMicroserviseClient>();

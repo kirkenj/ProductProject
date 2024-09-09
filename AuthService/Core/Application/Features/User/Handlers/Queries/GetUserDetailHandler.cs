@@ -20,14 +20,11 @@ namespace Application.Features.User.Handlers.Queries
 
         public async Task<Response<UserDto>> Handle(GetUserDtoRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetAsync(request.Id);
+            Domain.Models.User? user = await _userRepository.GetAsync(request.Id);
 
-            if (user == null)
-            {
-                return Response<UserDto>.NotFoundResponse(nameof(request.Id), true);
-            }
-
-            return Response<UserDto>.OkResponse(_mapper.Map<UserDto>(user), "Success");
+            return user == null ?
+                Response<UserDto>.NotFoundResponse(nameof(request.Id), true)
+                : Response<UserDto>.OkResponse(_mapper.Map<UserDto>(user), "Success");
         }
     }
 }

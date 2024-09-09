@@ -3,6 +3,7 @@ using Application.Features.User.Requests.Queries;
 using AuthAPI.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Application.Models.Response;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,14 +23,14 @@ namespace AuthAPI.Controllers
         [HttpGet("Roles")]
         public async Task<ActionResult<IEnumerable<RoleDto>>> GetRolesList()
         {
-            var result = await _mediator.Send(new GetRoleListRequest());
+            Response<List<RoleDto>> result = await _mediator.Send(new GetRoleListRequest());
             return result.GetActionResult();
         }
 
         [HttpGet("Roles/{id}")]
         public async Task<ActionResult<RoleDto>> GetRole(int id)
         {
-            var result = await _mediator.Send(new GetRoleDtoRequest() { Id = id });
+            Response<RoleDto> result = await _mediator.Send(new GetRoleDtoRequest() { Id = id });
             return result.GetActionResult();
         }
     }

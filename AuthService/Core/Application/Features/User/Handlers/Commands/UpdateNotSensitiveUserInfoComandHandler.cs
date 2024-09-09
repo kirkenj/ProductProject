@@ -19,7 +19,7 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(UpdateNotSensitiveUserInfoComand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetAsync(request.UpdateUserAddressDto.Id);
+            Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserAddressDto.Id);
 
             if (user == null)
             {

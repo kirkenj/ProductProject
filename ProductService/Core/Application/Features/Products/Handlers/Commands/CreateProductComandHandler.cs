@@ -37,21 +37,28 @@ namespace Application.Features.Product.Handlers.Commands
                 return Response<Guid>.BadRequestResponse(validationResult.Errors);
             }
 
-            var product = _mapper.Map<Domain.Models.Product>(request.CreateProductDto);
+            Domain.Models.Product product = _mapper.Map<Domain.Models.Product>(request.CreateProductDto);
 
             await _productRepository.AddAsync(product);
 
-            var userRequest = await _authClientService.GetUser(request.CreateProductDto.ProducerId) ?? throw new ApplicationException();
+            DTOs.UserClient.ClientResponse<DTOs.UserClient.UserDto?> userRequestResponse = await _authClientService.GetUser(request.CreateProductDto.ProducerId);
 
-            if (userRequest.Result != null)
+            if (userRequestResponse.Success == false)
             {
-                await _emailSender.SendEmailAsync(new Email
-                {
-                    Body = $"You added a product with id '{product.Id}'",
-                    Subject = "Product creation",
-                    To = userRequest.Result.Email ?? throw new ApplicationException()
-                });
+                throw new ApplicationException($"Got error while sending request: {userRequestResponse.Message}");
             }
+
+            if (userRequestResponse.Result == null)
+            {
+                throw new ApplicationException($"{nameof(userRequestResponse.Result)} is null");
+            }
+
+            await _emailSender.SendEmailAsync(new Email
+            {
+                Body = $"You added a product with id '{product.Id}'",
+                Subject = "Product creation",
+                To = userRequestResponse.Result.Email
+            });
 
             return Response<Guid>.OkResponse(product.Id, $"Product created with id {product.Id}");
         }

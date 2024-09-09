@@ -6,6 +6,7 @@ using AutoMapper;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;
+using Application.DTOs.UserClient;
 
 namespace Application.Features.Product.Handlers.Commands
 {
@@ -33,47 +34,59 @@ namespace Application.Features.Product.Handlers.Commands
                 return Response<string>.NotFoundResponse(nameof(product.Id), true);
             }
 
-            var prevOwnedId = product.ProducerId;
             var newOwnerId = request.UpdateProductDto.ProducerId;
 
-            if (prevOwnedId != newOwnerId)
+            if (product.ProducerId != newOwnerId)
             {
-                var usersRequest = await _authClientService.ListAsync(ids: new Guid[] { prevOwnedId, newOwnerId });
-
-                if (usersRequest == null || usersRequest.Success == false)
+                Response<string> updateProduserResult = await UpdateProducer(product, newOwnerId);
+                if (updateProduserResult.Success == false)
                 {
-                    throw new ApplicationException("Couldn't get users from auth service. " + usersRequest?.Message ?? string.Empty);
-                }
-
-                var newOwnerResult = usersRequest.Result.FirstOrDefault(u => u.Id == newOwnerId);
-
-                if (newOwnerResult == null)
-                {
-                    return Response<string>.BadRequestResponse($"Couldn't find user with id = '{newOwnerId}'");
-                }
-
-                _ = Task.Run(async () => await _emailSender.SendEmailAsync(new Email
-                {
-                    Subject = "You were given a product",
-                    To = newOwnerResult.Email,
-                    Body = $"Your new product id is {request.UpdateProductDto.Id}"
-                }));
-
-                var prevOwnerResult = usersRequest.Result.FirstOrDefault(u => u.Id == prevOwnedId);
-                if (prevOwnerResult != null && prevOwnerResult.Email != null)
-                {
-                    _ = Task.Run(async () => await _emailSender.SendEmailAsync(new Email
-                    {
-                        Subject = "Your product was given to other user",
-                        To = prevOwnerResult.Email,
-                        Body = $"Your product with id '{product.Id}' was given to other user"
-                    }));
+                    return updateProduserResult;
                 }
             }
 
             _mapper.Map(request.UpdateProductDto, product);
             await _productRepository.UpdateAsync(product);
-            return Response<string>.OkResponse("Ok", "Success");
+            return Response<string>.OkResponse("Success", "Product updated");
+        }
+
+        private async Task<Response<string>> UpdateProducer(Domain.Models.Product product, Guid newProducerId)
+        {
+            var prevOwnedId = product.ProducerId;
+
+            ClientResponse<ICollection<UserListDto>>? usersRequest = await _authClientService.ListAsync(ids: new Guid[] { prevOwnedId, newProducerId });
+
+            if (usersRequest == null || usersRequest.Success == false)
+            {
+                throw new ApplicationException("Couldn't get users from auth service. " + usersRequest?.Message ?? string.Empty);
+            }
+
+            var newOwner = usersRequest.Result.FirstOrDefault(u => u.Id == newProducerId);
+
+            if (newOwner == null)
+            {
+                return Response<string>.BadRequestResponse($"Couldn't find user with id = '{newProducerId}'");
+            }
+
+            await _emailSender.SendEmailAsync(new Email
+            {
+                Subject = "You were given a product",
+                To = newOwner.Email,
+                Body = $"Your new product id is {product.Id}"
+            });
+
+            var prevOwner = usersRequest.Result.FirstOrDefault(u => u.Id == prevOwnedId);
+            if (prevOwner != null && prevOwner.Email != null)
+            {
+                await _emailSender.SendEmailAsync(new Email
+                {
+                    Subject = "Your product was given to other user",
+                    To = prevOwner.Email,
+                    Body = $"Your product with id '{product.Id}' was given to other user"
+                });
+            }
+
+            return Response<string>.OkResponse("Success", "Product updated");
         }
     }
 }

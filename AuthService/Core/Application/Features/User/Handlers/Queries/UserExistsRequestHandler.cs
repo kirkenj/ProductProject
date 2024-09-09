@@ -14,7 +14,10 @@ namespace Application.Features.User.Handlers.Queries
             _userRepository = userRepository;
         }
 
-        public async Task<Response<bool>> Handle(UserExistsRequest request, CancellationToken cancellationToken)
-            => Response<bool>.OkResponse(await _userRepository.GetAsync(request.Id) is null, string.Empty);
+        public async Task<Response<bool>> Handle(UserExistsRequest request, CancellationToken cancellationToken) 
+        {
+            bool userExcists = await _userRepository.GetAsync(request.Id) is null;
+            return Response<bool>.OkResponse(userExcists, string.Empty); 
+        }
     }
 }

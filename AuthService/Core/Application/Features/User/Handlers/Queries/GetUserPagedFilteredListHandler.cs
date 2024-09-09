@@ -20,7 +20,7 @@ namespace Application.Features.User.Handlers.Queries
 
         public async Task<Response<List<UserListDto>>> Handle(GetUserPagedFilteredListRequest request, CancellationToken cancellationToken)
         {
-            var users = await _userRepository.GetPageContent(request.UserFilter, request.Page, request.PageSize);
+            IReadOnlyCollection<Domain.Models.User> users = await _userRepository.GetPageContent(request.UserFilter, request.Page, request.PageSize);
             return Response<List<UserListDto>>.OkResponse(_mapper.Map<List<UserListDto>>(users), "Success");
         }
     }

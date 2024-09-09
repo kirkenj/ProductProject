@@ -22,13 +22,6 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(UpdateUserLoginComand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetAsync(request.UpdateUserLoginDto.Id);
-
-            if (user == null)
-            {
-                return Response<string>.NotFoundResponse(nameof(user.Id), true);
-            }
-
             var validator = new UpdateUserLoginDtoValidator();
 
             var validationResult = await validator.ValidateAsync(request.UpdateUserLoginDto, cancellationToken);
@@ -40,16 +33,23 @@ namespace Application.Features.User.Handlers.Commands
 
             var newLogin = request.UpdateUserLoginDto.NewLogin;
 
-            var foundUser = await _userRepository.GetAsync(new Models.User.UserFilter() { AccurateLogin = newLogin });
+            Domain.Models.User? userWithNewlogin = await _userRepository.GetAsync(new Models.User.UserFilter() { AccurateLogin = newLogin });
 
-            if (foundUser != null)
+            if (userWithNewlogin != null)
             {
                 return Response<string>.BadRequestResponse("This login is already taken");
             }
 
-            user.Login = newLogin;
+            Domain.Models.User? userToUpdate = await _userRepository.GetAsync(request.UpdateUserLoginDto.Id);
 
-            await _userRepository.UpdateAsync(user);
+            if (userToUpdate == null)
+            {
+                return Response<string>.NotFoundResponse(nameof(userToUpdate.Id), true);
+            }      
+
+            userToUpdate.Login = newLogin;
+
+            await _userRepository.UpdateAsync(userToUpdate);
 
             return Response<string>.OkResponse("Ok", "Login updated");
         }

@@ -2,6 +2,7 @@
 using Application.DTOs.Product;
 using Application.Features.Product.Requests.Commands;
 using Application.Features.Product.Requests.Queries;
+using Application.Models.Response;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -30,7 +31,7 @@ namespace ProductAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductListDto>>> Get()
         {
-            var result = await _mediator.Send(new GetProducListtDtoRequest());
+            Response<IEnumerable<ProductListDto>> result = await _mediator.Send(new GetProducListtDtoRequest());
             return result.GetActionResult();
         }
 
@@ -39,7 +40,7 @@ namespace ProductAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> Get(Guid id)
         {
-            var result = await _mediator.Send(new GetProductDtoRequest() { Id = id });
+            Response<ProductDto> result = await _mediator.Send(new GetProductDtoRequest() { Id = id });
             return result.GetActionResult();
         }
 
@@ -53,7 +54,7 @@ namespace ProductAPI.Controllers
                 createProductDto.ProducerId = User.GetUserId();
             }
 
-            var result = await _mediator.Send(new CreateProductCommand() { CreateProductDto = createProductDto });
+            Response<Guid> result = await _mediator.Send(new CreateProductCommand() { CreateProductDto = createProductDto });
             return result.GetActionResult();
         }
 
@@ -62,7 +63,7 @@ namespace ProductAPI.Controllers
         [Authorize]
         public async Task<ActionResult<string>> Put([FromBody] UpdateProductDto updateProductDto)
         {
-            var productRequestResult = await _mediator.Send(new GetProductDtoRequest() { Id = updateProductDto.Id });
+            Response<ProductDto> productRequestResult = await _mediator.Send(new GetProductDtoRequest() { Id = updateProductDto.Id });
 
             if (productRequestResult.Success == false)
             {
@@ -95,7 +96,7 @@ namespace ProductAPI.Controllers
         [Authorize]
         public async Task<ActionResult<string>> Delete(Guid id)
         {
-            var productRequestResult = await _mediator.Send(new GetProductDtoRequest() { Id = id });
+            Response<ProductDto> productRequestResult = await _mediator.Send(new GetProductDtoRequest() { Id = id });
 
             if (productRequestResult.Success == false)
             {
