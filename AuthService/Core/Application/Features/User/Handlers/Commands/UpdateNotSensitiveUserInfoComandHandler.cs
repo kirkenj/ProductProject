@@ -19,14 +19,14 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(UpdateNotSensitiveUserInfoComand request, CancellationToken cancellationToken)
         {
-            Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserAddressDto.Id);
+            Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateNotSensetiveInfoDto.Id);
 
             if (user == null)
             {
-                return Response<string>.NotFoundResponse(nameof(request.UpdateUserAddressDto.Id), true);
+                return Response<string>.NotFoundResponse(nameof(request.UpdateNotSensetiveInfoDto.Id), true);
             }
 
-            _mapper.Map(request.UpdateUserAddressDto, user);
+            _mapper.Map(request.UpdateNotSensetiveInfoDto, user);
 
             await _userRepository.UpdateAsync(user);
 

@@ -2,6 +2,7 @@
 using Application.Contracts.Persistence;
 using Application.DTOs.User;
 using Application.Features.User.Requests.Queries;
+using Application.Models.CacheKeyGenerator;
 using Application.Models.Email;
 using Application.Models.Response;
 using Cache.Contracts;
@@ -69,7 +70,7 @@ namespace Application.Features.User.Handlers.Queries
                 throw new ApplicationException("Email was not sent"); 
             }
 
-            await _memoryCache.SetAsync(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, DateTimeOffset.UtcNow.AddHours(1));
+            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, DateTimeOffset.UtcNow.AddHours(1));
 
             return Response<string>.OkResponse("Check emails to get further details", string.Empty);
         }

@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.Persistence;
 using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
+using Application.Models.CacheKeyGenerator;
 using Application.Models.Email;
 using Application.Models.Response;
 using Cache.Contracts;
@@ -32,7 +33,7 @@ namespace Application.Features.User.Handlers.Commands
                 return Response<string>.BadRequestResponse(validationResult.Errors);
             }
 
-            EmailUpdateDetails? cachedDetailsValue = await _memoryCache.GetAsync<EmailUpdateDetails>(CacheKeyGenerator.CacheKeyGenerator.KeyForEmailChangeTokenCaching(request.ConfirmEmailChangeDto.Token));
+            EmailUpdateDetails? cachedDetailsValue = await _memoryCache.GetAsync<EmailUpdateDetails>(CacheKeyGenerator.KeyForEmailChangeTokenCaching(request.ConfirmEmailChangeDto.Token));
 
             if (cachedDetailsValue == null)
             {

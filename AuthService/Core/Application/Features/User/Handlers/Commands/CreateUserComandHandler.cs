@@ -3,6 +3,7 @@ using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
 using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
+using Application.Models.CacheKeyGenerator;
 using Application.Models.Response;
 using Application.Models.User;
 using AutoMapper;
@@ -56,7 +57,7 @@ namespace Application.Features.User.Handlers.Commands
 
             (this as IPasswordSettingHandler).SetPassword(password, user);
 
-            await _memoryCache.SetAsync(CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(1));
+            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(1));
 
             bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {

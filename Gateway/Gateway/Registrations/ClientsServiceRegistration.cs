@@ -10,8 +10,7 @@ namespace CustomGateway.Registrations
         {
             services.Configure<AuthClientSettings>(configuration.GetSection("AuthClientSettings"));
             services.Configure<ProductClientSettings>(configuration.GetSection("ProductClientSettings"));
-            //services.AddTransient((_) => new HttpClient());
-
+            
             services.AddHttpClient();
 
             services.AddScoped<IAuthApiClient, AuthApiClient>();

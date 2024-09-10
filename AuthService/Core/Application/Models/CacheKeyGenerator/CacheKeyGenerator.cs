@@ -1,4 +1,4 @@
-﻿namespace Application.Features.CacheKeyGenerator
+﻿namespace Application.Models.CacheKeyGenerator
 {
     public static class CacheKeyGenerator
     {

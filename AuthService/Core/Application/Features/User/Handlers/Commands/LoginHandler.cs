@@ -2,6 +2,7 @@
 using Application.Contracts.Persistence;
 using Application.DTOs.User;
 using Application.Features.User.Requests.Queries;
+using Application.Models.CacheKeyGenerator;
 using Application.Models.Response;
 using Application.Models.User;
 using AutoMapper;
@@ -37,7 +38,7 @@ namespace Application.Features.User.Handlers.Commands
         public async Task<Response<LoginResult>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             string loginEmail = request.LoginDto.Email;
-            string cacheKey = CacheKeyGenerator.CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
+            string cacheKey = CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
             Domain.Models.User? cachedUserValue = await _memoryCache.GetAsync<Domain.Models.User>(cacheKey);
 
             bool isRegistration = cachedUserValue != null;
