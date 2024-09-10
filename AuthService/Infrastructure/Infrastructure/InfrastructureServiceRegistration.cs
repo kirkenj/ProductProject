@@ -1,6 +1,5 @@
 ﻿using Application.Contracts.Infrastructure;
-using Application.Models.Hash;
-using Application.Models.Jwt;
+using Infrastructure.HashProvider;
 using Cache.Contracts;
 using Cache.Models;
 using EmailSender.Contracts;

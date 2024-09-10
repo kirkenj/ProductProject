@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Infrastructure;
-using Application.Models.Hash;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;

@@ -1,4 +1,4 @@
-﻿namespace Application.Models.Hash
+﻿namespace Infrastructure.HashProvider
 {
     public class HashProviderSettings
     {
