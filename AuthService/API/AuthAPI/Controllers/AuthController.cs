@@ -18,7 +18,7 @@ namespace AuthAPI.Controllers
         private readonly IMediator _mediator;
         private readonly ITokenTracker<Guid> _tokenTracker;
 
-        public AuthController(IMediator mediator, TokenTracker<Guid> tokenTracker)
+        public AuthController(IMediator mediator, ITokenTracker<Guid> tokenTracker)
         {
             _mediator = mediator;
             _tokenTracker = tokenTracker;
