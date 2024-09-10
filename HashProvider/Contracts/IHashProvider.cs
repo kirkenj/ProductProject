@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Application.Contracts.Infrastructure
+namespace HashProvider.Contracts
 {
     public interface IHashProvider
     {

@@ -1,4 +1,4 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using HashProvider.Contracts;
 
 namespace AuthAPI.Contracts
 {

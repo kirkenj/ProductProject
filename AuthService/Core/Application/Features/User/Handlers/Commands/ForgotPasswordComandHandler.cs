@@ -6,6 +6,7 @@ using Application.Models.User;
 using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using HashProvider.Contracts;
 using MediatR;
 
 

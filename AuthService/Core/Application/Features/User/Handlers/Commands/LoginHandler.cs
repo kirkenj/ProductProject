@@ -8,6 +8,7 @@ using AutoMapper;
 using Cache.Contracts;
 using CustomResponse;
 using EmailSender.Contracts;
+using HashProvider.Contracts;
 using MediatR;
 using System.Text;
 

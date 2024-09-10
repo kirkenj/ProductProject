@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System.Security.Cryptography;
+using Clients.AuthApi;
+using HashProvider.Contracts;
+using HashProvider.Models;
 
-namespace Clients.AuthApi.AuthApiIStokenValidClient
+namespace Clients.AuthClientService
 {
     public interface ITokenValidationClient
     {
@@ -11,8 +13,7 @@ namespace Clients.AuthApi.AuthApiIStokenValidClient
 
     public class TokenValidationClient : AuthApiClient, ITokenValidationClient
     {
-        private static HashAlgorithm? _hashAlgorithm;
-        private static System.Text.Encoding? _hashEncoding;
+        private static IHashProvider? HashProvider;
 
         public TokenValidationClient(IOptions<AuthClientSettings> baseUrl, IHttpClientFactory httpClient, IHttpContextAccessor contextAccessor) : base(baseUrl, httpClient.CreateClient(nameof(ITokenValidationClient)), contextAccessor)
         {
@@ -27,29 +28,22 @@ namespace Clients.AuthApi.AuthApiIStokenValidClient
 
             Console.WriteLine($"{nameof(TokenValidationClient)}: Request to auth client for hashDefaults - Success.");
 
-            _hashAlgorithm = HashAlgorithm.Create(defaults.HashAlgorithmName)
-                ?? throw new ArgumentException($"Couldn't create {nameof(HashAlgorithm)} with given name: '{defaults.HashAlgorithmName}'");
-
-            _hashEncoding = System.Text.Encoding.GetEncoding(defaults.EncodingName);
+            HashProvider = new HashProvider.Models.HashProvider(new HashProviderSettings { EncodingName = defaults.EncodingName, HashAlgorithmName = defaults.HashAlgorithmName});
         }
 
         public async Task<bool> IsTokenValid(string token)
         {
-            if (_hashAlgorithm == null || _hashEncoding == null)
+            if (HashProvider == null)
             {
                 await UpdateEncodingAndHashAlgoritm();
             }
 
-            if (_hashAlgorithm == null || _hashEncoding == null)
+            if (HashProvider == null)
             {
                 throw new ApplicationException($"Couldn't get all information about token hashing");
             }
 
-            _hashAlgorithm.Initialize();
-
-            var tokenHashBytes = _hashAlgorithm.ComputeHash(_hashEncoding.GetBytes(token));
-
-            var tokenHash = _hashEncoding.GetString(tokenHashBytes);
+            var tokenHash = HashProvider.GetHash(token);
 
             return await IsTokenValidPOSTAsync(tokenHash);
         }

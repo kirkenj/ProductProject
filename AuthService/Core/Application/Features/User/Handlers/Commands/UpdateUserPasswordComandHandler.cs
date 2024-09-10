@@ -1,5 +1,5 @@
 ﻿using Application.Contracts.Application;
-using Application.Contracts.Infrastructure;
+using HashProvider.Contracts;
 using Application.Contracts.Persistence;
 using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;

@@ -1,5 +1,5 @@
-﻿using Application.Contracts.Infrastructure;
-using Domain.Models;
+﻿using Domain.Models;
+using HashProvider.Contracts;
 
 namespace Application.Contracts.Application
 {

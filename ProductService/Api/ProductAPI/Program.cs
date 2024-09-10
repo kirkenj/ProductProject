@@ -1,5 +1,5 @@
 using Application;
-using Infrastructure;
+using HashProvider;
 using Persistence;
 using ProductAPI.JwtAuthentication;
 using ProductAPI.Middlewares;

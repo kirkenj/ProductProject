@@ -5,6 +5,7 @@ using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using Application.Models.CacheKeyGenerator;
 using Application.Models.User;
+using HashProvider.Contracts;
 using AutoMapper;
 using Cache.Contracts;
 using CustomResponse;

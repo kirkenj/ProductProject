@@ -1,6 +1,6 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using HashProvider.Contracts;
 using AuthAPI.Contracts;
-using Infrastructure.HashProvider;
+using HashProvider.Models;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

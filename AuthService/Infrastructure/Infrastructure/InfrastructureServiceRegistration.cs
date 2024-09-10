@@ -3,11 +3,12 @@ using Cache.Contracts;
 using Cache.Models;
 using EmailSender.Contracts;
 using EmailSender.Models;
-using Infrastructure.HashProvider;
+using HashProvider.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using HashProvider.Contracts;
 
-namespace Infrastructure
+namespace HashProvider
 {
     public static class InfrastructureServiceRegistration
     {
@@ -28,7 +29,7 @@ namespace Infrastructure
             services.Configure<CustomCacheOptions>(configuration.GetSection("CustomCacheOptions"));
             services.AddScoped<ICustomMemoryCache, RedisAsMemoryCache>();
             services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
-            services.AddTransient<IHashProvider, HashProvider.HashProvider>();
+            services.AddTransient<IHashProvider, Models.HashProvider>();
             services.AddTransient<IPasswordGenerator, PasswordGenerator.PasswordGenerator>();
 
             return services;

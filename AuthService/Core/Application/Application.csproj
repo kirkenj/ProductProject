@@ -17,6 +17,7 @@
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Common\EmailSender\EmailSender.csproj" />
+	  <ProjectReference Include="..\..\..\HashProvider\HashProvider.csproj" />
 	  <ProjectReference Include="..\..\..\Response\CustomResponse.csproj" />
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>

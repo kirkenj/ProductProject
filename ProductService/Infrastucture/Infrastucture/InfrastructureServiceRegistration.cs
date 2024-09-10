@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Infrastructure
+namespace HashProvider
 {
     public static class InfrastructureServiceRegistration
     {

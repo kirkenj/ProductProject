@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Constants\Constants.csproj" />
     <ProjectReference Include="..\..\..\Extensions\Extensions.csproj" />
+    <ProjectReference Include="..\..\..\HashProvider\HashProvider.csproj" />
     <ProjectReference Include="..\..\Core\Application\Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Persistence\Persistence.csproj" />

@@ -3,7 +3,7 @@ using AuthAPI.JwtAuthentication;
 using AuthAPI.Middlewares;
 using AuthAPI.Registrations;
 using Constants;
-using Infrastructure;
+using HashProvider;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);

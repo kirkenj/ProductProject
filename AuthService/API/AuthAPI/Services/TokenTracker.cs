@@ -1,4 +1,4 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using HashProvider.Contracts;
 using AuthAPI.Contracts;
 using AuthAPI.Models.TokenTracker;
 using Cache.Contracts;

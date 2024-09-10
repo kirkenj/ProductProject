@@ -1,26 +1,29 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using HashProvider.Contracts;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Infrastructure.HashProvider
+namespace HashProvider.Models
 {
     public class HashProvider : IHashProvider
     {
         private string _hashAlgorithmName;
         private HashAlgorithm _hashFunction;
 
-
-        public HashProvider(IOptions<HashProviderSettings> options)
+        public HashProvider(IOptions<HashProviderSettings> options) : this(options?.Value ?? throw new ArgumentNullException(nameof(options)))
         {
-            if (options.Value == null || options == null)
+        }
+
+        public HashProvider(HashProviderSettings options)
+        {
+            if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
 
-            _hashFunction = HashAlgorithm.Create(options.Value.HashAlgorithmName) ?? throw new ArgumentException(nameof(options.Value.HashAlgorithmName));
-            _hashAlgorithmName = options.Value.HashAlgorithmName;
-            Encoding = Encoding.GetEncoding(options.Value.EncodingName);
+            _hashFunction = HashAlgorithm.Create(options.HashAlgorithmName) ?? throw new ArgumentException(nameof(options.HashAlgorithmName));
+            _hashAlgorithmName = options.HashAlgorithmName;
+            Encoding = Encoding.GetEncoding(options.EncodingName);
         }
 
         public string HashAlgorithmName

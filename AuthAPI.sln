@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions", "Extensions\Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Constants", "Constants\Constants.csproj", "{4CF45C77-54EF-4C39-89FF-51A2D2E8CA61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashProvider", "HashProvider\HashProvider.csproj", "{ADCE94D8-05B2-4A07-A856-5BA2702B9021}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +147,10 @@ Global
 		{4CF45C77-54EF-4C39-89FF-51A2D2E8CA61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CF45C77-54EF-4C39-89FF-51A2D2E8CA61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CF45C77-54EF-4C39-89FF-51A2D2E8CA61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADCE94D8-05B2-4A07-A856-5BA2702B9021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADCE94D8-05B2-4A07-A856-5BA2702B9021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADCE94D8-05B2-4A07-A856-5BA2702B9021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADCE94D8-05B2-4A07-A856-5BA2702B9021}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -176,6 +182,7 @@ Global
 		{41A159D4-55EC-4519-892E-32D33AF5F402} = {0E526E07-3537-4029-B347-7B33D1A03540}
 		{B818D48D-B0FE-45BF-B787-150447DA3778} = {0E526E07-3537-4029-B347-7B33D1A03540}
 		{4CF45C77-54EF-4C39-89FF-51A2D2E8CA61} = {0E526E07-3537-4029-B347-7B33D1A03540}
+		{ADCE94D8-05B2-4A07-A856-5BA2702B9021} = {0E526E07-3537-4029-B347-7B33D1A03540}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2DB40AF-E389-4793-9CD8-CCD99624132A}

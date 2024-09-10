@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Common\EmailSender\EmailSender.csproj" />
+	  <ProjectReference Include="..\..\..\HashProvider\HashProvider.csproj" />
 	  <ProjectReference Include="..\..\Core\Application\Application.csproj" />
 	</ItemGroup>
 </Project>

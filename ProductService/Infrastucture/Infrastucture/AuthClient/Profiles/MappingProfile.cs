@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Infrastructure.AuthClient.Profiles
+namespace HashProvider.AuthClient.Profiles
 {
     public class MappingProfile : Profile
     {

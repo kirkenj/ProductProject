@@ -1,5 +1,5 @@
 ﻿using Clients.AuthApi;
-using Clients.AuthApi.AuthApiIStokenValidClient;
+using Clients.AuthClientService;
 using Clients.ProductApi;
 
 namespace CustomGateway.Registrations
