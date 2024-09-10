@@ -65,9 +65,9 @@ namespace Application.Features.User.Handlers.Queries
                 Body = $"Confirmation token: '{token}'"
             });
 
-            if (isEmailSent == false) 
-            { 
-                throw new ApplicationException("Email was not sent"); 
+            if (isEmailSent == false)
+            {
+                throw new ApplicationException("Email was not sent");
             }
 
             await _memoryCache.SetAsync(CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, DateTimeOffset.UtcNow.AddHours(1));

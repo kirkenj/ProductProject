@@ -1,12 +1,12 @@
 ﻿using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
+using Application.DTOs.UserClient;
 using Application.Features.Product.Requests.Commands;
-using CustomResponse;
 using AutoMapper;
+using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;
-using Application.DTOs.UserClient;
 
 namespace Application.Features.Product.Handlers.Commands
 {

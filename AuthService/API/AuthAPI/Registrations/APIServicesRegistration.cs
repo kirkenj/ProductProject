@@ -1,6 +1,7 @@
 ﻿using AuthAPI.Contracts;
 using AuthAPI.Models.Jwt;
 using AuthAPI.Models.TokenTracker;
+using AuthAPI.Services;
 
 
 namespace AuthAPI.JwtAuthentication

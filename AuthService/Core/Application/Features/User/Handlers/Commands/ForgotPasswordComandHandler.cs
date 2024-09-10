@@ -2,8 +2,8 @@
 using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
 using Application.Features.User.Requests.Commands;
-using CustomResponse;
 using Application.Models.User;
+using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;

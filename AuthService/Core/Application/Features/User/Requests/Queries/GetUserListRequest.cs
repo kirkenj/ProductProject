@@ -1,6 +1,6 @@
 ﻿using Application.DTOs.User;
-using CustomResponse;
 using Application.Models.User;
+using CustomResponse;
 using MediatR;
 
 namespace Application.Features.User.Requests.Queries

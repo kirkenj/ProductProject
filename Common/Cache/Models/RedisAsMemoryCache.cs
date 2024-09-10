@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;
 using Microsoft.Extensions.Options;
-using System.Text;
 using System.Text.Json;
 
 namespace Cache.Models

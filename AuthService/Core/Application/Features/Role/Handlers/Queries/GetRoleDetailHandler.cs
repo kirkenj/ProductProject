@@ -2,8 +2,8 @@
 using Application.DTOs.Role;
 using Application.Features.User.Requests.Queries;
 using AutoMapper;
-using MediatR;
 using CustomResponse;
+using MediatR;
 
 namespace Application.Features.User.Handlers.Queries
 {

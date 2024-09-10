@@ -2,13 +2,13 @@
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using Application.Models.User;
-using AuthAPI.FIlters;
 using AuthAPI.Contracts;
+using AuthAPI.FIlters;
+using Constants;
+using CustomResponse;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CustomResponse;
-using Constants;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

@@ -2,8 +2,8 @@
 using Application.Contracts.Persistence;
 using Application.DTOs.Product.Validators;
 using Application.Features.Product.Requests.Commands;
-using CustomResponse;
 using AutoMapper;
+using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;

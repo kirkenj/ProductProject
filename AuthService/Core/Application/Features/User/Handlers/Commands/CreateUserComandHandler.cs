@@ -68,7 +68,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (isEmailSent == false)
             {
-               throw new ApplicationException("User created, but email was not sent");
+                throw new ApplicationException("User created, but email was not sent");
             }
 
             return Response<Guid>.OkResponse(user.Id, $"Created user's id: {user.Id}. Further details sent on email");

@@ -1,9 +1,9 @@
 ﻿using Application.Contracts.Infrastructure;
-using Infrastructure.HashProvider;
 using Cache.Contracts;
 using Cache.Models;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using Infrastructure.HashProvider;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

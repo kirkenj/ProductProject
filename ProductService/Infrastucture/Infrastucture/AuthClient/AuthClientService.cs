@@ -110,7 +110,7 @@ namespace Infrastucture.AuthClient
                     result = _mapper.Map<Application.DTOs.UserClient.UserDto>(await _authClient.UsersGETAsync(userId));
                 }
 
-                await  _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000));
+                await _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000));
 
                 Console.WriteLine("Success");
                 return new ClientResponse<Application.DTOs.UserClient.UserDto?> { Result = result, Success = true };

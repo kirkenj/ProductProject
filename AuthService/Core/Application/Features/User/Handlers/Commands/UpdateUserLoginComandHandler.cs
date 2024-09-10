@@ -45,7 +45,7 @@ namespace Application.Features.User.Handlers.Commands
             if (userToUpdate == null)
             {
                 return Response<string>.NotFoundResponse(nameof(userToUpdate.Id), true);
-            }      
+            }
 
             userToUpdate.Login = newLogin;
 

@@ -33,7 +33,7 @@ namespace Repository.Models
             _dbSet.Add(obj);
             await _saveChangesAsync(CancellationToken.None);
             var cacheKey = CacheKeyPrefix + obj.Id;
-            _ = Task.Run(()=> _customMemoryCache.SetAsync(cacheKey, obj, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
+            _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, obj, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
             Console.WriteLine($"Set key {cacheKey}");
         }
 

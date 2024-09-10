@@ -44,7 +44,7 @@ namespace CustomResponse
             StatusCode = HttpStatusCode.OK
         };
 
-        public  ActionResult GetActionResult() =>
+        public ActionResult GetActionResult() =>
         new ObjectResult(Success ? Result : Message)
         {
             StatusCode = (int)StatusCode

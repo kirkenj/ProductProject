@@ -1,13 +1,13 @@
 ﻿using Application.DTOs.User;
-using CustomResponse;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
-using Extensions.ClaimsPrincipalExtensions;
 using AuthAPI.Contracts;
+using AuthAPI.Models.Requests;
+using CustomResponse;
+using Extensions.ClaimsPrincipalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using AuthAPI.Models.Requests;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -34,9 +34,9 @@ namespace AuthAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetAccountDetails()
         {
-            Response<UserDto> result = await _mediator.Send(new GetUserDtoRequest() 
-            { 
-                Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id") 
+            Response<UserDto> result = await _mediator.Send(new GetUserDtoRequest()
+            {
+                Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id")
             });
             return result.GetActionResult();
         }

@@ -2,14 +2,14 @@
 using Application.DTOs.Product;
 using Application.Features.Product.Requests.Commands;
 using Application.Features.Product.Requests.Queries;
-using CustomResponse;
+using Application.Models.Product;
 using AutoMapper;
+using Constants;
+using CustomResponse;
+using Extensions.ClaimsPrincipalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Extensions.ClaimsPrincipalExtensions;
-using Application.Models.Product;
-using Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,7 +30,7 @@ namespace ProductAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductListDto>>> Get([FromQuery] ProductFilter productFilter, int? page, int? pageSize)
         {
-            Response<IEnumerable<ProductListDto>> result = await _mediator.Send(new GetProducListtDtoRequest() { ProductFilter = productFilter, Page = page, PageSize = pageSize});
+            Response<IEnumerable<ProductListDto>> result = await _mediator.Send(new GetProducListtDtoRequest() { ProductFilter = productFilter, Page = page, PageSize = pageSize });
             return result.GetActionResult();
         }
 

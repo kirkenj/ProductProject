@@ -27,13 +27,13 @@ namespace Clients.AuthApi.AuthApiIStokenValidClient
 
             Console.WriteLine($"{nameof(TokenValidationClient)}: Request to auth client for hashDefaults - Success.");
 
-            _hashAlgorithm = HashAlgorithm.Create(defaults.HashAlgorithmName) 
+            _hashAlgorithm = HashAlgorithm.Create(defaults.HashAlgorithmName)
                 ?? throw new ArgumentException($"Couldn't create {nameof(HashAlgorithm)} with given name: '{defaults.HashAlgorithmName}'");
 
             _hashEncoding = System.Text.Encoding.GetEncoding(defaults.EncodingName);
         }
 
-        public async Task<bool> IsTokenValid(string token) 
+        public async Task<bool> IsTokenValid(string token)
         {
             if (_hashAlgorithm == null || _hashEncoding == null)
             {

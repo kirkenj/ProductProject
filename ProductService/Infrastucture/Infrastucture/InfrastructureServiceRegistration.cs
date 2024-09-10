@@ -22,7 +22,7 @@ namespace Infrastructure
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            
+
             services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
 
 

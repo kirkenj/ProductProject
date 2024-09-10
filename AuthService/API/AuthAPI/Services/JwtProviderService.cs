@@ -1,12 +1,13 @@
 ﻿using Application.DTOs.User;
 using AuthAPI.Contracts;
+using AuthAPI.Models.Jwt;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace AuthAPI.Models.Jwt
+namespace AuthAPI.Services
 {
     public class JwtProviderService : IJwtProviderService
     {

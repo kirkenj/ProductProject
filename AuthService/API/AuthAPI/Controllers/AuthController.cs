@@ -1,12 +1,12 @@
 ﻿using Application.DTOs.User;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
-using CustomResponse;
 using AuthAPI.Contracts;
+using AuthAPI.Models.Requests;
+using CustomResponse;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using AuthAPI.Models.Requests;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -59,7 +59,7 @@ namespace AuthAPI.Controllers
                 response.Result.Id,
                 DateTime.UtcNow);
 
-            return Ok(new LoginResultModel { Token = token , UserId = user.Id });
+            return Ok(new LoginResultModel { Token = token, UserId = user.Id });
         }
 
         [HttpPost("ForgotPassword")]
