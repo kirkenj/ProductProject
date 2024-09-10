@@ -46,23 +46,8 @@ namespace Repository.Models
             Console.WriteLine($"Removed the key {cacheKey}");
         }
 
-        public virtual async Task<bool> ExistsAsync(TIdType id)
-        {
-            Console.Write($"Got request for {typeof(T)}  with id = '{id}'. ");
-            var cacheKey = CacheKeyPrefix + id;
-            var cacheResult = _customMemoryCache.GetAsync<T>(cacheKey);
-            if (cacheResult != null)
-            {
-                Console.WriteLine($"Found in it cache.\nReset the key {cacheKey}");
-                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, cacheResult, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
-                return true;
-            }
 
-            Console.WriteLine("Sending request to database.");
-
-            return await _dbSet.AnyAsync(o => o.Id.Equals(id));
-        }
-        public virtual async Task<IReadOnlyCollection<T>> GetAllAsync() => await _dbSet.ToArrayAsync();
+        public virtual async Task<IReadOnlyCollection<T>> GetAllAsync() => await _dbSet.AsNoTracking().ToArrayAsync();
 
         protected IQueryable<T> GetPageContent(IQueryable<T> query, int? page = default, int? pageSize = default)
         {
@@ -76,7 +61,7 @@ namespace Repository.Models
             return query;
         }
 
-        public async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) => await GetPageContent(_dbSet, page, pageSize).ToArrayAsync();
+        public async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) => await GetPageContent(_dbSet, page, pageSize).AsNoTracking().ToArrayAsync();
 
         public virtual async Task<T?> GetAsync(TIdType id)
         {

@@ -34,7 +34,7 @@ namespace Application.Features.Product.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                return Response<Guid>.BadRequestResponse(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
+                return Response<Guid>.BadRequestResponse(validationResult.ToString());
             }
 
             Domain.Models.Product product = _mapper.Map<Domain.Models.Product>(request.CreateProductDto);

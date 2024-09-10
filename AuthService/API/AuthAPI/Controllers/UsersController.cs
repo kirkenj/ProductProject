@@ -110,5 +110,23 @@ namespace AuthAPI.Controllers
 
             return result.GetActionResult();
         }
+
+        [HttpPut("Role")]
+        [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
+        [Produces("text/plain")]
+        public async Task<ActionResult<string>> UpdateRole(UpdateUserRoleDTO request)
+        {
+            Response<string> result = await _mediator.Send(new UpdateUserRoleCommand
+            {
+                UpdateUserRoleDTO = request
+            });
+
+            if (result.Success)
+            {
+                await _tokenTracker.InvalidateUser(request.UserId, DateTime.UtcNow);
+            }
+
+            return result.GetActionResult();
+        }
     }
 }

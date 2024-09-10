@@ -35,7 +35,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                return Response<string>.BadRequestResponse(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
+                return Response<string>.BadRequestResponse(validationResult.ToString());
             }
 
             (this as IPasswordSettingHandler).SetPassword(request.UpdateUserPasswordDto.NewPassword, user);

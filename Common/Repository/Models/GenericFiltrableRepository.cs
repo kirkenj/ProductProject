@@ -17,8 +17,6 @@ namespace Repository.Models
 
         public virtual async Task<T?> GetAsync(TFilter filter) => await GetFilteredSet(_dbSet, filter).FirstOrDefaultAsync();
 
-        public virtual async Task<IReadOnlyCollection<T>> GetRangeAsync(TFilter filter) => await GetFilteredSet(_dbSet, filter).ToArrayAsync();
-
         public virtual async Task<IReadOnlyCollection<T>> GetPageContent(TFilter filter, int? page = default, int? pageSize = default) =>
             await GetPageContent(GetFilteredSet(_dbSet, filter), page, pageSize).ToArrayAsync();
     }

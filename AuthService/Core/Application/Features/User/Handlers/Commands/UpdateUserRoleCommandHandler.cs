@@ -25,7 +25,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                return Response<string>.BadRequestResponse(string.Join("; ", validationResult.Errors));
+                return Response<string>.BadRequestResponse(validationResult.ToString());
             }
 
             Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserRoleDTO.UserId);

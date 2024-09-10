@@ -46,7 +46,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                return Response<Guid>.BadRequestResponse(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+                return Response<Guid>.BadRequestResponse(validationResult.ToString());
             }
 
             Domain.Models.User user = _mapper.Map<Domain.Models.User>(request.CreateUserDto);

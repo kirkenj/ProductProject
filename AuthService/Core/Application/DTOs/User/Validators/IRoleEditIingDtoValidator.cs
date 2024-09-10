@@ -11,7 +11,8 @@ namespace Application.DTOs.User.Validators
             RuleFor(p => p.RoleID)
                 .MustAsync(async (id, cancellationToken) =>
                 {
-                    return await roleRepository.ExistsAsync(id);
+                    var role = await roleRepository.GetAsync(id);
+                    return role != null;
                 })
                 .WithMessage("{PropertyName} does not exist");
         }
