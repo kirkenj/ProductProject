@@ -1,4 +1,4 @@
-﻿using Application.Models.Response;
+﻿using CustomResponse;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthAPI.Extensions

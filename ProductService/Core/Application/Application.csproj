@@ -18,6 +18,7 @@
 	  <ProjectReference Include="..\..\..\Clients\Clients.csproj" />
 	  <ProjectReference Include="..\..\..\Common\EmailSender\EmailSender.csproj" />
 	  <ProjectReference Include="..\..\..\Common\Repository\Repository.csproj" />
+	  <ProjectReference Include="..\..\..\Response\CustomResponse.csproj" />
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
   <ItemGroup>

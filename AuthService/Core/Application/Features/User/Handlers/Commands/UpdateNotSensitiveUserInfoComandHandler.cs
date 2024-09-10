@@ -1,7 +1,7 @@
 ﻿using Application.Contracts.Persistence;
 using Application.Features.User.Requests.Commands;
-using Application.Models.Response;
 using AutoMapper;
+using CustomResponse;
 using MediatR;
 
 namespace Application.Features.User.Handlers.Commands

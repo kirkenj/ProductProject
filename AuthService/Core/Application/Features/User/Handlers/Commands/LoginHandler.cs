@@ -3,14 +3,13 @@ using Application.Contracts.Persistence;
 using Application.DTOs.User;
 using Application.Features.User.Requests.Queries;
 using Application.Models.CacheKeyGenerator;
-using Application.Models.Response;
+using CustomResponse;
 using Application.Models.User;
 using AutoMapper;
 using Cache.Contracts;
 using EmailSender.Contracts;
 using MediatR;
 using System.Text;
-using System.Threading;
 
 namespace Application.Features.User.Handlers.Commands
 {

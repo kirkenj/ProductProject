@@ -55,7 +55,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{BD71
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomGateway", "Gateway\Gateway\CustomGateway.csproj", "{4657C1CD-3AC6-4385-BE92-7A419862C5E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clients", "Clients\Clients.csproj", "{A87FD378-B0B8-4319-A245-57CA72457FAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clients", "Clients\Clients.csproj", "{A87FD378-B0B8-4319-A245-57CA72457FAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomResponse", "Response\CustomResponse.csproj", "{41A159D4-55EC-4519-892E-32D33AF5F402}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,6 +129,10 @@ Global
 		{A87FD378-B0B8-4319-A245-57CA72457FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A87FD378-B0B8-4319-A245-57CA72457FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A87FD378-B0B8-4319-A245-57CA72457FAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41A159D4-55EC-4519-892E-32D33AF5F402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41A159D4-55EC-4519-892E-32D33AF5F402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41A159D4-55EC-4519-892E-32D33AF5F402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41A159D4-55EC-4519-892E-32D33AF5F402}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -155,6 +161,7 @@ Global
 		{5AC16D0F-5C31-4375-A9DD-F0CC33F1D4D5} = {0E526E07-3537-4029-B347-7B33D1A03540}
 		{4657C1CD-3AC6-4385-BE92-7A419862C5E9} = {BD710F14-1071-41DD-B8FE-C5130A34CF02}
 		{A87FD378-B0B8-4319-A245-57CA72457FAE} = {0E526E07-3537-4029-B347-7B33D1A03540}
+		{41A159D4-55EC-4519-892E-32D33AF5F402} = {0E526E07-3537-4029-B347-7B33D1A03540}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2DB40AF-E389-4793-9CD8-CCD99624132A}

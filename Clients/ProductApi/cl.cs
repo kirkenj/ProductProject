@@ -18,7 +18,7 @@
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable 8765 // Disable "CS8765 Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes)."
 
-namespace Clients.ProductApi.meow
+namespace Clients.ProductApi
 {
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
@@ -29,12 +29,12 @@ namespace Clients.ProductApi.meow
     {
         /// <returns>Success</returns>
         /// <exception cref="ProductApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ProductApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ProductApiException">A server side error occurred.</exception>
@@ -85,9 +85,9 @@ namespace Clients.ProductApi.meow
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public ProductApiClient(IOptions<ProductClientSettings> baseUrl, HttpClient httpClient, IHttpContextAccessor contextAccessor)
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = baseUrl.Value.Uri;
             _httpClient = httpClient;
@@ -136,15 +136,15 @@ namespace Clients.ProductApi.meow
 
         /// <returns>Success</returns>
         /// <exception cref="ProductApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize)
         {
-            return ProductAllAsync(System.Threading.CancellationToken.None);
+            return ProductAllAsync(ids, namePart, descriptionPart, priceStart, priceEnd, isAvailable, producerIds, creationDateStart, creationDateEnd, page, pageSize, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ProductApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -159,6 +159,52 @@ namespace Clients.ProductApi.meow
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "api/Product"
                     urlBuilder_.Append("api/Product");
+                    urlBuilder_.Append('?');
+                    if (ids != null)
+                    {
+                        foreach (var item_ in ids) { urlBuilder_.Append(System.Uri.EscapeDataString("Ids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (namePart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("NamePart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(namePart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (descriptionPart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("DescriptionPart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(descriptionPart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (priceStart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("PriceStart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(priceStart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (priceEnd != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("PriceEnd")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(priceEnd, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (isAvailable != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("IsAvailable")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(isAvailable, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (producerIds != null)
+                    {
+                        foreach (var item_ in producerIds) { urlBuilder_.Append(System.Uri.EscapeDataString("ProducerIds")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (creationDateStart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("CreationDateStart")).Append('=').Append(System.Uri.EscapeDataString(creationDateStart.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (creationDateEnd != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("CreationDateEnd")).Append('=').Append(System.Uri.EscapeDataString(creationDateEnd.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (page != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("page")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(page, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -765,11 +811,11 @@ namespace Clients.ProductApi.meow
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ProductApiException<TResult> : ProductApiException
+    public partial class ApiException<TResult> : ProductApiException
     {
         public TResult Result { get; private set; }
 
-        public ProductApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
+        public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
             : base(message, statusCode, response, headers, innerException)
         {
             Result = result;

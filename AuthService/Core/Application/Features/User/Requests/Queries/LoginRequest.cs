@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.User;
-using Application.Models.Response;
+using CustomResponse;
 using Application.Models.User;
 using MediatR;
 

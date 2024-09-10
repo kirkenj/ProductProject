@@ -1,7 +1,7 @@
 ﻿using Application.Contracts.Persistence;
 using Application.DTOs.Product;
 using Application.Features.Product.Requests.Queries;
-using Application.Models.Response;
+using CustomResponse;
 using AutoMapper;
 using MediatR;
 

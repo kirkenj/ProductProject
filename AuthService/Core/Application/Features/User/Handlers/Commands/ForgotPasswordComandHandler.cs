@@ -2,7 +2,7 @@
 using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
 using Application.Features.User.Requests.Commands;
-using Application.Models.Response;
+using CustomResponse;
 using Application.Models.User;
 using EmailSender.Contracts;
 using EmailSender.Models;

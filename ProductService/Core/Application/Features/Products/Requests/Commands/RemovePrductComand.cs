@@ -1,4 +1,4 @@
-﻿using Application.Models.Response;
+﻿using CustomResponse;
 using MediatR;
 
 namespace Application.Features.Product.Requests.Commands

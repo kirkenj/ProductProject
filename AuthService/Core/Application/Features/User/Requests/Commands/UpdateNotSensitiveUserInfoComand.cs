@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.User;
-using Application.Models.Response;
+using CustomResponse;
 using MediatR;
 
 namespace Application.Features.User.Requests.Commands

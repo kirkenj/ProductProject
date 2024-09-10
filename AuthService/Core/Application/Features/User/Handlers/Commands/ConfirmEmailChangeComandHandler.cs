@@ -3,8 +3,8 @@ using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using Application.Models.CacheKeyGenerator;
 using Application.Models.Email;
-using Application.Models.Response;
 using Cache.Contracts;
+using CustomResponse;
 using EmailSender.Contracts;
 using MediatR;
 
@@ -30,7 +30,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                return Response<string>.BadRequestResponse(validationResult.Errors);
+                return Response<string>.BadRequestResponse(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
             }
 
             EmailUpdateDetails? cachedDetailsValue = await _memoryCache.GetAsync<EmailUpdateDetails>(CacheKeyGenerator.KeyForEmailChangeTokenCaching(request.ConfirmEmailChangeDto.Token));

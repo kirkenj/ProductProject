@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.User;
-using Application.Models.Response;
+using CustomResponse;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using AuthAPI.Extensions;

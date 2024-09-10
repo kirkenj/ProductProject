@@ -2,13 +2,13 @@
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using Application.Models.User;
-using AuthAPI.Extensions;
 using AuthAPI.FIlters;
 using Infrastructure.TockenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Application.Models.Response;
+using CustomResponse;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,7 +36,7 @@ namespace AuthAPI.Controllers
                 filter.RoleIds = null;
             }
 
-            Response<List<UserListDto>> result = await _mediator.Send(new GetUserPagedFilteredListRequest() { UserFilter = filter, Page = page, PageSize = pageSize });
+            Response<List<UserListDto>> result = await _mediator.Send(new GetUserListRequest() { UserFilter = filter, Page = page, PageSize = pageSize });
             return result.GetActionResult();
         }
 

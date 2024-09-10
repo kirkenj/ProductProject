@@ -4,10 +4,10 @@ using Application.Contracts.Persistence;
 using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using Application.Models.CacheKeyGenerator;
-using Application.Models.Response;
 using Application.Models.User;
 using AutoMapper;
 using Cache.Contracts;
+using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;
@@ -45,7 +45,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                return Response<Guid>.BadRequestResponse(validationResult.Errors);
+                return Response<Guid>.BadRequestResponse(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
             }
 
             Domain.Models.User user = _mapper.Map<Domain.Models.User>(request.CreateUserDto);

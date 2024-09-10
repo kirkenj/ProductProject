@@ -31,7 +31,7 @@ namespace CustomGateway.Controllers.Product
 
     public partial class ProductServiceController : Microsoft.AspNetCore.Mvc.ControllerBase
     {
-        private Clients.ProductApi.IProductApiClient _implementation;
+        private IProductApiClient _implementation;
 
         public ProductServiceController(IProductApiClient implementation)
         {
@@ -42,8 +42,8 @@ namespace CustomGateway.Controllers.Product
         [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Product", Name = "ProductAll")]
         public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAll()
         {
-
-            return await _implementation.ProductAllAsync();
+            var res = await _implementation.ProductAllAsync(null, null, null, null, null, null, null, null, null, null, null);
+            return res;
         }
 
         /// <returns>Success</returns>

@@ -1,11 +1,11 @@
 ﻿using Application.DTOs.User;
-using Application.Models.Response;
+using CustomResponse;
 using Application.Models.User;
 using MediatR;
 
 namespace Application.Features.User.Requests.Queries
 {
-    public class GetUserPagedFilteredListRequest : IRequest<Response<List<UserListDto>>>
+    public class GetUserListRequest : IRequest<Response<List<UserListDto>>>
     {
         public UserFilter UserFilter { get; set; } = null!;
         public int? PageSize { get; set; }

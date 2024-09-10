@@ -1,9 +1,8 @@
 ﻿using Application.DTOs.Role;
 using Application.Features.User.Requests.Queries;
-using AuthAPI.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Application.Models.Response;
+using CustomResponse;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

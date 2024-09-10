@@ -4,8 +4,8 @@ using Application.DTOs.User;
 using Application.Features.User.Requests.Queries;
 using Application.Models.CacheKeyGenerator;
 using Application.Models.Email;
-using Application.Models.Response;
 using Cache.Contracts;
+using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;
@@ -35,7 +35,7 @@ namespace Application.Features.User.Handlers.Queries
 
             if (validationResult.IsValid == false)
             {
-                return Response<string>.BadRequestResponse(validationResult.Errors);
+                return Response<string>.BadRequestResponse(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
             }
 
             string newEmail = request.UpdateUserEmailDto.Email;

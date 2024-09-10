@@ -1,7 +1,8 @@
-﻿using FluentValidation.Results;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Application.Models.Response
+
+namespace CustomResponse
 {
     public class Response<T>
     {
@@ -14,14 +15,6 @@ namespace Application.Models.Response
         public static Response<T> BadRequestResponse(string message) => new()
         {
             Message = message,
-            Success = false,
-            StatusCode = HttpStatusCode.BadRequest,
-            Result = default
-        };
-
-        public static Response<T> BadRequestResponse(IEnumerable<ValidationFailure> validationFailures) => new()
-        {
-            Message = string.Join(";", validationFailures.Select(e => e.ErrorMessage)),
             Success = false,
             StatusCode = HttpStatusCode.BadRequest,
             Result = default
@@ -49,6 +42,12 @@ namespace Application.Models.Response
             Message = message,
             Result = result,
             StatusCode = HttpStatusCode.OK
+        };
+
+        public  ActionResult GetActionResult() =>
+        new ObjectResult(Success ? Result : Message)
+        {
+            StatusCode = (int)StatusCode
         };
     }
 }

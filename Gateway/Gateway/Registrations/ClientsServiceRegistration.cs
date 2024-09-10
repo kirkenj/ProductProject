@@ -14,7 +14,7 @@ namespace CustomGateway.Registrations
             services.AddHttpClient();
 
             services.AddScoped<IAuthApiClient, AuthApiClient>();
-            services.AddScoped<IAuthApiClient, AuthApiClient>();
+            services.AddScoped<IProductApiClient, ProductApiClient>();
             services.AddScoped<ITokenValidationClient, TokenValidationClient>();
 
             return services;

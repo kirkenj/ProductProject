@@ -2,8 +2,7 @@
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using Application.Models.User;
-using Application.Models.Response;
-using AuthAPI.Extensions;
+using CustomResponse; 
 using Infrastructure.TockenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

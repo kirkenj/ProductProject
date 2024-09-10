@@ -2,7 +2,7 @@
 using Application.Contracts.Persistence;
 using Application.DTOs.Product.Validators;
 using Application.Features.Product.Requests.Commands;
-using Application.Models.Response;
+using CustomResponse;
 using AutoMapper;
 using EmailSender.Contracts;
 using EmailSender.Models;
@@ -34,7 +34,7 @@ namespace Application.Features.Product.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                return Response<Guid>.BadRequestResponse(validationResult.Errors);
+                return Response<Guid>.BadRequestResponse(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
             }
 
             Domain.Models.Product product = _mapper.Map<Domain.Models.Product>(request.CreateProductDto);

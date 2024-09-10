@@ -1,9 +1,9 @@
 ﻿using Application.Contracts.Persistence;
 using Application.DTOs.Role;
 using Application.Features.User.Requests.Queries;
-using Application.Models.Response;
 using AutoMapper;
 using MediatR;
+using CustomResponse;
 
 namespace Application.Features.User.Handlers.Queries
 {

@@ -1,7 +1,7 @@
 ﻿using Application.Contracts.Persistence;
 using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
-using Application.Models.Response;
+using CustomResponse;
 using MediatR;
 
 namespace Application.Features.User.Handlers.Commands
@@ -25,7 +25,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                return Response<string>.BadRequestResponse(validationResult.Errors);
+                return Response<string>.BadRequestResponse(string.Join("; ", validationResult.Errors));
             }
 
             Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserRoleDTO.UserId);
