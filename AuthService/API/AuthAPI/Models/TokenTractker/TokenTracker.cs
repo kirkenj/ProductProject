@@ -1,9 +1,9 @@
-﻿using Application.Contracts.Infrastructure;
-using Application.Models.TokenTracker;
+﻿using Microsoft.Extensions.Options;
 using Cache.Contracts;
-using Microsoft.Extensions.Options;
+using AuthAPI.Contracts;
+using Application.Contracts.Infrastructure;
 
-namespace Infrastructure.TokenTractker
+namespace AuthAPI.Models.TokenTracker
 {
     public class TokenTracker<TUserIdType> : ITokenTracker<TUserIdType> where TUserIdType : struct
     {

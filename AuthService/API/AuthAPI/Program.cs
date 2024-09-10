@@ -1,6 +1,7 @@
 using Application;
 using AuthAPI.JwtAuthentication;
 using AuthAPI.Middlewares;
+using AuthAPI.Registrations;
 using Constants;
 using Infrastructure;
 using Persistence;
@@ -8,6 +9,9 @@ using Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
+builder.Services.ConfigureApiServices(builder.Configuration);
 builder.Services.ConfigurePersistenceServices(builder.Configuration);
 builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 builder.Services.ConfigureApplicationServices(builder.Configuration);

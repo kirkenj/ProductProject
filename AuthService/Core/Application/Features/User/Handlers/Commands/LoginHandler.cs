@@ -13,28 +13,26 @@ using System.Text;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class LoginHandler : IRequestHandler<LoginRequest, Response<LoginResultDto>>
+    public class LoginHandler : IRequestHandler<LoginRequest, Response<UserDto>>
     {
         private readonly IUserRepository _userRepository;
         private readonly IHashProvider _hashProvider;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
-        private readonly IJwtProviderService _jwtService;
         private readonly ICustomMemoryCache _memoryCache;
         private readonly IRoleRepository _roleRepository;
 
-        public LoginHandler(IUserRepository userRepository, IRoleRepository roleRepository, IHashProvider hashProvider, IMapper mapper, ICustomMemoryCache memoryCache, IEmailSender emailSender, IJwtProviderService jwtService)
+        public LoginHandler(IUserRepository userRepository, IRoleRepository roleRepository, IHashProvider hashProvider, IMapper mapper, ICustomMemoryCache memoryCache, IEmailSender emailSender)
         {
             _userRepository = userRepository;
             _hashProvider = hashProvider;
             _roleRepository = roleRepository;
             _mapper = mapper;
             _emailSender = emailSender;
-            _jwtService = jwtService;
             _memoryCache = memoryCache;
         }
 
-        public async Task<Response<LoginResultDto>> Handle(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<Response<UserDto>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             string loginEmail = request.LoginDto.Email;
             string cacheKey = CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
@@ -48,7 +46,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (userToHandle == null)
             {
-                return Response<LoginResultDto>.NotFoundResponse(nameof(loginEmail), true);
+                return Response<UserDto>.NotFoundResponse(nameof(loginEmail), true);
             }
 
             _hashProvider.HashAlgorithmName = userToHandle.HashAlgorithm;
@@ -58,7 +56,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (loginPasswordHash != userToHandle.PasswordHash)
             {
-                return Response<LoginResultDto>.BadRequestResponse("Wrong password");
+                return Response<UserDto>.BadRequestResponse("Wrong password");
             }
 
             if (isRegistration == true)
@@ -69,13 +67,7 @@ namespace Application.Features.User.Handlers.Commands
 
             UserDto userDto = _mapper.Map<UserDto>(userToHandle);
 
-            LoginResultDto result = new()
-            {
-                Token = _jwtService.GetToken(userDto),
-                UserId = userToHandle.Id
-            };
-
-            return Response<LoginResultDto>.OkResponse(result, "Success");
+            return Response<UserDto>.OkResponse(userDto, "Success");
         }
 
         private async Task RegisterUser(Domain.Models.User userToHandle)

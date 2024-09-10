@@ -3,12 +3,11 @@ using CustomResponse;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using Extensions.ClaimsPrincipalExtensions;
-using AuthAPI.Models;
-using Infrastructure.TokenTractker;
+using AuthAPI.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Domain.Models;
+using AuthAPI.Models.Requests;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -63,7 +62,7 @@ namespace AuthAPI.Controllers
 
         [HttpPut("Password")]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> UpdatePassword(AuthorizedUserUpdatePassword request)
+        public async Task<ActionResult<string>> UpdatePassword([FromBody] string request)
         {
 
             Response<string> result = await _mediator.Send(new UpdateUserPasswordComand
@@ -71,7 +70,7 @@ namespace AuthAPI.Controllers
                 UpdateUserPasswordDto = new UpdateUserPasswordDto
                 {
                     Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id"),
-                    NewPassword = request.NewPassword
+                    NewPassword = request
                 }
             });
 

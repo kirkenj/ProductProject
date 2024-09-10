@@ -1,6 +1,6 @@
-﻿namespace Application.DTOs.User
+﻿namespace AuthAPI.Models.Requests
 {
-    public class LoginResultDto
+    public class LoginResultModel
     {
         public string Token { get; set; } = null!;
         public Guid UserId { get; set; }

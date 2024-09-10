@@ -1,16 +1,16 @@
-﻿using Infrastructure.Jwt;
+﻿using AuthAPI.Models.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace AuthAPI.JwtAuthentication
+namespace AuthAPI.Registrations
 {
     public static class JwtAuthenticationRegistration
     {
         public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-
             var settings = configuration.GetSection("JwtSettings").Get<JwtSettings>() ?? throw new KeyNotFoundException($"Couldn't get {nameof(JwtSettings)}");
+
 
             var validIssuer = settings.Issuer ?? throw new KeyNotFoundException(); //configuration["JwtSettings:Issuer"];
             var validAudience = settings.Audience ?? throw new KeyNotFoundException(); //configuration["JwtSettings:Audience"];

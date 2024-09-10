@@ -3,7 +3,7 @@ using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using Application.Models.User;
 using AuthAPI.FIlters;
-using Infrastructure.TokenTractker;
+using AuthAPI.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

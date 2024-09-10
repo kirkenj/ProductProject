@@ -1,6 +1,6 @@
 ﻿using Application.DTOs.User;
 
-namespace Application.Contracts.Infrastructure
+namespace AuthAPI.Contracts
 {
     public interface IJwtProviderService
     {

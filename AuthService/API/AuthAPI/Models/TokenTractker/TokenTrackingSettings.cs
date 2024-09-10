@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.TokenTractker
+﻿namespace AuthAPI.Models.TokenTracker
 {
     public class TokenTrackingSettings
     {

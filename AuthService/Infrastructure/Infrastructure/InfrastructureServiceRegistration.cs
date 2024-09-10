@@ -4,8 +4,6 @@ using Cache.Contracts;
 using Cache.Models;
 using EmailSender.Contracts;
 using EmailSender.Models;
-using Infrastructure.Jwt;
-using Infrastructure.TokenTractker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,8 +15,6 @@ namespace Infrastructure
         {
             services.Configure<HashProviderSettings>(configuration.GetSection("HashProviderSettings"));
 
-            
-
             services.AddSingleton(new EmailSettings
             {
                 ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new KeyNotFoundException(),
@@ -29,15 +25,10 @@ namespace Infrastructure
                 ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new KeyNotFoundException())
             });
 
-
-            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-            services.Configure<TokenTrackingSettings>(configuration.GetSection("TokenTrackingSettings"));
             services.Configure<CustomCacheOptions>(configuration.GetSection("CustomCacheOptions"));
             services.AddScoped<ICustomMemoryCache, RedisAsMemoryCache>();
-            services.AddScoped<ITokenTracker<Guid>, TokenTracker<Guid>>();
             services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
             services.AddTransient<IHashProvider, HashProvider.HashProvider>();
-            services.AddTransient<IJwtProviderService, JwtProviderService>();
             services.AddTransient<IPasswordGenerator, PasswordGenerator.PasswordGenerator>();
 
             return services;

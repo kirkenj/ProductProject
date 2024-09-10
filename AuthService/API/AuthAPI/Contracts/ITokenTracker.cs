@@ -1,7 +1,6 @@
 ﻿using Application.Contracts.Infrastructure;
-using Application.Models.TokenTracker;
 
-namespace Infrastructure.TokenTractker
+namespace AuthAPI.Contracts
 {
     public interface ITokenTracker<TUserIdType> where TUserIdType : struct
     {
