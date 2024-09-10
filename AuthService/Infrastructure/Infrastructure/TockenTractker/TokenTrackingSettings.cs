@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.TockenTractker
+﻿namespace Infrastructure.TokenTractker
 {
     public class TokenTrackingSettings
     {

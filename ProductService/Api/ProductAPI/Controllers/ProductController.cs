@@ -7,8 +7,9 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductAPI.Extensions;
+using Extensions.ClaimsPrincipalExtensions;
 using Application.Models.Product;
+using Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,12 +20,10 @@ namespace ProductAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IMediator _mediator = null!;
-        private readonly IAuthClientService _authClientService = null!;
 
         public ProductController(IMediator mediator, IAuthClientService authClientService, IMapper mapper)
         {
             _mediator = mediator;
-            _authClientService = authClientService;
         }
 
         // GET: api/<ValuesController>
@@ -48,9 +47,9 @@ namespace ProductAPI.Controllers
         [Authorize]
         public async Task<ActionResult<Guid>> Post([FromBody] CreateProductDto createProductDto)
         {
-            if (User.IsInRole(Constants.Constants.ADMIN_ROLE_NAME))
+            if (User.IsInRole(ApiConstants.ADMIN_ROLE_NAME))
             {
-                createProductDto.ProducerId = User.GetUserId();
+                createProductDto.ProducerId = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id");
             }
 
             Response<Guid> result = await _mediator.Send(new CreateProductCommand() { CreateProductDto = createProductDto });
@@ -77,7 +76,7 @@ namespace ProductAPI.Controllers
 
             UpdateProductCommand updateProductCommand = new() { UpdateProductDto = updateProductDto };
 
-            if (User.IsInRole(Constants.Constants.ADMIN_ROLE_NAME) == false)
+            if (User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) == false)
             {
                 if (productRequestResult.Result.ProducerId != User.GetUserId())
                 {
@@ -109,7 +108,7 @@ namespace ProductAPI.Controllers
                 throw new ApplicationException();
             }
 
-            if (User.IsInRole(Constants.Constants.ADMIN_ROLE_NAME) || productRequestResult.Result.ProducerId == User.GetUserId())
+            if (User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) || productRequestResult.Result.ProducerId == User.GetUserId())
             {
                 return (await _mediator.Send(new RemovePrductComand() { ProductId = id })).GetActionResult();
             }

@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Role;
 using Application.DTOs.User;
+using Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,7 +9,8 @@ namespace AuthAPI.FIlters
     [AttributeUsage(AttributeTargets.Method)]
     public class GetUserActionFilterAttribute : Attribute, IAsyncResultFilter
     {
-        public static RoleDto DefaultRole => new() { Id = 2, Name = Constants.Constants.REGULAR_ROLE_NAME };
+        public const string ADDRESS_PLACEHOLDER = "Contact administration to get this information";
+        public static RoleDto DefaultRole => new() { Id = 2, Name = ApiConstants.REGULAR_ROLE_NAME };
 
         public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
@@ -18,7 +20,7 @@ namespace AuthAPI.FIlters
                 return;
             }
 
-            if (context.HttpContext.User.IsInRole(Constants.Constants.ADMIN_ROLE_NAME))
+            if (context.HttpContext.User.IsInRole(ApiConstants.ADMIN_ROLE_NAME))
             {
                 await next();
                 return;
@@ -38,12 +40,12 @@ namespace AuthAPI.FIlters
             await next();
         }
 
-        private void HadnleSingleUserDto(UserDto userDto)
+        private static void HadnleSingleUserDto(UserDto userDto)
         {
             SetDefaultValues(userDto);
         }
 
-        private void HadnleUserListDtoCollection(IReadOnlyCollection<UserListDto> userList)
+        private static void HadnleUserListDtoCollection(IReadOnlyCollection<UserListDto> userList)
         {
             foreach (var item in userList)
             {
@@ -57,7 +59,7 @@ namespace AuthAPI.FIlters
         private static UserDto SetDefaultValues(UserDto user)
         {
             user.Role = DefaultRole;
-            user.Address = Constants.Constants.ADDRESS_PLACEHOLDER;
+            user.Address = ADDRESS_PLACEHOLDER;
             return user;
         }
 

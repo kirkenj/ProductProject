@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Application.Features.User.Handlers.Commands
 {
-    public class LoginHandler : IRequestHandler<LoginRequest, Response<LoginResult>>
+    public class LoginHandler : IRequestHandler<LoginRequest, Response<LoginResultDto>>
     {
         private readonly IUserRepository _userRepository;
         private readonly IHashProvider _hashProvider;
@@ -34,7 +34,7 @@ namespace Application.Features.User.Handlers.Commands
             _memoryCache = memoryCache;
         }
 
-        public async Task<Response<LoginResult>> Handle(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<Response<LoginResultDto>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             string loginEmail = request.LoginDto.Email;
             string cacheKey = CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
@@ -48,7 +48,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (userToHandle == null)
             {
-                return Response<LoginResult>.NotFoundResponse(nameof(loginEmail), true);
+                return Response<LoginResultDto>.NotFoundResponse(nameof(loginEmail), true);
             }
 
             _hashProvider.HashAlgorithmName = userToHandle.HashAlgorithm;
@@ -58,7 +58,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (loginPasswordHash != userToHandle.PasswordHash)
             {
-                return Response<LoginResult>.BadRequestResponse("Wrong password");
+                return Response<LoginResultDto>.BadRequestResponse("Wrong password");
             }
 
             if (isRegistration == true)
@@ -69,13 +69,13 @@ namespace Application.Features.User.Handlers.Commands
 
             UserDto userDto = _mapper.Map<UserDto>(userToHandle);
 
-            LoginResult result = new()
+            LoginResultDto result = new()
             {
                 Token = _jwtService.GetToken(userDto),
                 UserId = userToHandle.Id
             };
 
-            return Response<LoginResult>.OkResponse(result, "Success");
+            return Response<LoginResultDto>.OkResponse(result, "Success");
         }
 
         private async Task RegisterUser(Domain.Models.User userToHandle)

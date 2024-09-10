@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Infrastructure.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -8,9 +9,12 @@ namespace AuthAPI.JwtAuthentication
     {
         public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            var validIssuer = configuration["JwtSettings:Issuer"];
-            var validAudience = configuration["JwtSettings:Audience"];
-            var key = configuration["JwtSettings:Key"] ?? throw new Exception();
+
+            var settings = configuration.GetSection("JwtSettings").Get<JwtSettings>() ?? throw new KeyNotFoundException($"Couldn't get {nameof(JwtSettings)}");
+
+            var validIssuer = settings.Issuer ?? throw new KeyNotFoundException(); //configuration["JwtSettings:Issuer"];
+            var validAudience = settings.Audience ?? throw new KeyNotFoundException(); //configuration["JwtSettings:Audience"];
+            var key = settings.Key ?? throw new KeyNotFoundException(); //configuration["JwtSettings:Key"] ?? throw new KeyNotFoundException();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

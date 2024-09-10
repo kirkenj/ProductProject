@@ -1,6 +1,7 @@
 using Application;
 using AuthAPI.JwtAuthentication;
 using AuthAPI.Middlewares;
+using Constants;
 using Infrastructure;
 using Persistence;
 
@@ -30,9 +31,9 @@ builder.Services.AddCors(o =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AuthAPI.Constants.Constants.ADMIN_POLICY_NAME, policy =>
+    options.AddPolicy(ApiConstants.ADMIN_POLICY_NAME, policy =>
     {
-        policy.RequireRole(AuthAPI.Constants.Constants.ADMIN_ROLE_NAME);
+        policy.RequireRole(ApiConstants.ADMIN_ROLE_NAME);
     });
 });
 

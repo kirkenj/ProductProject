@@ -3,11 +3,12 @@ using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using Application.Models.User;
 using AuthAPI.FIlters;
-using Infrastructure.TockenTractker;
+using Infrastructure.TokenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CustomResponse;
+using Constants;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,9 +20,9 @@ namespace AuthAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly TokenTracker<Guid> _tokenTracker;
+        private readonly ITokenTracker<Guid> _tokenTracker;
 
-        public UsersController(IMediator mediator, TokenTracker<Guid> tokenTracker)
+        public UsersController(IMediator mediator, ITokenTracker<Guid> tokenTracker)
         {
             _mediator = mediator;
             _tokenTracker = tokenTracker;
@@ -31,7 +32,7 @@ namespace AuthAPI.Controllers
         [GetUserActionFilter]
         public async Task<ActionResult<IEnumerable<UserListDto>>> Get([FromQuery] UserFilter filter, int? page, int? pageSize)
         {
-            if (!User.IsInRole(Constants.Constants.ADMIN_ROLE_NAME))
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME))
             {
                 filter.RoleIds = null;
             }
@@ -49,7 +50,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut]
-        [Authorize(Constants.Constants.ADMIN_POLICY_NAME)]
+        [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateUser(UpdateNotSensetiveInfoDto request)
         {
@@ -62,7 +63,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("Email")]
-        [Authorize(Constants.Constants.ADMIN_POLICY_NAME)]
+        [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateEmail([FromBody] SendTokenToUpdateUserEmailDto request)
         {
@@ -75,7 +76,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost("Email")]
-        [Authorize(Constants.Constants.ADMIN_POLICY_NAME)]
+        [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> ConfirmEmailUpdate(ConfirmEmailChangeDto request)
         {
@@ -93,7 +94,7 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("UserTag")]
-        [Authorize(Constants.Constants.ADMIN_POLICY_NAME)]
+        [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateLogin(UpdateUserLoginDto request)
         {

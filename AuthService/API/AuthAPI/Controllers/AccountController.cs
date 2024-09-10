@@ -2,12 +2,13 @@
 using CustomResponse;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
-using AuthAPI.Extensions;
+using Extensions.ClaimsPrincipalExtensions;
 using AuthAPI.Models;
-using Infrastructure.TockenTractker;
+using Infrastructure.TokenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Domain.Models;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,9 +21,9 @@ namespace AuthAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly TokenTracker<Guid> _tokenTracker;
+        private readonly ITokenTracker<Guid> _tokenTracker;
 
-        public AccountController(IMediator mediator, TokenTracker<Guid> tokenTracker)
+        public AccountController(IMediator mediator, ITokenTracker<Guid> tokenTracker)
         {
             _tokenTracker = tokenTracker;
             _mediator = mediator;
@@ -34,13 +35,10 @@ namespace AuthAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetAccountDetails()
         {
-            var userId = User.GetUserId();
-            if (!userId.HasValue)
-            {
-                return BadRequest();
-            }
-
-            Response<UserDto> result = await _mediator.Send(new GetUserDtoRequest() { Id = userId.Value });
+            Response<UserDto> result = await _mediator.Send(new GetUserDtoRequest() 
+            { 
+                Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id") 
+            });
             return result.GetActionResult();
         }
 
@@ -48,17 +46,13 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateUser(UpdateUserModel updateUserModel)
         {
-            var userId = User.GetUserId();
-            if (!userId.HasValue)
-            {
-                return BadRequest();
-            }
+            var userId = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id");
 
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
                 UpdateNotSensetiveInfoDto = new UpdateNotSensetiveInfoDto
                 {
-                    Id = userId.Value,
+                    Id = userId,
                     Address = updateUserModel.Address,
                     Name = updateUserModel.Name
                 }
@@ -72,17 +66,11 @@ namespace AuthAPI.Controllers
         public async Task<ActionResult<string>> UpdatePassword(AuthorizedUserUpdatePassword request)
         {
 
-            var userId = User.GetUserId();
-            if (!userId.HasValue)
-            {
-                return BadRequest();
-            }
-
             Response<string> result = await _mediator.Send(new UpdateUserPasswordComand
             {
                 UpdateUserPasswordDto = new UpdateUserPasswordDto
                 {
-                    Id = userId.Value,
+                    Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id"),
                     NewPassword = request.NewPassword
                 }
             });
@@ -94,17 +82,13 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateLogin(string newLogin)
         {
-            var userId = User.GetUserId();
-            if (!userId.HasValue)
-            {
-                return BadRequest();
-            }
+            var userId = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id");
 
             Response<string> result = await _mediator.Send(new UpdateUserLoginComand
             {
                 UpdateUserLoginDto = new()
                 {
-                    Id = userId.Value,
+                    Id = userId,
                     NewLogin = newLogin
                 }
             });
@@ -112,7 +96,7 @@ namespace AuthAPI.Controllers
             if (result.Success)
             {
                 result.Result += "Relogin needed.";
-                await _tokenTracker.InvalidateUser(userId.Value, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(userId, DateTime.UtcNow);
             }
 
             return result.GetActionResult();
@@ -122,18 +106,12 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateEmail([FromBody] string newEmail)
         {
-            var userId = User.GetUserId();
-            if (!userId.HasValue)
-            {
-                return BadRequest();
-            }
-
             Response<string> result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {
                 UpdateUserEmailDto = new SendTokenToUpdateUserEmailDto
                 {
                     Email = newEmail,
-                    Id = userId.Value
+                    Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id")
                 }
             });
 
@@ -144,17 +122,13 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> ConfirmEmailUpdate([FromBody] string confirmationToken)
         {
-            var userId = User.GetUserId();
-            if (!userId.HasValue)
-            {
-                return BadRequest();
-            }
+            var userId = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id");
 
             Response<string> result = await _mediator.Send(new ConfirmEmailChangeComand
             {
                 ConfirmEmailChangeDto = new ConfirmEmailChangeDto
                 {
-                    UserId = userId.Value,
+                    UserId = userId,
                     Token = confirmationToken
                 }
             });
@@ -162,7 +136,7 @@ namespace AuthAPI.Controllers
             if (result.Success)
             {
                 result.Result += "Relogin needed.";
-                await _tokenTracker.InvalidateUser(userId.Value, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(userId, DateTime.UtcNow);
             }
 
             return result.GetActionResult();

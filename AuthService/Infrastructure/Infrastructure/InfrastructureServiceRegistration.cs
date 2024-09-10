@@ -5,7 +5,7 @@ using Cache.Models;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using Infrastructure.Jwt;
-using Infrastructure.TockenTractker;
+using Infrastructure.TokenTractker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,14 +17,16 @@ namespace Infrastructure
         {
             services.Configure<HashProviderSettings>(configuration.GetSection("HashProviderSettings"));
 
+            
+
             services.AddSingleton(new EmailSettings
             {
-                ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new ApplicationException(),
-                ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new ApplicationException(),
-                ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new ApplicationException(),
-                ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new ApplicationException()),
-                FromName = configuration["EmailSettings:FromName"] ?? throw new ApplicationException(),
-                ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new ApplicationException())
+                ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new KeyNotFoundException(),
+                ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new KeyNotFoundException(),
+                ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new KeyNotFoundException(),
+                ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new KeyNotFoundException()),
+                FromName = configuration["EmailSettings:FromName"] ?? throw new KeyNotFoundException(),
+                ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new KeyNotFoundException())
             });
 
 
@@ -32,7 +34,7 @@ namespace Infrastructure
             services.Configure<TokenTrackingSettings>(configuration.GetSection("TokenTrackingSettings"));
             services.Configure<CustomCacheOptions>(configuration.GetSection("CustomCacheOptions"));
             services.AddScoped<ICustomMemoryCache, RedisAsMemoryCache>();
-            services.AddScoped<TokenTracker<Guid>>();
+            services.AddScoped<ITokenTracker<Guid>, TokenTracker<Guid>>();
             services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
             services.AddTransient<IHashProvider, HashProvider.HashProvider>();
             services.AddTransient<IJwtProviderService, JwtProviderService>();

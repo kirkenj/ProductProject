@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.TockenTractker
+﻿namespace Application.Models.TokenTracker
 {
     public class AssignedTokenInfo<TUserIdType>
     {

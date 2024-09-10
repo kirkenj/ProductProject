@@ -1,10 +1,11 @@
 ﻿using Application.Contracts.Infrastructure;
+using Application.Models.TokenTracker;
 using Cache.Contracts;
 using Microsoft.Extensions.Options;
 
-namespace Infrastructure.TockenTractker
+namespace Infrastructure.TokenTractker
 {
-    public class TokenTracker<TUserIdType>
+    public class TokenTracker<TUserIdType> : ITokenTracker<TUserIdType> where TUserIdType : struct
     {
         private readonly TokenTrackingSettings _settings = null!;
         private readonly ICustomMemoryCache _memoryCache;
@@ -17,27 +18,20 @@ namespace Infrastructure.TockenTractker
             _keyGeneratingDelegate = (value) => _settings.CacheSeed + value;
             HashProvider = hashProvider;
         }
+
         public IHashProvider HashProvider { get; private set; }
 
-        public async Task Track(KeyValuePair<string, AssignedTokenInfo<TUserIdType>> pair)
+        public async Task InvalidateUser(TUserIdType userId, DateTime time)
         {
-            if (pair.Value == null || pair.Key == null)
-                throw new ArgumentNullException(nameof(pair));
+            if (userId.Equals(default))
+            {
+                throw new ArgumentException($"{nameof(userId)} can not be {default(TUserIdType)}", nameof(userId));
+            }
 
-            var jwtHash = HashProvider.GetHash(pair.Key);
+            string userIdStr = userId.ToString() ?? throw new ApplicationException("Couldn't get user's id as string");
 
-            var cahceKey = _keyGeneratingDelegate(jwtHash);
             await _memoryCache.SetAsync(
-            cahceKey,
-                pair.Value,
-                DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes
-                ));
-        }
-
-        public async Task InvalidateUser(Guid userId, DateTime time)
-        {
-            await _memoryCache.SetAsync(
-                _keyGeneratingDelegate(userId.ToString()),
+                _keyGeneratingDelegate(userIdStr),
                 time,
                 DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes));
 
@@ -52,15 +46,15 @@ namespace Infrastructure.TockenTractker
             }
 
             var key = _keyGeneratingDelegate(tokenHash);
-            var trackInfo = await _memoryCache.GetAsync<AssignedTokenInfo<TUserIdType>>(key) ?? throw new InvalidOperationException("Tocken is not tracked");
+            var trackInfo = await _memoryCache.GetAsync<AssignedTokenInfo<TUserIdType>>(key) ?? throw new InvalidOperationException("Token is not tracked");
 
-            if (trackInfo == null || trackInfo.UserId == null)
+            if (trackInfo == null || trackInfo.UserId.Equals(default))
             {
                 throw new InvalidOperationException(nameof(trackInfo));
             }
 
             var banResult = await _memoryCache.GetAsync<DateTime>(
-                _keyGeneratingDelegate(trackInfo.UserId?.ToString() ?? throw new InvalidOperationException(nameof(trackInfo))));
+                _keyGeneratingDelegate(trackInfo.UserId.ToString() ?? throw new InvalidOperationException(nameof(trackInfo))));
 
             if (banResult == default)
             {
@@ -68,6 +62,18 @@ namespace Infrastructure.TockenTractker
             }
 
             return trackInfo.DateTime >= banResult;
+        }
+
+        public async Task Track(string token, TUserIdType userId, DateTime tokenRegistrationTime)
+        {
+            var jwtHash = HashProvider.GetHash(token ?? throw new ArgumentNullException(nameof(token)));
+
+            var cahceKey = _keyGeneratingDelegate(jwtHash);
+            await _memoryCache.SetAsync(
+                cahceKey,
+                new AssignedTokenInfo<TUserIdType> { DateTime = tokenRegistrationTime, UserId = userId },
+                DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes
+                ));
         }
     }
 }

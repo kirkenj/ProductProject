@@ -1,9 +1,8 @@
 ﻿using Application.DTOs.User;
 using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
-using Application.Models.User;
-using CustomResponse; 
-using Infrastructure.TockenTractker;
+using CustomResponse;
+using Infrastructure.TokenTractker;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +16,7 @@ namespace AuthAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly TokenTracker<Guid> _tokenTracker;
+        private readonly ITokenTracker<Guid> _tokenTracker;
 
         public AuthController(IMediator mediator, TokenTracker<Guid> tokenTracker)
         {
@@ -39,22 +38,16 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<LoginResult>> Login(LoginDto loginDto)
+        public async Task<ActionResult<LoginResultDto>> Login(LoginDto loginDto)
         {
-            Response<LoginResult> result = await _mediator.Send(new LoginRequest { LoginDto = loginDto });
+            Response<LoginResultDto> result = await _mediator.Send(new LoginRequest { LoginDto = loginDto });
 
             if (result.Success)
             {
-                await _tokenTracker.Track(new KeyValuePair<string, AssignedTokenInfo<Guid>>
-                        (
-                            result.Result?.Token ?? throw new ApplicationException(),
-                            new()
-                            {
-                                DateTime = DateTime.UtcNow,
-                                UserId = result.Result.UserId
-                            }
-                        ));
-
+                await _tokenTracker.Track(
+                    result.Result?.Token ?? throw new ApplicationException(), 
+                    result.Result.UserId, 
+                    DateTime.UtcNow);
             }
             return result.GetActionResult();
         }

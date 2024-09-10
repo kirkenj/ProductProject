@@ -28,12 +28,12 @@ namespace Infrastructure
 
             services.AddSingleton(new EmailSettings
             {
-                ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new ApplicationException(),
-                ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new ApplicationException(),
-                ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new ApplicationException(),
-                ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new ApplicationException()),
-                FromName = configuration["EmailSettings:FromName"] ?? throw new ApplicationException(),
-                ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new ApplicationException())
+                ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new KeyNotFoundException(),
+                ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new KeyNotFoundException(),
+                ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new KeyNotFoundException(),
+                ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new KeyNotFoundException()),
+                FromName = configuration["EmailSettings:FromName"] ?? throw new KeyNotFoundException(),
+                ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new KeyNotFoundException())
             });
             services.Configure<CustomCacheOptions>(configuration.GetSection("RedisCacheOptions"));
             services.AddSingleton<ICustomMemoryCache, RedisAsMemoryCache>();

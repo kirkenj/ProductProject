@@ -19,7 +19,6 @@ namespace ProductAPI.JwtAuthentication
             })
                 .AddJwtBearer(o =>
                 {
-                    //o.EventsType = typeof(CustomJwtBearerEvents);
                     o.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuerSigningKey = true,
@@ -33,7 +32,6 @@ namespace ProductAPI.JwtAuthentication
                     };
                 });
 
-            //services.AddScoped<CustomJwtBearerEvents>();
 
             return services;
         }

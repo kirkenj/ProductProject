@@ -1,6 +1,6 @@
-﻿namespace Application.Models.User
+﻿namespace Application.DTOs.User
 {
-    public class LoginResult
+    public class LoginResultDto
     {
         public string Token { get; set; } = null!;
         public Guid UserId { get; set; }
