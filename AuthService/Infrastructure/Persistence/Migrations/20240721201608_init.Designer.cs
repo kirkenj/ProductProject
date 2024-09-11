@@ -13,7 +13,7 @@ namespace Persistence.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
     [Migration("20240721201608_init")]
-    partial class init
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

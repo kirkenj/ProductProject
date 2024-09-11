@@ -6,6 +6,6 @@ namespace Application.Features.User.Requests.Commands
 {
     public class UpdateNotSensitiveUserInfoComand : IRequest<Response<string>>
     {
-        public UpdateUserInfoDto UpdateNotSensetiveInfoDto { get; set; } = null!;
+        public UpdateUserInfoDto UpdateUserInfoDto { get; set; } = null!;
     }
 }

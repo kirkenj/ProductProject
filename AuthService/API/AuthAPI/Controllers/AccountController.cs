@@ -49,7 +49,7 @@ namespace AuthAPI.Controllers
 
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
-                UpdateNotSensetiveInfoDto = new UpdateUserInfoDto
+                UpdateUserInfoDto = new UpdateUserInfoDto
                 {
                     Id = userId,
                     Address = updateUserModel.Address,

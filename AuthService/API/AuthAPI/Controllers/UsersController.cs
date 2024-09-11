@@ -56,7 +56,7 @@ namespace AuthAPI.Controllers
         {
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
-                UpdateNotSensetiveInfoDto = request
+                UpdateUserInfoDto = request
             });
 
             return result.GetActionResult();

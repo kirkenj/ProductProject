@@ -6,10 +6,10 @@ namespace CustomResponse
 {
     public class Response<T>
     {
-        public string Message = null!;
-        public T? Result;
-        public HttpStatusCode StatusCode;
-        public bool Success = false;
+        public string Message { get; set; } = string.Empty;
+        public T? Result { get; set; } = default!;
+        public HttpStatusCode StatusCode { get; set; } = default!;
+        public bool Success { get; set; } = default!;
 
 
         public static Response<T> BadRequestResponse(string message) => new()

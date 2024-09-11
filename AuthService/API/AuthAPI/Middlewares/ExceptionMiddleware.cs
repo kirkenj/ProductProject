@@ -1,4 +1,6 @@
 ﻿
+using FluentValidation;
+
 namespace AuthAPI.Middlewares
 {
     public class ExceptionMiddleware
@@ -17,6 +19,12 @@ namespace AuthAPI.Middlewares
             try
             {
                 await _next(context);
+            }
+            catch(ValidationException valEx)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsJsonAsync(valEx.Message);
+                return;
             }
             catch (Exception ex)
             {
