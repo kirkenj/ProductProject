@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
 using Application.DTOs.User;
+using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Queries;
 using Application.Models.CacheKeyGenerator;
 using Application.Models.User;
@@ -35,8 +36,19 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<UserDto>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
+            var validator = new LoginDtoValidator();
+
+            var validationResult = validator.Validate(request.LoginDto);
+
+            if (validationResult.IsValid == false)
+            {
+                return Response<UserDto>.BadRequestResponse(validationResult.ToString());
+            }
+
             string loginEmail = request.LoginDto.Email;
+
             string cacheKey = CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
+
             Domain.Models.User? cachedUserValue = await _memoryCache.GetAsync<Domain.Models.User>(cacheKey);
 
             bool isRegistration = cachedUserValue != null;

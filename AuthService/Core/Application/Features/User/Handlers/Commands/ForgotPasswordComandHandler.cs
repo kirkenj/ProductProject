@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
+using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using Application.Models.User;
 using CustomResponse;
@@ -30,6 +31,15 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(ForgotPasswordComand request, CancellationToken cancellationToken)
         {
+            var validator = new ForgotPasswordDtoValidator();
+
+            var validationResult = validator.Validate(request.ForgotPasswordDto);
+
+            if (validationResult.IsValid == false)
+            {
+                return Response<string>.BadRequestResponse(validationResult.ToString());
+            }
+
             string emailAddress = request.ForgotPasswordDto.Email;
 
             Domain.Models.User? user = await _userRepository.GetAsync(new UserFilter { Email = emailAddress });
@@ -53,16 +63,9 @@ namespace Application.Features.User.Handlers.Commands
                 throw new ApplicationException("Couldn't send email");
             }
 
-            try
-            {
-                (this as IPasswordSettingHandler).SetPassword(newPassword, user);
-                await _userRepository.UpdateAsync(user);
-                return Response<string>.OkResponse("New password was sent on your emial", "Success");
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException($"EMAIL WAS SENT, BUT PASSWORD WAS NOT UPDATED. USERID: {user.Id}", ex);
-            }
+            (this as IPasswordSettingHandler).SetPassword(newPassword, user);
+            await _userRepository.UpdateAsync(user);
+            return Response<string>.OkResponse("New password was sent on your emial", "Success");
         }
     }
 }

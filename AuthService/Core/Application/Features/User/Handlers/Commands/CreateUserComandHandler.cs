@@ -41,15 +41,14 @@ namespace Application.Features.User.Handlers.Commands
         public async Task<Response<Guid>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var validator = new CreateUserDtoValidator(_userRepository);
-
             var validationResult = await validator.ValidateAsync(request.CreateUserDto, cancellationToken);
-
             if (validationResult.IsValid == false)
             {
                 return Response<Guid>.BadRequestResponse(validationResult.ToString());
             }
 
             Domain.Models.User user = _mapper.Map<Domain.Models.User>(request.CreateUserDto);
+
             user.Id = Guid.NewGuid();
             user.Login = $"User{user.Id}";
             user.RoleID = _createUserSettings.DefaultRoleID;

@@ -27,7 +27,6 @@ namespace AuthAPI.Controllers
             _jwtProviderService = jwtProviderService;
         }
 
-
         [HttpPost("Register")]
         public async Task<ActionResult<Guid>> Register([FromBody] CreateUserDto createUserDto)
         {

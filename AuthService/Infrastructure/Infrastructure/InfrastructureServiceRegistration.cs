@@ -28,7 +28,7 @@ namespace HashProvider
 
             services.Configure<CustomCacheOptions>(configuration.GetSection("CustomCacheOptions"));
             services.AddScoped<ICustomMemoryCache, RedisAsMemoryCache>();
-            services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
+            services.AddScoped<IEmailSender, EmailSender.Models.EmailSender>();
             services.AddTransient<IHashProvider, Models.HashProvider>();
             services.AddTransient<IPasswordGenerator, PasswordGenerator.PasswordGenerator>();
 

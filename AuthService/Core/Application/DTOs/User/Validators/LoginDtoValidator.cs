@@ -8,7 +8,6 @@ namespace Application.DTOs.User.Validators
         public LoginDtoValidator()
         {
             Include(new IEmailDtoValidator());
-            Include(new IPasswordDtoValidator());
         }
     }
 }

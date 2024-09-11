@@ -26,6 +26,15 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(ConfirmEmailChangeComand request, CancellationToken cancellationToken)
         {
+            var validator = new ConfirmEmailChangeDtoValidator(_userRepository);
+
+            var validationResults = await validator.ValidateAsync(request.ConfirmEmailChangeDto, cancellationToken);
+
+            if (validationResults.IsValid == false)
+            {
+                return Response<string>.BadRequestResponse(validationResults.ToString());
+            }
+
             EmailUpdateDetails? cachedDetailsValue = await _memoryCache.GetAsync<EmailUpdateDetails>(CacheKeyGenerator.KeyForEmailChangeTokenCaching(request.ConfirmEmailChangeDto.Token));
 
             if (cachedDetailsValue == null)

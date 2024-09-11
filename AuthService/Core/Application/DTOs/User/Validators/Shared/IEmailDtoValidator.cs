@@ -7,7 +7,7 @@ namespace Application.DTOs.User.Validators.Shared
     {
         public IEmailDtoValidator()
         {
-            RuleFor(p => p.Email).NotEmpty();
+            RuleFor(p => p.Email).EmailAddress().NotEmpty();
         }
     }
 }
