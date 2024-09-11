@@ -21,8 +21,5 @@
 	  <ProjectReference Include="..\..\..\Response\CustomResponse.csproj" />
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Contracts\Infrastructure\" />
-  </ItemGroup>
 
 </Project>

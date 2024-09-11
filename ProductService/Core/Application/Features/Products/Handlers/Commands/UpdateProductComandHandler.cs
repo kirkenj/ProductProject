@@ -1,12 +1,13 @@
-﻿using Application.Contracts.Infrastructure;
-using Application.Contracts.Persistence;
+﻿using Application.Contracts.Persistence;
 using Application.DTOs.UserClient;
 using Application.Features.Product.Requests.Commands;
 using AutoMapper;
+using Clients.AuthApi;
 using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;
+using UserListDto = Application.DTOs.UserClient.UserListDto;
 
 namespace Application.Features.Product.Handlers.Commands
 {
@@ -14,10 +15,10 @@ namespace Application.Features.Product.Handlers.Commands
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
-        private readonly IAuthClientService _authClientService;
+        private readonly IAuthApiClient _authClientService;
         private readonly IEmailSender _emailSender;
 
-        public UpdateProductComandHandler(IProductRepository productRepository, IMapper mapper, IAuthClientService authClientService, IEmailSender emailSender)
+        public UpdateProductComandHandler(IProductRepository productRepository, IMapper mapper, IAuthApiClient authClientService, IEmailSender emailSender)
         {
             _productRepository = productRepository;
             _mapper = mapper;
@@ -54,14 +55,9 @@ namespace Application.Features.Product.Handlers.Commands
         {
             var prevOwnedId = product.ProducerId;
 
-            ClientResponse<ICollection<UserListDto>>? usersRequest = await _authClientService.ListAsync(ids: new Guid[] { prevOwnedId, newProducerId });
+            ICollection<UserListDto> usersRequest = _mapper.Map<List<UserListDto>>(await _authClientService.ListAsync(new Guid[] { prevOwnedId, newProducerId }, null, null, null,null,null,null,null));
 
-            if (usersRequest == null || usersRequest.Success == false)
-            {
-                throw new ApplicationException("Couldn't get users from auth service. " + usersRequest?.Message ?? string.Empty);
-            }
-
-            var newOwner = usersRequest.Result.FirstOrDefault(u => u.Id == newProducerId);
+            var newOwner = usersRequest.FirstOrDefault(u => u.Id == newProducerId);
 
             if (newOwner == null)
             {
@@ -75,7 +71,7 @@ namespace Application.Features.Product.Handlers.Commands
                 Body = $"Your new product id is {product.Id}"
             });
 
-            var prevOwner = usersRequest.Result.FirstOrDefault(u => u.Id == prevOwnedId);
+            var prevOwner = usersRequest.FirstOrDefault(u => u.Id == prevOwnedId);
             if (prevOwner != null && prevOwner.Email != null)
             {
                 await _emailSender.SendEmailAsync(new Email

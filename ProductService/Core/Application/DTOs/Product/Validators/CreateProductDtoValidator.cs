@@ -1,11 +1,11 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using Clients.AuthApi;
 using FluentValidation;
 
 namespace Application.DTOs.Product.Validators
 {
     public class CreateProductDtoValidator : AbstractValidator<CreateProductDto>
     {
-        public CreateProductDtoValidator(IAuthClientService authClientService)
+        public CreateProductDtoValidator(IAuthApiClient authClientService)
         {
             RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();
@@ -14,8 +14,8 @@ namespace Application.DTOs.Product.Validators
             RuleFor(x => x.ProducerId).NotEqual(default(Guid));
             RuleFor(x => x.ProducerId).MustAsync(async (id, token) =>
             {
-                var result = await authClientService.GetUser(id);
-                return result.Success && result.Result != null;
+                var result = await authClientService.UsersGETAsync(id);
+                return result != null;
             });
         }
     }

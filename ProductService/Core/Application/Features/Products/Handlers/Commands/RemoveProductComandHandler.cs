@@ -1,10 +1,13 @@
-﻿using Application.Contracts.Infrastructure;
-using Application.Contracts.Persistence;
+﻿using Application.Contracts.Persistence;
+using Application.DTOs.UserClient;
 using Application.Features.Product.Requests.Commands;
+using AutoMapper;
+using Clients.AuthApi;
 using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;
+using UserDto = Clients.AuthApi.UserDto;
 
 namespace Application.Features.Product.Handlers.Commands
 {
@@ -12,13 +15,15 @@ namespace Application.Features.Product.Handlers.Commands
     {
         private readonly IProductRepository _productRepository;
         private readonly IEmailSender _emailSender;
-        private readonly IAuthClientService _authClientService;
+        private readonly IAuthApiClient _authClientService;
+        private readonly IMapper _mapper;
 
-        public RemoveProductComandHandler(IProductRepository productRepository, IAuthClientService authClientService, IEmailSender emailSender)
+        public RemoveProductComandHandler(IProductRepository productRepository, IAuthApiClient authClientService, IEmailSender emailSender, IMapper mapper)
         {
             _productRepository = productRepository;
             _authClientService = authClientService;
             _emailSender = emailSender;
+            _mapper = mapper;
         }
 
         public async Task<Response<string>> Handle(RemovePrductComand request, CancellationToken cancellationToken)
@@ -32,14 +37,14 @@ namespace Application.Features.Product.Handlers.Commands
 
             await _productRepository.DeleteAsync(product);
 
-            var ownerResult = await _authClientService.GetUser(product.ProducerId) ?? throw new ApplicationException("Couldn't send request to auth sevice");
+            UserDto ownerResult = _mapper.Map<UserDto>(await _authClientService.UsersGETAsync(product.ProducerId));
 
-            if (ownerResult.Success && ownerResult.Result != null)
+            if (ownerResult != null)
             {
                 await _emailSender.SendEmailAsync(new Email
                 {
                     Subject = "Your product was removed",
-                    To = ownerResult.Result.Email,
+                    To = ownerResult.Email,
                     Body = $"Your product with id '{product.Id}' was removed"
                 });
             }

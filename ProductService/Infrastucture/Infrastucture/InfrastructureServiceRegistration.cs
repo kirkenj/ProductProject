@@ -1,10 +1,8 @@
-﻿using Application.Contracts.Infrastructure;
-using Cache.Contracts;
+﻿using Cache.Contracts;
 using Cache.Models;
 using Clients.AuthApi;
 using EmailSender.Contracts;
 using EmailSender.Models;
-using Infrastucture.AuthClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -18,7 +16,6 @@ namespace HashProvider
             services.Configure<AuthClientSettings>(configuration.GetSection("AuthClientSettings"));
             services.AddHttpClient();
             services.AddScoped<IAuthApiClient, AuthApiClient>();
-            services.AddScoped<IAuthClientService, AuthClientService>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

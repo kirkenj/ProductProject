@@ -1,8 +1,8 @@
-﻿using Application.Contracts.Infrastructure;
-using Application.Contracts.Persistence;
+﻿using Application.Contracts.Persistence;
 using Application.DTOs.Product.Validators;
 using Application.Features.Product.Requests.Commands;
 using AutoMapper;
+using Clients.AuthApi;
 using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
@@ -15,10 +15,10 @@ namespace Application.Features.Product.Handlers.Commands
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
-        private readonly IAuthClientService _authClientService;
+        private readonly IAuthApiClient _authClientService;
         private readonly IEmailSender _emailSender;
 
-        public CreateProductComandHandler(IProductRepository userRepository, IMapper mapper, IAuthClientService authClientService, IEmailSender emailSender)
+        public CreateProductComandHandler(IProductRepository userRepository, IMapper mapper, IAuthApiClient authClientService, IEmailSender emailSender)
         {
             _productRepository = userRepository;
             _mapper = mapper;
@@ -41,23 +41,13 @@ namespace Application.Features.Product.Handlers.Commands
 
             await _productRepository.AddAsync(product);
 
-            DTOs.UserClient.ClientResponse<DTOs.UserClient.UserDto?> userRequestResponse = await _authClientService.GetUser(request.CreateProductDto.ProducerId);
-
-            if (userRequestResponse.Success == false)
-            {
-                throw new ApplicationException($"Got error while sending request: {userRequestResponse.Message}");
-            }
-
-            if (userRequestResponse.Result == null)
-            {
-                throw new ApplicationException($"{nameof(userRequestResponse.Result)} is null");
-            }
+            UserDto userRequestResponse = await _authClientService.UsersGETAsync(request.CreateProductDto.ProducerId);
 
             await _emailSender.SendEmailAsync(new Email
             {
                 Body = $"You added a product with id '{product.Id}'",
                 Subject = "Product creation",
-                To = userRequestResponse.Result.Email
+                To = userRequestResponse.Email
             });
 
             return Response<Guid>.OkResponse(product.Id, $"Product created with id {product.Id}");
