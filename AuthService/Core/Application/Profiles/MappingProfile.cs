@@ -12,7 +12,7 @@ namespace Application.Profiles
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, UserListDto>();
             CreateMap<User, CreateUserDto>().ReverseMap();
-            CreateMap<User, UpdateNotSensetiveInfoDto>().ReverseMap();
+            CreateMap<User, UpdateUserInfoDto>().ReverseMap();
             CreateMap<Role, RoleDto>().ReverseMap();
         }
     }

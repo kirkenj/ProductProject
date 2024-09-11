@@ -1,13 +1,13 @@
 ﻿using Application.DTOs.User.Interfaces;
 using FluentValidation;
 
-namespace Application.DTOs.User.Validators
+namespace Application.DTOs.User.Validators.Shared
 {
-    public class IUpdateUserPasswordDtoValidator : AbstractValidator<IUpdateUserPasswordDto>
+    public class IPasswordDtoValidator : AbstractValidator<IPasswordDto>
     {
-        public IUpdateUserPasswordDtoValidator()
+        public IPasswordDtoValidator()
         {
-            RuleFor(o => o.NewPassword)
+            RuleFor(o => o.Password)
                 .NotEmpty()
                 .NotNull()
                 .MinimumLength(8)

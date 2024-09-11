@@ -52,7 +52,7 @@ namespace AuthAPI.Controllers
         [HttpPut]
         [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> UpdateUser(UpdateNotSensetiveInfoDto request)
+        public async Task<ActionResult<string>> UpdateUser(UpdateUserInfoDto request)
         {
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
@@ -87,7 +87,7 @@ namespace AuthAPI.Controllers
 
             if (result.Success)
             {
-                await _tokenTracker.InvalidateUser(request.UserId, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
             }
 
             return result.GetActionResult();
@@ -123,7 +123,7 @@ namespace AuthAPI.Controllers
 
             if (result.Success)
             {
-                await _tokenTracker.InvalidateUser(request.UserId, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
             }
 
             return result.GetActionResult();

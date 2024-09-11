@@ -49,7 +49,7 @@ namespace AuthAPI.Controllers
 
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
-                UpdateNotSensetiveInfoDto = new UpdateNotSensetiveInfoDto
+                UpdateNotSensetiveInfoDto = new UpdateUserInfoDto
                 {
                     Id = userId,
                     Address = updateUserModel.Address,
@@ -70,7 +70,7 @@ namespace AuthAPI.Controllers
                 UpdateUserPasswordDto = new UpdateUserPasswordDto
                 {
                     Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id"),
-                    NewPassword = request
+                    Password = request
                 }
             });
 
@@ -127,7 +127,7 @@ namespace AuthAPI.Controllers
             {
                 ConfirmEmailChangeDto = new ConfirmEmailChangeDto
                 {
-                    UserId = userId,
+                    Id = userId,
                     Token = confirmationToken
                 }
             });

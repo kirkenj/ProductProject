@@ -1,9 +1,10 @@
 ﻿using Application.DTOs.Role;
+using Application.DTOs.User.Interfaces;
 using Repository.Contracts;
 
 namespace Application.DTOs.User
 {
-    public class UserDto : IIdObject<Guid>
+    public class UserDto : IIdObject<Guid>, IUserInfoDto
     {
         public Guid Id { get; set; }
         public string Login { get; set; } = null!;

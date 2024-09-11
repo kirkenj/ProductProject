@@ -1,12 +1,20 @@
-﻿using FluentValidation;
+﻿using Application.Contracts.Persistence;
+using Application.DTOs.User.Validators.Shared;
+using FluentValidation;
 
 namespace Application.DTOs.User.Validators
 {
     public class UpdateUserLoginDtoValidator : AbstractValidator<UpdateUserLoginDto>
     {
-        public UpdateUserLoginDtoValidator()
+        public UpdateUserLoginDtoValidator(IUserRepository userRepository)
         {
-            RuleFor(o => o.Id).NotEqual(Guid.Empty).WithMessage("{PropertyName} can not be equal to {ComparisonValue}");
+            Include(new IIdDtoValidator<Guid>());
+
+            RuleFor(u => u.NewLogin).MustAsync(async (login, token) =>
+            {
+                var result = await userRepository.GetAsync(new (){ AccurateLogin = login });
+                return result == null;
+            });
         }
     }
 }

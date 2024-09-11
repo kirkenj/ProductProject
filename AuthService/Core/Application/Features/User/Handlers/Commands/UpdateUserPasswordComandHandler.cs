@@ -38,7 +38,7 @@ namespace Application.Features.User.Handlers.Commands
                 return Response<string>.BadRequestResponse(validationResult.ToString());
             }
 
-            (this as IPasswordSettingHandler).SetPassword(request.UpdateUserPasswordDto.NewPassword, user);
+            (this as IPasswordSettingHandler).SetPassword(request.UpdateUserPasswordDto.Password, user);
 
             await _userRepository.UpdateAsync(user);
 

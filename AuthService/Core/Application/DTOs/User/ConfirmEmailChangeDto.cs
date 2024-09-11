@@ -1,8 +1,10 @@
-﻿namespace Application.DTOs.User
+﻿using Repository.Contracts;
+
+namespace Application.DTOs.User
 {
-    public class ConfirmEmailChangeDto
+    public class ConfirmEmailChangeDto : IIdObject<Guid>
     {
-        public Guid UserId { get; set; }
+        public Guid Id { get; set; }
         public string Token { get; set; } = null!;
     }
 }

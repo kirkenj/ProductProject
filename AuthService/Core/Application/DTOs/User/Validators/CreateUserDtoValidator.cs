@@ -1,5 +1,5 @@
 ﻿using Application.Contracts.Persistence;
-using Application.Models.User;
+using Application.DTOs.User.Validators.Shared;
 using FluentValidation;
 
 namespace Application.DTOs.User.Validators
@@ -8,22 +8,9 @@ namespace Application.DTOs.User.Validators
     {
         public CreateUserDtoValidator(IUserRepository userRepository)
         {
-            RuleFor(x => x.Name).NotEmpty().NotNull();
+            Include(new IUserInfoDtoValidator());
 
-            RuleFor(x => x.Address).NotEmpty().NotNull();
-
-            RuleFor(p => p.Email)
-                .MustAsync(async (Email, cancellationToken) =>
-                {
-                    var resultUser = await userRepository.GetAsync(new UserFilter { Email = Email });
-                    if (resultUser == null)
-                    {
-                        return true;
-                    }
-
-                    return resultUser.Email != Email;
-                })
-                .WithMessage("{PropertyName} is taken");
+            Include(new IEmailUpdateDtoValidator(userRepository));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(UpdateUserLoginComand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateUserLoginDtoValidator();
+            var validator = new UpdateUserLoginDtoValidator(_userRepository);
 
             var validationResult = await validator.ValidateAsync(request.UpdateUserLoginDto, cancellationToken);
 

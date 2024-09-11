@@ -1,12 +1,14 @@
-﻿using FluentValidation;
+﻿using Application.Contracts.Persistence;
+using Application.DTOs.User.Validators.Shared;
+using FluentValidation;
 
 namespace Application.DTOs.User.Validators
 {
     public class UpdateUserEmailDtoValidator : AbstractValidator<SendTokenToUpdateUserEmailDto>
     {
-        public UpdateUserEmailDtoValidator()
+        public UpdateUserEmailDtoValidator(IUserRepository userRepository)
         {
-            RuleFor(o => o.Email).EmailAddress();
+            Include(new IEmailUpdateDtoValidator(userRepository));
         }
     }
 }

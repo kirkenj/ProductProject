@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.DTOs.User.Validators.Shared;
+using FluentValidation;
 
 namespace Application.DTOs.User
 {
@@ -6,7 +7,8 @@ namespace Application.DTOs.User
     {
         public SendTokenToUpdateUserEmailDtoValidator()
         {
-            RuleFor(o => o.Email).EmailAddress().NotNull();
+            Include(new IEmailDtoValidator());
+            Include(new IIdDtoValidator<Guid>());
         }
     }
 }

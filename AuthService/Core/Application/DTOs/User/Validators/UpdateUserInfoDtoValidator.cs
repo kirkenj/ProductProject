@@ -3,12 +3,12 @@ using FluentValidation;
 
 namespace Application.DTOs.User.Validators
 {
-    public class UpdateUserPasswordDTOValidator : AbstractValidator<UpdateUserPasswordDto>
+    public class UpdateUserInfoDtoValidator : AbstractValidator<UpdateUserInfoDto>
     {
-        public UpdateUserPasswordDTOValidator()
+        public UpdateUserInfoDtoValidator()
         {
-            Include(new IPasswordDtoValidator());
             Include(new IIdDtoValidator<Guid>());
+            Include(new IUserInfoDtoValidator());
         }
     }
 }

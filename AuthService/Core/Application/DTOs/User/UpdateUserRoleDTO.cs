@@ -1,10 +1,11 @@
 ﻿using Application.DTOs.User.Interfaces;
+using Repository.Contracts;
 
 namespace Application.DTOs.User
 {
-    public class UpdateUserRoleDTO : IRoleEditIingDto
+    public class UpdateUserRoleDTO : IRoleDto, IIdObject<Guid>
     {
-        public Guid UserId { get; set; }
+        public Guid Id { get; set; }
         public int RoleID { get; set; }
     }
 }

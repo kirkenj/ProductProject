@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Persistence;
+using Application.DTOs.User.Validators.Shared;
 using FluentValidation;
 
 namespace Application.DTOs.User.Validators
@@ -7,7 +8,8 @@ namespace Application.DTOs.User.Validators
     {
         public UpdateUserRoleDTOValidator(IRoleRepository roleRepository)
         {
-            Include(new IRoleEditIingDtoValidator(roleRepository));
+            Include(new IIdDtoValidator<Guid>());
+            Include(new IRoleDtoValidator(roleRepository));
         }
     }
 }
