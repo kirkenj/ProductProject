@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
@@ -31,8 +32,8 @@ namespace Persistence
             modelBuilder.Entity<Role>().HasData(regularRole);
 
             string hashAlgorithmName = "MD5";
-            
-            HashAlgorithm hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? throw new Exception($"Hash algorithm not found {hashAlgorithmName}");
+
+            HashAlgorithm hashAlgorithm = MD5.Create() ?? throw new Exception($"Hash algorithm not found {hashAlgorithmName}");
             Encoding encoding = Encoding.UTF8;
 
             ((string login, string password, string name, string email) userData, int roleID)[] startUsersArray = new[]

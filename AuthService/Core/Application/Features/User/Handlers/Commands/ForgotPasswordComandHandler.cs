@@ -31,15 +31,6 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(ForgotPasswordComand request, CancellationToken cancellationToken)
         {
-            var validator = new ForgotPasswordDtoValidator();
-
-            var validationResult = validator.Validate(request.ForgotPasswordDto);
-
-            if (validationResult.IsValid == false)
-            {
-                return Response<string>.BadRequestResponse(validationResult.ToString());
-            }
-
             string emailAddress = request.ForgotPasswordDto.Email;
 
             Domain.Models.User? user = await _userRepository.GetAsync(new UserFilter { Email = emailAddress });

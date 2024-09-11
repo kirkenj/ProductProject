@@ -36,15 +36,6 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<UserDto>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
-            var validator = new LoginDtoValidator();
-
-            var validationResult = validator.Validate(request.LoginDto);
-
-            if (validationResult.IsValid == false)
-            {
-                return Response<UserDto>.BadRequestResponse(validationResult.ToString());
-            }
-
             string loginEmail = request.LoginDto.Email;
 
             string cacheKey = CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);

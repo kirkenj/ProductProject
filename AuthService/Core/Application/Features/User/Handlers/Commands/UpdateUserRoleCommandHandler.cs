@@ -19,15 +19,6 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateUserRoleDTOValidator(_roleRepository);
-
-            var validationResult = await validator.ValidateAsync(request.UpdateUserRoleDTO, cancellationToken);
-
-            if (validationResult.IsValid == false)
-            {
-                return Response<string>.BadRequestResponse(validationResult.ToString());
-            }
-
             Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserRoleDTO.Id);
 
             if (user == null)

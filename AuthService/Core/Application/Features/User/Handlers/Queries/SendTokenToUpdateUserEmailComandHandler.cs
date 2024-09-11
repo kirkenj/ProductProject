@@ -29,15 +29,6 @@ namespace Application.Features.User.Handlers.Queries
 
         public async Task<Response<string>> Handle(SendTokenToUpdateUserEmailRequest request, CancellationToken cancellationToken)
         {
-            var validator = new SendTokenToUpdateUserEmailDtoValidator();
-
-            var validationResult = validator.Validate(request.UpdateUserEmailDto);
-
-            if (validationResult.IsValid == false)
-            {
-                return Response<string>.BadRequestResponse(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
-            }
-
             string newEmail = request.UpdateUserEmailDto.Email;
 
             Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserEmailDto.Id);
