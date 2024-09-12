@@ -12,11 +12,9 @@ namespace Repository.Models
         protected static readonly Guid _repId = Guid.NewGuid();
         protected int _cacheTimeoutMiliseconds = 2_000;
 
-        public GenericRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache)
+        public GenericRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache) : this(dbContext.Set<T>(), dbContext.SaveChangesAsync, customMemoryCache)
         {
-            _saveChangesAsync = dbContext.SaveChangesAsync;
-            _dbSet = dbContext.Set<T>() ?? throw new Exception("Set not found");
-            _customMemoryCache = customMemoryCache;
+
         }
 
         public GenericRepository(DbSet<T> dbSet, Func<CancellationToken, Task<int>> saveDelegate, ICustomMemoryCache customMemoryCache)
@@ -32,9 +30,7 @@ namespace Repository.Models
         {
             _dbSet.Add(obj);
             await _saveChangesAsync(CancellationToken.None);
-            var cacheKey = CacheKeyPrefix + obj.Id;
-            _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, obj, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
-            Console.WriteLine($"Set key {cacheKey}");
+            _ = Task.Run(() => SetCache(CacheKeyPrefix + obj.Id, obj));
         }
 
         public virtual async Task DeleteAsync(T obj)
@@ -61,28 +57,39 @@ namespace Repository.Models
             return query;
         }
 
-        public async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) => await GetPageContent(_dbSet, page, pageSize).AsNoTracking().ToArrayAsync();
+        public async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) 
+        {
+            var result = await GetPageContent(_dbSet, page, pageSize).AsNoTracking().ToArrayAsync();
+
+            _ = Task.Run(() =>
+            {
+                foreach (var item in result)
+                {
+                    _ = Task.Run(() => SetCache(CacheKeyPrefix + item.Id, item));
+                }
+            });
+            
+            return result;
+        }
 
         public virtual async Task<T?> GetAsync(TIdType id)
         {
             Console.Write($"Got request for {typeof(T).Name} with id = '{id}'. ");
             var cacheKey = CacheKeyPrefix + id;
             var result = await _customMemoryCache.GetAsync<T>(cacheKey);
-            if (result != null)
-            {
-                Console.WriteLine($"Found in it cache.");
-                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
-            }
-            else
+            if (result == null)
             {
                 Console.WriteLine("Sending request to database.");
                 result = await _dbSet.AsNoTracking().FirstOrDefaultAsync(o => o.Id.Equals(id));
             }
+            else
+            {
+                Console.WriteLine($"Found in it cache.");
+            }
 
             if (result != null)
             {
-                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
-                Console.WriteLine($"Set cache with key '{cacheKey}'");
+                _ = Task.Run(() => SetCache(cacheKey, result));
             }
 
             return result;
@@ -94,10 +101,14 @@ namespace Repository.Models
 
             await _saveChangesAsync(CancellationToken.None);
 
-            var cacheKey = CacheKeyPrefix + obj.Id;
+            _ = Task.Run(() => SetCache(CacheKeyPrefix + obj.Id, obj));
+        }
 
-            _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, obj, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
-            Console.WriteLine($"Set cache with key '{cacheKey}'");
+
+        protected virtual async Task SetCache(string key, object value)
+        {
+            await _customMemoryCache.SetAsync(key, value, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+            Console.WriteLine($"Set cache with key '{key}'");
         }
     }
 }

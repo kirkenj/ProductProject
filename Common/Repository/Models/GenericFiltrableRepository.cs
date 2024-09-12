@@ -17,7 +17,21 @@ namespace Repository.Models
 
         public virtual async Task<T?> GetAsync(TFilter filter) => await GetFilteredSet(_dbSet, filter).FirstOrDefaultAsync();
 
-        public virtual async Task<IReadOnlyCollection<T>> GetPageContent(TFilter filter, int? page = default, int? pageSize = default) =>
-            await GetPageContent(GetFilteredSet(_dbSet, filter), page, pageSize).ToArrayAsync();
+        public virtual async Task<IReadOnlyCollection<T>> GetPageContent(TFilter filter, int? page = default, int? pageSize = default)
+        {
+            var result = await GetPageContent(GetFilteredSet(_dbSet, filter), page, pageSize).ToArrayAsync();
+
+            _ = Task.Run(async () =>
+            {
+                foreach (var item in result)
+                {
+                    var cacheKey = CacheKeyPrefix + item.Id;
+                    await _customMemoryCache.SetAsync(cacheKey, item, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+                    Console.WriteLine($"Set cache with key '{cacheKey}'");
+                }
+            });
+
+            return result;
+        }
     }
 }
