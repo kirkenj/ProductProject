@@ -1,5 +1,6 @@
 ﻿using Cache.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Repository.Contracts;
 
 namespace Repository.Models
@@ -11,17 +12,19 @@ namespace Repository.Models
         protected readonly ICustomMemoryCache _customMemoryCache;
         protected static readonly Guid _repId = Guid.NewGuid();
         protected int _cacheTimeoutMiliseconds = 2_000;
+        protected readonly ILogger<GenericRepository<T, TIdType>> _logger;
 
-        public GenericRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache) : this(dbContext.Set<T>(), dbContext.SaveChangesAsync, customMemoryCache)
+
+        public GenericRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<GenericRepository<T, TIdType>> logger) : this(dbContext.Set<T>(), dbContext.SaveChangesAsync, customMemoryCache, logger)
         {
-
         }
 
-        public GenericRepository(DbSet<T> dbSet, Func<CancellationToken, Task<int>> saveDelegate, ICustomMemoryCache customMemoryCache)
+        public GenericRepository(DbSet<T> dbSet, Func<CancellationToken, Task<int>> saveDelegate, ICustomMemoryCache customMemoryCache, ILogger<GenericRepository<T, TIdType>> logger)
         {
-            _saveChangesAsync = saveDelegate ?? throw new ArgumentNullException(nameof(saveDelegate));
             _dbSet = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
+            _saveChangesAsync = saveDelegate ?? throw new ArgumentNullException(nameof(saveDelegate));
             _customMemoryCache = customMemoryCache;
+            _logger = logger;
         }
 
         protected string CacheKeyPrefix => _repId + " ";
@@ -39,7 +42,7 @@ namespace Repository.Models
             await _saveChangesAsync(CancellationToken.None);
             var cacheKey = CacheKeyPrefix + obj.Id;
             _ = Task.Run(() => _customMemoryCache.RemoveAsync(cacheKey));
-            Console.WriteLine($"Removed the key {cacheKey}");
+            _logger.Log(LogLevel.Information, $"Removed the key {cacheKey}");
         }
 
 
@@ -74,17 +77,17 @@ namespace Repository.Models
 
         public virtual async Task<T?> GetAsync(TIdType id)
         {
-            Console.Write($"Got request for {typeof(T).Name} with id = '{id}'. ");
+            _logger.Log(LogLevel.Information, $"Got request for {typeof(T).Name} with id = '{id}'. ");
             var cacheKey = CacheKeyPrefix + id;
             var result = await _customMemoryCache.GetAsync<T>(cacheKey);
             if (result == null)
             {
-                Console.WriteLine("Sending request to database.");
+                _logger.Log(LogLevel.Information, "Sending request to database.");
                 result = await _dbSet.AsNoTracking().FirstOrDefaultAsync(o => o.Id.Equals(id));
             }
             else
             {
-                Console.WriteLine($"Found in it cache.");
+                _logger.Log(LogLevel.Information, $"Found in it cache.");
             }
 
             if (result != null)
@@ -108,7 +111,7 @@ namespace Repository.Models
         protected virtual async Task SetCache(string key, object value)
         {
             await _customMemoryCache.SetAsync(key, value, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
-            Console.WriteLine($"Set cache with key '{key}'");
+            _logger.Log(LogLevel.Information, $"Set cache with key '{key}'");
         }
     }
 }

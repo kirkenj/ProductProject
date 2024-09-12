@@ -1,6 +1,6 @@
 ﻿namespace Application.DTOs.Product.Contracts
 {
-    public interface IEditProductObject
+    public interface IEditProductDto
     {
         public string Name { get; set; }
         public string Description { get; set; }

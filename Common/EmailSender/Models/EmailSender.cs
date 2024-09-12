@@ -1,5 +1,6 @@
 ﻿using EmailSender.Contracts;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 
 namespace EmailSender.Models
@@ -7,15 +8,17 @@ namespace EmailSender.Models
     public class EmailSender : IEmailSender
     {
         private EmailSettings Settings { get; }
+        private ILogger<EmailSender> Logger {  get; }
 
-        public EmailSender(EmailSettings emailSettings)
+        public EmailSender(EmailSettings emailSettings, ILogger<EmailSender> logger)
         {
             Settings = emailSettings;
+            Logger = logger;
         }
 
         public async Task<bool> SendEmailAsync(Email email)
         {
-            WriteMessageToConsole($"Sending email to {email.To}");
+            Logger.LogInformation($"Sending email to {email.To}");
             using var emailMessage = new MimeMessage();
 
             emailMessage.From.Add(new MailboxAddress(Settings.FromName, Settings.ApiLogin));
@@ -30,7 +33,7 @@ namespace EmailSender.Models
 
             if (Settings.ConsoleMode)
             {
-                WriteMessageToConsole($"Message to {email.To}\nSubject: {email.Subject}.\nBody: {email.Body}");
+                Logger.LogInformation($"Message to {email.To}\nSubject: {email.Subject}.\nBody: {email.Body}");
                 Thread.Sleep(80);
                 return true;
             }
@@ -43,21 +46,14 @@ namespace EmailSender.Models
 
                 _ = Task.Run(() => client.DisconnectAsync(true));
 
-                WriteMessageToConsole($"Message to {email.To}. Success");
+                Logger.LogInformation($"Message to {email.To}. Success");
                 return true;
             }
             catch (Exception ex)
             {
-                WriteMessageToConsole($"Message to {email.To}. Fail:" + ex.ToString());
+                Logger.LogInformation($"Message to {email.To}. Fail:" + ex.ToString());
                 return false;
             }
-        }
-
-        private void WriteMessageToConsole(string message)
-        {
-            Console.WriteLine($"--------------------------------------------------------------------");
-            Console.WriteLine($"{nameof(EmailSender)}: {message}");
-            Console.WriteLine($"--------------------------------------------------------------------");
         }
     }
 }

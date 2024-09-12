@@ -1,4 +1,4 @@
-﻿namespace Application.DTOs.UserClient
+﻿namespace Application.Models.UserClient
 {
     public class ClientResponse<T>
     {

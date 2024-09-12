@@ -1,6 +1,8 @@
-﻿namespace Application.DTOs.Product
+﻿using Application.DTOs.Product.Contracts;
+
+namespace Application.DTOs.Product
 {
-    public class UpdateProductDto
+    public class UpdateProductDto : IEditProductDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;

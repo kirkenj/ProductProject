@@ -3,6 +3,7 @@ using Application.Models.Product;
 using Cache.Contracts;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Repository.Models;
 
 
@@ -10,7 +11,7 @@ namespace Persistence.Repositories
 {
     public class ProductRepository : GenericFiltrableRepository<Product, Guid, ProductFilter>, IProductRepository
     {
-        public ProductRepository(ProductDbContext dbContext, ICustomMemoryCache customMemoryCache) : base(dbContext, customMemoryCache)
+        public ProductRepository(ProductDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<ProductRepository> logger) : base(dbContext, customMemoryCache, logger)  
         {
         }
 

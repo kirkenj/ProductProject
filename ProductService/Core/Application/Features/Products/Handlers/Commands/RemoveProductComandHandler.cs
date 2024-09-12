@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Persistence;
-using Application.DTOs.UserClient;
 using Application.Features.Product.Requests.Commands;
 using AutoMapper;
 using Clients.AuthApi;

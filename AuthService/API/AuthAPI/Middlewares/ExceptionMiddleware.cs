@@ -1,5 +1,4 @@
-﻿
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace AuthAPI.Middlewares
 {
@@ -20,7 +19,7 @@ namespace AuthAPI.Middlewares
             {
                 await _next(context);
             }
-            catch(ValidationException valEx)
+            catch (ValidationException valEx)
             {
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsJsonAsync(valEx.Message);

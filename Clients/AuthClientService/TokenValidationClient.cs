@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Clients.AuthApi;
 using HashProvider.Contracts;
 using HashProvider.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Clients.AuthClientService
 {
@@ -14,19 +15,20 @@ namespace Clients.AuthClientService
     public class TokenValidationClient : AuthApiClient, ITokenValidationClient
     {
         private static IHashProvider? HashProvider;
+        private static ILogger Logger = null!;
 
-        public TokenValidationClient(IOptions<AuthClientSettings> baseUrl, IHttpClientFactory httpClient, IHttpContextAccessor contextAccessor) : base(baseUrl, httpClient.CreateClient(nameof(ITokenValidationClient)), contextAccessor)
+        public TokenValidationClient(IOptions<AuthClientSettings> baseUrl, IHttpClientFactory httpClient, IHttpContextAccessor contextAccessor, ILogger<TokenValidationClient> logger) : base(baseUrl, httpClient.CreateClient(nameof(ITokenValidationClient)), contextAccessor)
         {
-
+            Logger = logger;
         }
 
         private async Task UpdateEncodingAndHashAlgoritm()
         {
-            Console.WriteLine($"{nameof(TokenValidationClient)}: Sending request to auth client for hashDefaults.");
+            Logger.LogInformation($"Sending request to auth client for hashDefaults.");
 
             var defaults = await GetHashDefaultsAsync();
 
-            Console.WriteLine($"{nameof(TokenValidationClient)}: Request to auth client for hashDefaults - Success.");
+            Logger.LogInformation($"Request to auth client for hashDefaults - Success.");
 
             HashProvider = new HashProvider.Models.HashProvider(new HashProviderSettings { EncodingName = defaults.EncodingName, HashAlgorithmName = defaults.HashAlgorithmName});
         }
@@ -38,12 +40,7 @@ namespace Clients.AuthClientService
                 await UpdateEncodingAndHashAlgoritm();
             }
 
-            if (HashProvider == null)
-            {
-                throw new ApplicationException($"Couldn't get all information about token hashing");
-            }
-
-            var tokenHash = HashProvider.GetHash(token);
+            var tokenHash = HashProvider?.GetHash(token) ?? throw new ApplicationException($"Couldn't get hash");
 
             return await IsTokenValidPOSTAsync(tokenHash);
         }

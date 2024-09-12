@@ -1,17 +1,17 @@
 ﻿using Application.Contracts.Persistence;
 using Cache.Contracts;
 using Domain.Models;
+using Microsoft.Extensions.Logging;
 using Repository.Models;
 
 namespace Persistence.Repositories
 {
     public class RoleRepository : GenericRepository<Role, int>, IRoleRepository
     {
-        public RoleRepository(AuthDbContext dbContext, ICustomMemoryCache customMemoryCache) : base(dbContext, customMemoryCache)
+        public RoleRepository(AuthDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<RoleRepository> logger) : base(dbContext, customMemoryCache, logger)
         {
             _cacheTimeoutMiliseconds = int.MaxValue;
         }
-
 
         public override async Task<IReadOnlyCollection<Role>> GetAllAsync()
         {

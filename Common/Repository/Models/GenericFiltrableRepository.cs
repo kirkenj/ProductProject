@@ -1,15 +1,18 @@
 ﻿using Cache.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Repository.Contracts;
 
 namespace Repository.Models
 {
     public abstract class GenericFiltrableRepository<T, TIdType, TFilter> : GenericRepository<T, TIdType>, IGenericFiltrableRepository<T, TIdType, TFilter> where T : class, IIdObject<TIdType> where TIdType : struct
     {
-        public GenericFiltrableRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache) : base(dbContext, customMemoryCache)
+        public GenericFiltrableRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<GenericRepository<T, TIdType>> logger) 
+            : this(dbContext.Set<T>(), dbContext.SaveChangesAsync, customMemoryCache, logger)
         {
         }
-        public GenericFiltrableRepository(DbSet<T> dbSet, Func<CancellationToken, Task<int>> saveDelegate, ICustomMemoryCache customMemoryCache) : base(dbSet, saveDelegate, customMemoryCache)
+        public GenericFiltrableRepository(DbSet<T> dbSet, Func<CancellationToken, Task<int>> saveDelegate, ICustomMemoryCache customMemoryCache, ILogger<GenericRepository<T, TIdType>> logger) 
+            : base(dbSet, saveDelegate, customMemoryCache, logger)
         {
         }
 
@@ -21,13 +24,11 @@ namespace Repository.Models
         {
             var result = await GetPageContent(GetFilteredSet(_dbSet, filter), page, pageSize).ToArrayAsync();
 
-            _ = Task.Run(async () =>
+            _ = Task.Run(() =>
             {
                 foreach (var item in result)
                 {
-                    var cacheKey = CacheKeyPrefix + item.Id;
-                    await _customMemoryCache.SetAsync(cacheKey, item, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
-                    Console.WriteLine($"Set cache with key '{cacheKey}'");
+                    _ = Task.Run(() => SetCache(CacheKeyPrefix + item.Id, item));
                 }
             });
 

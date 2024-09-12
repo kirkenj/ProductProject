@@ -2,7 +2,7 @@
 
 namespace Application.DTOs.Product
 {
-    public class CreateProductDto : IEditProductObject
+    public class CreateProductDto : IEditProductDto
     {
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;

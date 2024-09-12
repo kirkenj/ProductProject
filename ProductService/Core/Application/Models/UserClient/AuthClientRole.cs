@@ -1,6 +1,6 @@
-﻿namespace Application.DTOs.UserClient
+﻿namespace Application.Models.UserClient
 {
-    public class RoleDto
+    public class AuthClientRole
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]

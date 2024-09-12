@@ -1,9 +1,9 @@
-﻿namespace Application.DTOs.UserClient
+﻿namespace Application.Models.UserClient
 {
-    public class UserListDto
+    public class AuthClientUser
     {
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("login")]
         public string Login { get; set; } = default!;
@@ -12,6 +12,6 @@
         public string Email { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("role")]
-        public RoleDto Role { get; set; } = default!;
+        public AuthClientRole Role { get; set; } = default!;
     }
 }
