@@ -30,7 +30,7 @@ namespace Clients.AuthClientService
 
             Logger.LogInformation($"Request to auth client for hashDefaults - Success.");
 
-            HashProvider = new HashProvider.Models.HashProvider(new HashProviderSettings { EncodingName = defaults.EncodingName, HashAlgorithmName = defaults.HashAlgorithmName});
+            HashProvider = new HashProvider.Models.HashProvider(new HashProvider.Models.HashProviderSettings { EncodingName = defaults.EncodingName, HashAlgorithmName = defaults.HashAlgorithmName});
         }
 
         public async Task<bool> IsTokenValid(string token)
@@ -42,7 +42,7 @@ namespace Clients.AuthClientService
 
             var tokenHash = HashProvider?.GetHash(token) ?? throw new ApplicationException($"Couldn't get hash");
 
-            return await IsTokenValidPOSTAsync(tokenHash);
+            return await IsTokenValidAsync(tokenHash);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Application.Features.Product.Handlers.Commands
 
             await _productRepository.DeleteAsync(product);
 
-            UserDto ownerResult = _mapper.Map<UserDto>(await _authClientService.UsersGETAsync(product.ProducerId));
+            UserDto ownerResult = _mapper.Map<UserDto>(await _authClientService.UsersGETAsync(product.ProducerId, cancellationToken));
 
             if (ownerResult != null)
             {

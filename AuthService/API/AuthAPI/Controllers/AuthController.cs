@@ -74,19 +74,5 @@ namespace AuthAPI.Controllers
             });
             return result.GetActionResult();
         }
-
-        [HttpPost("Crap")]
-        [Produces("text/plain")]
-        public async Task<ActionResult<string>> Crap()
-        {
-            Response<string> result = await _mediator.Send(new ForgotPasswordComand
-            {
-                ForgotPasswordDto = new ForgotPasswordDto
-                {
-                    Email = "email"
-                }
-            });
-            return result.GetActionResult();
-        }
     }
 }

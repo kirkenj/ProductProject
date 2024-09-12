@@ -69,10 +69,10 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account/Password", Name = "Password")]
         [Authorize]
-        public async System.Threading.Tasks.Task<string> Password([Microsoft.AspNetCore.Mvc.FromBody] AuthorizedUserUpdatePassword? body)
+        public async System.Threading.Tasks.Task<string> Password([FromBody] string newPassword)
         {
 
-            return await _implementation.PasswordAsync(body);
+            return await _implementation.PasswordAsync(newPassword);
         }
 
         /// <returns>Success</returns>
@@ -112,7 +112,7 @@ namespace CustomGateway.Controllers.Auth
 
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Auth/Login", Name = "Login")]
-        public async System.Threading.Tasks.Task<LoginResult> Login([Microsoft.AspNetCore.Mvc.FromBody] LoginDto? body)
+        public async System.Threading.Tasks.Task<LoginResultModel> Login([Microsoft.AspNetCore.Mvc.FromBody] LoginDto? body)
         {
             return await _implementation.LoginAsync(body);
         }
@@ -141,21 +141,6 @@ namespace CustomGateway.Controllers.Auth
             return await _implementation.RolesAsync(id);
         }
 
-        /// <returns>Success</returns>
-        [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Tokens/IsTokenValid", Name = "IsTokenValidPOST")]
-        public async System.Threading.Tasks.Task<bool> IsTokenValidPOST([Microsoft.AspNetCore.Mvc.FromBody] string? body)
-        {
-
-            return await _implementation.IsTokenValidPOSTAsync(body);
-        }
-
-        /// <returns>Success</returns>
-        [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Tokens/IsTokenValid", Name = "IsTokenValidGET")]
-        public async System.Threading.Tasks.Task<bool> IsTokenValidGET([Microsoft.AspNetCore.Mvc.FromQuery] string? token)
-        {
-
-            return await _implementation.IsTokenValidGETAsync(token);
-        }
 
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Tokens/InvalidateUsersToken", Name = "InvalidateUsersToken")]
@@ -183,7 +168,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users", Name = "UsersPUT")]
         [Authorize]
-        public async System.Threading.Tasks.Task<string> UsersPUT([Microsoft.AspNetCore.Mvc.FromBody] UpdateNotSensetiveInfoDto? body)
+        public async System.Threading.Tasks.Task<string> UsersPUT([Microsoft.AspNetCore.Mvc.FromBody] UpdateUserInfoDto? body)
         {
 
             return await _implementation.UsersPUTAsync(body);
