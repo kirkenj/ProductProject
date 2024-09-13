@@ -11,7 +11,6 @@ namespace Repository.Models
         protected readonly Func<CancellationToken, Task<int>> _saveChangesAsync;
         protected readonly ICustomMemoryCache _customMemoryCache;
         protected static readonly Guid _repId = Guid.NewGuid();
-        protected int _cacheTimeoutMiliseconds = 2_000;
         protected readonly ILogger<GenericRepository<T, TIdType>> _logger;
 
 
@@ -27,6 +26,7 @@ namespace Repository.Models
             _logger = logger;
         }
 
+        public int СacheTimeoutMiliseconds { get; set; } = 2_000;
         protected string CacheKeyPrefix => _repId + " ";
 
         public virtual async Task AddAsync(T obj)
@@ -110,7 +110,7 @@ namespace Repository.Models
 
         protected virtual async Task SetCache(string key, object value)
         {
-            await _customMemoryCache.SetAsync(key, value, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds));
+            await _customMemoryCache.SetAsync(key, value, DateTimeOffset.UtcNow.AddMilliseconds(СacheTimeoutMiliseconds));
             _logger.Log(LogLevel.Information, $"Set cache with key '{key}'");
         }
     }

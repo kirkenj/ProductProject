@@ -10,7 +10,7 @@ namespace Persistence.Repositories
     {
         public RoleRepository(AuthDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<RoleRepository> logger) : base(dbContext, customMemoryCache, logger)
         {
-            _cacheTimeoutMiliseconds = int.MaxValue;
+            СacheTimeoutMiliseconds = int.MaxValue;
         }
 
         public override async Task<IReadOnlyCollection<Role>> GetAllAsync()
@@ -30,16 +30,16 @@ namespace Persistence.Repositories
                 {
                     var singleKey = CacheKeyPrefix + singleEntry.Id;
                     Console.WriteLine("Set cache with key " + singleKey);
-                    _ = Task.Run(() => _customMemoryCache.SetAsync(singleKey, singleEntry, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
+                    _ = Task.Run(() => _customMemoryCache.SetAsync(singleKey, singleEntry, DateTimeOffset.UtcNow.AddMilliseconds(СacheTimeoutMiliseconds)));
                 }
 
-                _ = Task.Run(() => _customMemoryCache.SetAsync(key, dbRes, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
+                _ = Task.Run(() => _customMemoryCache.SetAsync(key, dbRes, DateTimeOffset.UtcNow.AddMilliseconds(СacheTimeoutMiliseconds)));
                 Console.WriteLine("Set cache with key " + key);
                 return dbRes;
             }
 
             Console.WriteLine("Found it in cache. Updated cache with key " + key);
-            _ = Task.Run(() => _customMemoryCache.SetAsync(key, arrRes, DateTimeOffset.UtcNow.AddMilliseconds(_cacheTimeoutMiliseconds)));
+            _ = Task.Run(() => _customMemoryCache.SetAsync(key, arrRes, DateTimeOffset.UtcNow.AddMilliseconds(СacheTimeoutMiliseconds)));
 
             return arrRes;
         }
