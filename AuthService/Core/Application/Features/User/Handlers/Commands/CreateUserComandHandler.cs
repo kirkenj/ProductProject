@@ -50,7 +50,7 @@ namespace Application.Features.User.Handlers.Commands
 
             (this as IPasswordSettingHandler).SetPassword(password, user);
 
-            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(1));
+            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(_createUserSettings.EmailConfirmationTimeoutHours));
 
             bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {
