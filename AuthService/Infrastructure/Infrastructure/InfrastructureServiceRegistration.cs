@@ -8,28 +8,28 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using HashProvider.Contracts;
 
-namespace HashProvider
+namespace Infrastructure
 {
     public static class InfrastructureServiceRegistration
     {
-        public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
         {
             services.Configure<HashProviderSettings>(configuration.GetSection("HashProviderSettings"));
 
-            services.AddSingleton(new EmailSettings
+            if (isDevelopment)
             {
-                ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new KeyNotFoundException(),
-                ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new KeyNotFoundException(),
-                ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new KeyNotFoundException(),
-                ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new KeyNotFoundException()),
-                FromName = configuration["EmailSettings:FromName"] ?? throw new KeyNotFoundException(),
-                ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new KeyNotFoundException())
-            });
+                services.AddScoped<IEmailSender, ConsoleEmailSender>();
+            }
+            else
+            {
+                services.AddSingleton(configuration.GetSection("EmailSettings").Get<EmailSettings>() ?? throw new ArgumentException("Email settings is null"));
+                services.AddScoped<IEmailSender, EmailSender.Models.EmailSender>();
+            }
 
             services.Configure<CustomCacheOptions>(configuration.GetSection("CustomCacheOptions"));
+
             services.AddScoped<ICustomMemoryCache, RedisAsMemoryCache>();
-            services.AddScoped<IEmailSender, EmailSender.Models.EmailSender>();
-            services.AddTransient<IHashProvider, Models.HashProvider>();
+            services.AddTransient<IHashProvider, HashProvider.Models.HashProvider>();
             services.AddTransient<IPasswordGenerator, PasswordGenerator.PasswordGenerator>();
 
             return services;

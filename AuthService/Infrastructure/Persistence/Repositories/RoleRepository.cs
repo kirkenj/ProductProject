@@ -6,7 +6,7 @@ using Repository.Models;
 
 namespace Persistence.Repositories
 {
-    public class RoleRepository : GenericRepository<Role, int>, IRoleRepository
+    public class RoleRepository : GenericCachableRepository<Role, int>, IRoleRepository
     {
         public RoleRepository(AuthDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<RoleRepository> logger) : base(dbContext, customMemoryCache, logger)
         {
@@ -19,7 +19,7 @@ namespace Persistence.Repositories
 
             _logger.LogInformation($"Gor request for all instances.");
 
-            IReadOnlyCollection<Role>? arrRes = await _customMemoryCache.GetAsync<IReadOnlyCollection<Role>>(key);
+            IReadOnlyCollection<Role>? arrRes = await CustomMemoryCache.GetAsync<IReadOnlyCollection<Role>>(key);
 
             if (arrRes == null)
             {
@@ -32,7 +32,7 @@ namespace Persistence.Repositories
             }
 
              _logger.LogInformation($"Updated cache with key: '{key}'.");
-            _ = Task.Run(() => _customMemoryCache.SetAsync(key, arrRes, DateTimeOffset.UtcNow.AddMilliseconds(СacheTimeoutMiliseconds)));
+            _ = Task.Run(() => CustomMemoryCache.SetAsync(key, arrRes, DateTimeOffset.UtcNow.AddMilliseconds(СacheTimeoutMiliseconds)));
 
             return arrRes;
         }

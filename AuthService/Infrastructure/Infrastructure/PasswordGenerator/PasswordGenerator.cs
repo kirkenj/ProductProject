@@ -1,7 +1,7 @@
 ﻿using Application.Contracts.Infrastructure;
 
 
-namespace HashProvider.PasswordGenerator
+namespace Infrastructure.PasswordGenerator
 {
     public class PasswordGenerator : IPasswordGenerator
     {

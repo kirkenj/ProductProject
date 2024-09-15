@@ -9,11 +9,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace HashProvider
+
+namespace Infrastucture
 {
     public static class InfrastructureServiceRegistration
     {
-        public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
         {
             services.Configure<AuthClientSettings>(configuration.GetSection("AuthClientSettings"));
             services.AddHttpClient();
@@ -22,17 +23,15 @@ namespace HashProvider
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            services.AddTransient<IEmailSender, EmailSender.Models.EmailSender>();
-
-            services.AddSingleton(new EmailSettings
+            if (isDevelopment)
             {
-                ApiAdress = configuration["EmailSettings:ApiAdress"] ?? throw new KeyNotFoundException(),
-                ApiPassword = configuration["EmailSettings:ApiPassword"] ?? throw new KeyNotFoundException(),
-                ApiLogin = configuration["EmailSettings:ApiLogin"] ?? throw new KeyNotFoundException(),
-                ApiPort = int.Parse(configuration["EmailSettings:ApiPort"] ?? throw new KeyNotFoundException()),
-                FromName = configuration["EmailSettings:FromName"] ?? throw new KeyNotFoundException(),
-                ConsoleMode = bool.Parse(configuration["EmailSettings:ConsoleMode"] ?? throw new KeyNotFoundException())
-            });
+                services.AddScoped<IEmailSender, ConsoleEmailSender>();
+            }
+            else
+            {
+                services.AddSingleton(configuration.GetSection("EmailSettings").Get<EmailSettings>() ?? throw new ArgumentException("Email settings is null"));
+                services.AddScoped<IEmailSender, EmailSender.Models.EmailSender>();
+            }
             services.Configure<CustomCacheOptions>(configuration.GetSection("RedisCacheOptions"));
             services.AddSingleton<ICustomMemoryCache, RedisAsMemoryCache>();
 

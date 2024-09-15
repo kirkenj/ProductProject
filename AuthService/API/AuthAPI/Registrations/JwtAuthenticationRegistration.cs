@@ -12,9 +12,9 @@ namespace AuthAPI.Registrations
             var settings = configuration.GetSection("JwtSettings").Get<JwtSettings>() ?? throw new KeyNotFoundException($"Couldn't get {nameof(JwtSettings)}");
 
 
-            var validIssuer = settings.Issuer ?? throw new KeyNotFoundException(); //configuration["JwtSettings:Issuer"];
-            var validAudience = settings.Audience ?? throw new KeyNotFoundException(); //configuration["JwtSettings:Audience"];
-            var key = settings.Key ?? throw new KeyNotFoundException(); //configuration["JwtSettings:Key"] ?? throw new KeyNotFoundException();
+            var validIssuer = settings.Issuer ?? throw new KeyNotFoundException(); 
+            var validAudience = settings.Audience ?? throw new KeyNotFoundException(); 
+            var key = settings.Key ?? throw new KeyNotFoundException();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -1,6 +1,6 @@
 ﻿namespace Repository.Contracts
 {
-    public interface IGenericRepository<T, TIdType> where T : IIdObject<TIdType> where TIdType : struct
+    public interface IGenericRepository<T, TIdType> where T : class, IIdObject<TIdType> where TIdType : struct
     {
         public Task<IReadOnlyCollection<T>> GetAllAsync();
         public Task<T?> GetAsync(TIdType id);

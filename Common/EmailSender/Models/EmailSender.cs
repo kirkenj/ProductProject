@@ -31,13 +31,6 @@ namespace EmailSender.Models
 
             using var client = new SmtpClient();
 
-            if (Settings.ConsoleMode)
-            {
-                Logger.LogInformation($"Message to {email.To}\nSubject: {email.Subject}.\nBody: {email.Body}");
-                Thread.Sleep(80);
-                return true;
-            }
-
             try
             {
                 await client.ConnectAsync(Settings.ApiAdress, Settings.ApiPort, true);

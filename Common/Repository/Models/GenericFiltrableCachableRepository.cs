@@ -5,13 +5,13 @@ using Repository.Contracts;
 
 namespace Repository.Models
 {
-    public abstract class GenericFiltrableRepository<T, TIdType, TFilter> : 
-        GenericRepository<T, TIdType>, 
-        IGenericFiltrableRepository<T, TIdType, TFilter> 
+    public abstract class GenericFiltrableCachableRepository<T, TIdType, TFilter> : 
+        GenericCachableRepository<T, TIdType>, 
+        IGenericFiltrableRepository<T, TIdType, TFilter>
         where T : class, IIdObject<TIdType> where TIdType : struct
     {
-        public GenericFiltrableRepository(DbContext dbContext) 
-            : base(dbContext)
+        public GenericFiltrableCachableRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<GenericCachableRepository<T, TIdType>> logger)
+            : base(dbContext, customMemoryCache, logger)
         {
         }
 
@@ -22,6 +22,14 @@ namespace Repository.Models
         public virtual async Task<IReadOnlyCollection<T>> GetPageContent(TFilter filter, int? page = default, int? pageSize = default)
         {
             var result = await GetPageContent(GetFilteredSet(_dbSet, filter), page, pageSize).ToArrayAsync();
+
+            _ = Task.Run(() =>
+            {
+                foreach (var item in result)
+                {
+                    _ = Task.Run(() => SetCache(CacheKeyPrefix + item.Id, item));
+                }
+            });
 
             return result;
         }

@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Redis;
-
-namespace Cache.Models
+﻿namespace Cache.Models
 {
-    public class CustomCacheOptions : RedisCacheOptions
+    public class CustomCacheOptions
     {
+        public string DockerContainerName { get; set; } = null!;
+        public string ConnectionUri { get; set; } = null!;
     }
 }

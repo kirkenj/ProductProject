@@ -10,9 +10,8 @@ namespace Persistence.Repositories
 {
     public class UserRepository : GenericFiltrableRepository<User, Guid, UserFilter>, IUserRepository
     {
-        public UserRepository(AuthDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<UserRepository> logger) : base(dbContext, customMemoryCache, logger)
+        public UserRepository(AuthDbContext dbContext) : base(dbContext)
         {
-            СacheTimeoutMiliseconds = 10000;
         }
 
         protected override IQueryable<User> GetFilteredSet(IQueryable<User> set, UserFilter filter)

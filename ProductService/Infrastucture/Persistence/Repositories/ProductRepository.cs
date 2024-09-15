@@ -9,7 +9,7 @@ using Repository.Models;
 
 namespace Persistence.Repositories
 {
-    public class ProductRepository : GenericFiltrableRepository<Product, Guid, ProductFilter>, IProductRepository
+    public class ProductRepository : GenericFiltrableCachableRepository<Product, Guid, ProductFilter>, IProductRepository
     {
         public ProductRepository(ProductDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<ProductRepository> logger) : base(dbContext, customMemoryCache, logger)  
         {

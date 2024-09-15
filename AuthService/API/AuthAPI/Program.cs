@@ -3,7 +3,7 @@ using AuthAPI.JwtAuthentication;
 using AuthAPI.Middlewares;
 using AuthAPI.Registrations;
 using Constants;
-using HashProvider;
+using Infrastructure;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureApiServices(builder.Configuration);
 builder.Services.ConfigurePersistenceServices(builder.Configuration);
-builder.Services.ConfigureInfrastructureServices(builder.Configuration);
+builder.Services.ConfigureInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureJwtAuthentication(builder.Configuration);
 
