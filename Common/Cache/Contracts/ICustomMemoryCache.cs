@@ -2,10 +2,10 @@
 {
     public interface ICustomMemoryCache
     {
-        public Task SetAsync<T>(object key, T value, DateTimeOffset offset);
+        public Task SetAsync<T>(string key, T value, DateTimeOffset offset);
 
-        public Task RemoveAsync(object key);
+        public Task RemoveAsync(string key);
 
-        public Task<T?> GetAsync<T>(object key);
+        public Task<T?> GetAsync<T>(string key);
     }
 }
