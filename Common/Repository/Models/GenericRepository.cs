@@ -3,34 +3,40 @@ using Repository.Contracts;
 
 namespace Repository.Models
 {
-    public abstract class GenericRepository<T, TIdType> : 
+    public class GenericRepository<T, TIdType> : 
         IGenericRepository<T, TIdType>
         where T : class, IIdObject<TIdType> where TIdType : struct
     {
-        protected readonly DbSet<T> _dbSet;
-        protected readonly Func<CancellationToken, Task<int>> _saveChangesAsync;
         protected static readonly Guid _repId = Guid.NewGuid();
+
+        public DbSet<T> DbSet { get; private set; }
+
+        public Func<CancellationToken, Task<int>> SaveChangesAsync { get; private set; }
 
         public GenericRepository(DbContext dbContext)
         { 
-            _dbSet = dbContext?.Set<T>() ?? throw new ArgumentNullException(nameof(dbContext));
-            _saveChangesAsync = dbContext.SaveChangesAsync;
+            DbSet = dbContext?.Set<T>() ?? throw new ArgumentNullException(nameof(dbContext));
+            SaveChangesAsync = dbContext.SaveChangesAsync;
         }
 
         public virtual async Task AddAsync(T obj)
         {
-            _dbSet.Add(obj);
-            await _saveChangesAsync(CancellationToken.None);
+            ArgumentNullException.ThrowIfNull(obj);
+
+            DbSet.Add(obj);
+            await SaveChangesAsync(CancellationToken.None);
         }
 
         public virtual async Task DeleteAsync(T obj)
         {
-            _dbSet.Remove(obj);
-            await _saveChangesAsync(CancellationToken.None);
+            ArgumentNullException.ThrowIfNull(obj);
+            
+            DbSet.Remove(obj);
+            await SaveChangesAsync(CancellationToken.None);
         }
 
 
-        public virtual async Task<IReadOnlyCollection<T>> GetAllAsync() => await _dbSet.AsNoTracking().ToArrayAsync();
+        public virtual async Task<IReadOnlyCollection<T>> GetAllAsync() => await DbSet.ToArrayAsync();
 
         protected IQueryable<T> GetPageContent(IQueryable<T> query, int? page = default, int? pageSize = default)
         {
@@ -46,18 +52,18 @@ namespace Repository.Models
 
         public virtual async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) 
         {
-            return await GetPageContent(_dbSet, page, pageSize).AsNoTracking().ToArrayAsync();
+            return await GetPageContent(DbSet, page, pageSize).ToArrayAsync();
         }
 
         public virtual async Task<T?> GetAsync(TIdType id)
         {
-            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(o => o.Id.Equals(id));
+            return await DbSet.FirstOrDefaultAsync(o => o.Id.Equals(id));
         }
 
         public virtual async Task UpdateAsync(T obj)
         {
-            _dbSet.Entry(obj).State = EntityState.Modified;
-            await _saveChangesAsync(CancellationToken.None);
+            DbSet.Entry(obj).State = EntityState.Modified;
+            await SaveChangesAsync(CancellationToken.None);
         }
     }
 }

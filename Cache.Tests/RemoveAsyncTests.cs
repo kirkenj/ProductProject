@@ -22,7 +22,7 @@ namespace Cache.Tests
 
             IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
 
-            _cache = new RedisAsMemoryCache(options);
+            _cache = new RedisCustomMemoryCache(options);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace Cache.Tests
             var value = new Human() { Name = "Hello", Surname = "World" };
 
             //act
-            await _cache.SetAsync(key, value, DateTimeOffset.Now.AddSeconds(5));
+            await _cache.SetAsync(key, value, TimeSpan.FromSeconds(5));
 
             await _cache.RemoveAsync(key);
 
@@ -81,7 +81,7 @@ namespace Cache.Tests
         {
             //arrange
 
-            List<KeyValuePair<string, Human>> humansBeforeCache = new List<KeyValuePair<string, Human>>();
+            List<KeyValuePair<string, Human>> humansBeforeCache = new();
 
             for (int i = 0; i < 10; i++)
             {
@@ -100,10 +100,10 @@ namespace Cache.Tests
 
             foreach (var l in humansBeforeCache)
             {
-                await _cache.SetAsync(l.Key, l.Value, DateTimeOffset.Now.AddSeconds(5));
+                await _cache.SetAsync(l.Key, l.Value, TimeSpan.FromSeconds(5));
             }
 
-            await _cache.SetAsync(selectedKeyValuePair.Key, selectedKeyValuePair.Value, DateTimeOffset.Now.AddSeconds(5));
+            await _cache.SetAsync(selectedKeyValuePair.Key, selectedKeyValuePair.Value, TimeSpan.FromSeconds(5));
 
             await _cache.RemoveAsync(selectedKeyValuePair.Key);
 

@@ -54,11 +54,11 @@ namespace Infrastucture.AuthClient
 
                 _ = Task.Run(() =>
                 {
-                    _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));
+                    _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, TimeSpan.FromMilliseconds(10_000)));
 
                     foreach (var item in result)
                     {
-                        _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKeyPrefix + "userId_" + item.Id, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));
+                        _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKeyPrefix + "userId_" + item.Id, result, TimeSpan.FromMilliseconds(10_000)));
                     }
                 });
 
@@ -94,7 +94,7 @@ namespace Infrastucture.AuthClient
                     result = _mapper.Map<AuthClientUser>(await _authClient.UsersGETAsync(userId));
                 }
 
-                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, DateTimeOffset.UtcNow.AddMilliseconds(10_000)));
+                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, TimeSpan.FromMilliseconds(10_000)));
 
                 return new ClientResponse<AuthClientUser?> { Result = result, Success = true };
             }
@@ -105,7 +105,7 @@ namespace Infrastucture.AuthClient
             }
         }
 
-        private string StringifyParameters(IEnumerable<Guid>? ids = null, string? accurateLogin = null, string? loginPart = null, string? email = null, string? address = null, IEnumerable<int>? roleIds = null, int? page = null, int? pageSize = null)
+        private static string StringifyParameters(IEnumerable<Guid>? ids = null, string? accurateLogin = null, string? loginPart = null, string? email = null, string? address = null, IEnumerable<int>? roleIds = null, int? page = null, int? pageSize = null)
         {
             StringBuilder stringBuilder = new();
 

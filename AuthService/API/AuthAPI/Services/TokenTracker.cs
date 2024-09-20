@@ -34,7 +34,7 @@ namespace AuthAPI.Services
             await _memoryCache.SetAsync(
                 _keyGeneratingDelegate(userIdStr),
                 time,
-                DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes));
+                TimeSpan.FromMinutes(_settings.DurationInMinutes));
 
             return;
         }
@@ -73,7 +73,7 @@ namespace AuthAPI.Services
             await _memoryCache.SetAsync(
                 cahceKey,
                 new AssignedTokenInfo<TUserIdType> { DateTime = tokenRegistrationTime, UserId = userId },
-                DateTimeOffset.UtcNow.AddMinutes(_settings.DurationInMinutes
+                TimeSpan.FromMinutes(_settings.DurationInMinutes
                 ));
         }
     }

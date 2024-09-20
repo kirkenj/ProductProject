@@ -22,7 +22,7 @@ namespace Cache.Tests
 
             IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
 
-            _cache = new RedisAsMemoryCache(options);
+            _cache = new RedisCustomMemoryCache(options);
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Cache.Tests
             var result = await _cache.GetAsync<object>(key);
 
             //assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace Cache.Tests
             var value = new Human { Name = "Rick", Surname = "Sanckezz" };
 
             //act
-            await _cache.SetAsync(key, value, DateTimeOffset.Now.AddSeconds(3));
+            await _cache.SetAsync(key, value, TimeSpan.FromSeconds(3));
 
             Exception? thrownException = null;
 
@@ -105,7 +105,7 @@ namespace Cache.Tests
             int milisecs = 120;
 
             //act
-            await _cache.SetAsync(key, value, DateTimeOffset.Now.AddMilliseconds(milisecs));
+            await _cache.SetAsync(key, value, TimeSpan.FromMilliseconds(milisecs));
 
             Thread.Sleep(milisecs);
 
@@ -124,7 +124,7 @@ namespace Cache.Tests
             var value = new Human { Name = "Rick", Surname = "Sanckezz" };
 
             //act
-            await _cache.SetAsync(key, value, DateTimeOffset.Now.AddSeconds(3));
+            await _cache.SetAsync(key, value, TimeSpan.FromSeconds(3));
 
             var result = await _cache.GetAsync<Human>(key);
 
@@ -147,7 +147,7 @@ namespace Cache.Tests
             var timeToSleep = milisecs - inaccuracy;
 
             //act
-            _ = Task.Run(async () => await _cache.SetAsync(key, value, DateTimeOffset.Now.AddMilliseconds(milisecs)));
+            _ = Task.Run(async () => await _cache.SetAsync(key, value, TimeSpan.FromMilliseconds(milisecs)));
 
             Thread.Sleep(timeToSleep);
 

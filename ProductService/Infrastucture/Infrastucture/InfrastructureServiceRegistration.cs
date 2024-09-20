@@ -33,7 +33,7 @@ namespace Infrastucture
                 services.AddScoped<IEmailSender, EmailSender.Models.EmailSender>();
             }
             services.Configure<CustomCacheOptions>(configuration.GetSection("RedisCacheOptions"));
-            services.AddSingleton<ICustomMemoryCache, RedisAsMemoryCache>();
+            services.AddSingleton<ICustomMemoryCache, RedisCustomMemoryCache>();
 
             return services;
         }

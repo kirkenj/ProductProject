@@ -9,13 +9,13 @@ using Repository.Models;
 
 namespace Persistence.Repositories
 {
-    public class ProductRepository : GenericFiltrableCachableRepository<Product, Guid, ProductFilter>, IProductRepository
+    public class ProductRepository : GenericFiltrableCachingRepository<Product, Guid, ProductFilter>, IProductRepository
     {
-        public ProductRepository(ProductDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<ProductRepository> logger) : base(dbContext, customMemoryCache, logger)  
+        public ProductRepository(ProductDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<ProductRepository> logger) : base(dbContext, customMemoryCache, logger, GetFilteredSet)  
         {
         }
 
-        protected override IQueryable<Product> GetFilteredSet(IQueryable<Product> set, ProductFilter filter)
+        protected static IQueryable<Product> GetFilteredSet(IQueryable<Product> set, ProductFilter filter)
         {
             if (filter == null)
             {

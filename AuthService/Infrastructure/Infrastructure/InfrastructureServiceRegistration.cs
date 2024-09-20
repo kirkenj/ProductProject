@@ -28,9 +28,10 @@ namespace Infrastructure
 
             services.Configure<CustomCacheOptions>(configuration.GetSection("CustomCacheOptions"));
 
-            services.AddScoped<ICustomMemoryCache, RedisAsMemoryCache>();
+            services.AddScoped<ICustomMemoryCache, RedisCustomMemoryCache>();
             services.AddTransient<IHashProvider, HashProvider.Models.HashProvider>();
             services.AddTransient<IPasswordGenerator, PasswordGenerator.PasswordGenerator>();
+
 
             return services;
         }

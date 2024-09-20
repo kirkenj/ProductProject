@@ -13,7 +13,11 @@ namespace Persistence
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
 
-            services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AuthDbConnectionString")));
+            services.AddDbContext<AuthDbContext>(options => 
+            { 
+                options.UseSqlServer(configuration.GetConnectionString("AuthDbConnectionString")); 
+                
+            });
 
             return services;
         }

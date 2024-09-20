@@ -22,14 +22,14 @@ namespace Cache.Tests
 
             IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
 
-            _cache = new RedisAsMemoryCache(options);
+            _cache = new RedisCustomMemoryCache(options);
         }
 
         [Test]
         public void SetAsync_KeyNullValueNullOffset99ms_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>(null, null, DateTimeOffset.Now.AddMilliseconds(99));
+            var func = async () => await _cache.SetAsync<object>(null, null, TimeSpan.FromMilliseconds(99));
 
             //assert
             Assert.That(func, Throws.TypeOf<ArgumentNullException>());
@@ -40,7 +40,7 @@ namespace Cache.Tests
         public void SetAsync_KeyNullValueNullOffset100msPlusInaccuracy_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>(null, null, DateTimeOffset.Now.AddMilliseconds(100 + _inaccuracyMs));
+            var func = async () => await _cache.SetAsync<object>(null, null, TimeSpan.FromMilliseconds(100 + _inaccuracyMs));
 
             //assert
             Assert.That(func, Throws.TypeOf<ArgumentNullException>());
@@ -50,7 +50,7 @@ namespace Cache.Tests
         public void SetAsync_KeyNullValueNotNullOffset99ms_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>(null, "value", DateTimeOffset.Now.AddMilliseconds(99));
+            var func = async () => await _cache.SetAsync<object>(null, "value", TimeSpan.FromMilliseconds(99));
 
             //assert
             Assert.That(func, Throws.TypeOf<ArgumentNullException>());
@@ -60,7 +60,7 @@ namespace Cache.Tests
         public void SetAsync_KeyNullValueNotNullOffset100msPlusInaccuracy_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>(null, "value", DateTimeOffset.Now.AddMilliseconds(100 + _inaccuracyMs));
+            var func = async () => await _cache.SetAsync<object>(null, "value", TimeSpan.FromMilliseconds(100 + _inaccuracyMs));
 
             //assert
             Assert.That(func, Throws.TypeOf<ArgumentNullException>());
@@ -70,7 +70,7 @@ namespace Cache.Tests
         public void SetAsync_KeyNotNullValueNullOffset99ms_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>("key", null, DateTimeOffset.Now.AddMilliseconds(99));
+            var func = async () => await _cache.SetAsync<object>("key", null, TimeSpan.FromMilliseconds(99));
 
             //assert
             Assert.That(func, Throws.TypeOf<ArgumentNullException>());
@@ -80,7 +80,7 @@ namespace Cache.Tests
         public void SetAsync_KeyNotNullValueNullOffset100msPlusInaccuracy_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>("key", null, DateTimeOffset.Now.AddMilliseconds(100 + _inaccuracyMs));
+            var func = async () => await _cache.SetAsync<object>("key", null, TimeSpan.FromMilliseconds(100 + _inaccuracyMs));
 
             //assert
             Assert.That(func, Throws.TypeOf<ArgumentNullException>());
@@ -90,17 +90,17 @@ namespace Cache.Tests
         public void SetAsync_KeyNotNullValueNotNullOffset99ms_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>("key", "value", DateTimeOffset.Now.AddMilliseconds(99));
+            var func = async () => await _cache.SetAsync<object>("key", "value", TimeSpan.FromMilliseconds(99));
 
             //assert
-            Assert.That(func, Throws.TypeOf<ArgumentOutOfRangeException>().With.Message.StartsWith("Offset has to be at least 100 ms ahead from now"));
+            Assert.That(func, Throws.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test]
         public void SetAsync_KeyNotNullValueNotNullOffset100msPlusInaccuracy_Pass()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>("Key", "value", DateTimeOffset.Now.AddMilliseconds(100 + _inaccuracyMs));
+            var func = async () => await _cache.SetAsync<object>("Key", "value", TimeSpan.FromMilliseconds(100 + _inaccuracyMs));
 
             //assert
             Assert.That(func, Throws.Nothing);
@@ -110,7 +110,7 @@ namespace Cache.Tests
         public void SetAsync_KeyEmptyValueNotNullOffset100msPlusInaccuracy_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>(string.Empty, "value", DateTimeOffset.Now.AddMilliseconds(100 + _inaccuracyMs));
+            var func = async () => await _cache.SetAsync<object>(string.Empty, "value", TimeSpan.FromMilliseconds(100 + _inaccuracyMs));
 
             //assert
             Assert.That(func, Throws.TypeOf<ArgumentNullException>());
@@ -120,7 +120,7 @@ namespace Cache.Tests
         public void SetAsync_KeyWhiteSpaceValueNotNullOffset100msPlusInaccuracy_ThrowsArgumentNullException()
         {
             //act
-            var func = async () => await _cache.SetAsync<object>("   ", "value", DateTimeOffset.Now.AddMilliseconds(100 + _inaccuracyMs));
+            var func = async () => await _cache.SetAsync<object>("   ", "value", TimeSpan.FromMilliseconds(100 + _inaccuracyMs));
 
             //assert
             Assert.That(func, Throws.TypeOf<ArgumentNullException>());
@@ -138,7 +138,7 @@ namespace Cache.Tests
             //act
             try
             {
-                await _cache.SetAsync<object>("key", "value", DateTimeOffset.Now.AddMilliseconds(100 + 2));
+                await _cache.SetAsync<object>("key", "value", TimeSpan.FromMilliseconds(100 + 2));
                 noExceptionsThrown = true;
             }
             catch (AggregateException agrEx)
@@ -179,7 +179,7 @@ namespace Cache.Tests
 
             foreach (var l in humansBeforeCache)
             {
-                await _cache.SetAsync(key, l, DateTimeOffset.Now.AddSeconds(5));
+                await _cache.SetAsync(key, l, TimeSpan.FromSeconds(5));
             }
 
             var cacheValue = await _cache.GetAsync<Human>(key);
@@ -211,7 +211,7 @@ namespace Cache.Tests
 
             foreach (var l in humansBeforeCache)
             {
-                await _cache.SetAsync(l.Key, l.Value, DateTimeOffset.Now.AddSeconds(5));
+                await _cache.SetAsync(l.Key, l.Value, TimeSpan.FromSeconds(5));
             }
 
             List<KeyValuePair<string, Human?>> humansAfterCache = new();

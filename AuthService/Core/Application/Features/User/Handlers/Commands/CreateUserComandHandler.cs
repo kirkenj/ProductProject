@@ -18,16 +18,14 @@ namespace Application.Features.User.Handlers.Commands
 {
     public class CreateUserComandHandler : IRequestHandler<CreateUserCommand, Response<Guid>>, IPasswordSettingHandler
     {
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly CreateUserSettings _createUserSettings;
         private readonly ICustomMemoryCache _memoryCache;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly IEmailSender _emailSender;
 
-        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IUserRepository userRepository, IMapper mapper, IHashProvider passwordSetter, IPasswordGenerator passwordGenerator, IEmailSender emailSender, ICustomMemoryCache memoryCache)
+        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IMapper mapper, IHashProvider passwordSetter, IPasswordGenerator passwordGenerator, IEmailSender emailSender, ICustomMemoryCache memoryCache)
         {
-            _userRepository = userRepository;
             _mapper = mapper;
             HashPrvider = passwordSetter;
             _createUserSettings = createUserSettings.Value;
@@ -50,7 +48,7 @@ namespace Application.Features.User.Handlers.Commands
 
             (this as IPasswordSettingHandler).SetPassword(password, user);
 
-            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, DateTimeOffset.UtcNow.AddHours(_createUserSettings.EmailConfirmationTimeoutHours));
+            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, TimeSpan.FromHours(_createUserSettings.EmailConfirmationTimeoutHours));
 
             bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {

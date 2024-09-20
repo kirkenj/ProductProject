@@ -61,7 +61,7 @@ namespace Application.Features.User.Handlers.Queries
                 throw new ApplicationException("Email was not sent");
             }
 
-            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, DateTimeOffset.UtcNow.AddHours(1));
+            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, TimeSpan.FromHours(1));
 
             return Response<string>.OkResponse("Check emails to get further details", string.Empty);
         }

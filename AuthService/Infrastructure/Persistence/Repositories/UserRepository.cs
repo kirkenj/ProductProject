@@ -1,20 +1,18 @@
 ﻿using Application.Contracts.Persistence;
 using Application.Models.User;
-using Cache.Contracts;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Repository.Models;
 
 namespace Persistence.Repositories
 {
     public class UserRepository : GenericFiltrableRepository<User, Guid, UserFilter>, IUserRepository
     {
-        public UserRepository(AuthDbContext dbContext) : base(dbContext)
+        public UserRepository(AuthDbContext dbContext) : base(dbContext, GetFilteredSet)
         {
         }
 
-        protected override IQueryable<User> GetFilteredSet(IQueryable<User> set, UserFilter filter)
+        private static IQueryable<User> GetFilteredSet(IQueryable<User> set, UserFilter filter)
         {
             if (filter == null)
             {
