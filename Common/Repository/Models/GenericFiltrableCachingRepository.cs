@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Repository.Models
 {
-    public abstract class GenericFiltrableCachingRepository<T, TIdType, TFilter> : 
+    public class GenericFiltrableCachingRepository<T, TIdType, TFilter> : 
         GenericCachingRepository<T, TIdType>, 
         IGenericFiltrableRepository<T, TIdType, TFilter>
         where T : class, IIdObject<TIdType> where TIdType : struct

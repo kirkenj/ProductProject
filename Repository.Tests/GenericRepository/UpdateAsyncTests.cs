@@ -20,7 +20,7 @@ namespace Repository.Tests.GenericRepository
         [Test]
         public async Task UpdateAsync_UpdatingContainedUser_ValueUpdated()
         {
-            var id = _testDbContext.Users.First().Id;
+            var id = Users.First().Id;
 
             var userToUpdate = await _repository.GetAsync(id);
 
@@ -36,15 +36,18 @@ namespace Repository.Tests.GenericRepository
                 Name = userToUpdate.Name,
                 Email = userToUpdate.Email,
                 Address = userToUpdate.Address,
-                Login = userToUpdate.Login
+                Login = userToUpdate.Login  
             };
 
-            userToUpdate.Name = "Updated name";
+            var newValue = $"Updated value {Guid.NewGuid()}";
+
+            userToUpdate.Name = newValue;
 
             await _repository.UpdateAsync(userToUpdate);
 
             var userAfterUpdate = await _repository.GetAsync(id);
 
+            Assert.That(userToUpdate, Is.EqualTo(userAfterUpdate));
             Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate));
         }
 

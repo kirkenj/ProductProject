@@ -1,7 +1,6 @@
 using Repository.Tests.Models;
 using Repository.Contracts;
 using Repository.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Repository.Tests.GenericRepository
 {
@@ -37,7 +36,7 @@ namespace Repository.Tests.GenericRepository
         [Test]
         public void AddAsyncTests_IDIsTaken_ThrowsInvalidOperationException()
         {
-            var user3 = new User
+            var user = new User
             {
                 Address = "Zone 51",
                 Name = "Natan",
@@ -47,7 +46,7 @@ namespace Repository.Tests.GenericRepository
             };
 
 
-            var func = async () => await _repository.AddAsync(user3);
+            var func = async () => await _repository.AddAsync(user);
 
             Assert.That(func, Throws.InvalidOperationException);
         }
@@ -55,7 +54,7 @@ namespace Repository.Tests.GenericRepository
         [Test]
         public async Task AddAsyncTests_ValueIsValid_AddsValue()
         {
-            var user33 = new User
+            var user = new User
             {
                 Address = "Zone 51",
                 Name = "Natan",
@@ -64,27 +63,11 @@ namespace Repository.Tests.GenericRepository
                 Id = Guid.NewGuid()
             };
 
+            await _repository.AddAsync(user);
 
+            var userFromContext = await _repository.GetAsync(user.Id);
 
-
-            var u = await _testDbContext.Users.ToArrayAsync();
-
-            //var q = _testDbContext.Entry(user33);
-
-            var val = await _repository.GetAsync(user33.Id);
-
-            if (val != null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            await _testDbContext.Users.AddAsync(user33);
-
-            await _testDbContext.SaveChangesAsync();
-
-            var userFromContext = await _repository.GetAsync(user33.Id);
-
-            Assert.That(userFromContext, Is.EqualTo(user33));
+            Assert.That(userFromContext, Is.EqualTo(user));
         }
     }
 }

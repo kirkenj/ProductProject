@@ -3,7 +3,7 @@ using Repository.Contracts;
 
 namespace Repository.Models
 {
-    public abstract class GenericFiltrableRepository<T, TIdType, TFilter> : 
+    public class GenericFiltrableRepository<T, TIdType, TFilter> : 
         GenericRepository<T, TIdType>, 
         IGenericFiltrableRepository<T, TIdType, TFilter> 
         where T : class, IIdObject<TIdType> where TIdType : struct

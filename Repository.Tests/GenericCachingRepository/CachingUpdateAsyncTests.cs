@@ -2,7 +2,6 @@ using Repository.Tests.Models;
 using Repository.Models;
 using Repository.Contracts;
 using Cache.Contracts;
-using Cache.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -12,11 +11,10 @@ namespace Repository.Tests.GenericCachingRepository
     {
         private IGenericRepository<User, Guid> _repository = null!;
         private TestDbContext _testDbContext = null!;
-        private ICustomMemoryCache _customMemoryCache = null!;
-
+        private RedisCustomMemoryCacheWithEvents _customMemoryCache = null!;
         private List<User> Users => _testDbContext.Users.ToList();
 
-        [SetUp]
+        [OneTimeSetUp]
         public async Task Setup()
         {
             var redis = TestConstants.GetReddis();
@@ -29,15 +27,20 @@ namespace Repository.Tests.GenericCachingRepository
 
             var MockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
 
-            _repository = new GenericCachingRepository<User, Guid>(_testDbContext, _customMemoryCache, MockLogger);
+            _repository = new GenericCachingRepository<User, Guid>(_testDbContext, _customMemoryCache, MockLogger);           
+        }
 
-            
+        [SetUp]
+        public void SetUp()
+        {
+            _customMemoryCache.ClearDb();
+            _customMemoryCache.DropEvents();
         }
 
         [Test]
-        public async Task UpdateAsync_UpdatingContainedUser_ValueUpdated()
+        public async Task UpdateAsync_UpdatingContainedUser_ValueUpdatedAndAddedToCache()
         {
-            var id = Users.First().Id;
+            var id = Users[Random.Shared.Next(Users.Count)].Id;
 
             var userToUpdate = await _repository.GetAsync(id);
 
@@ -46,6 +49,16 @@ namespace Repository.Tests.GenericCachingRepository
                 Assert.Fail();
                 return;
             }
+
+            User? userAddedToCache = null;
+
+            _customMemoryCache.OnSet += (key, value, offset) =>
+            {
+                if (value is User uVal && uVal.Id == id)
+                {
+                    userAddedToCache = uVal;
+                }
+            };
 
             var userBeforeUpdate = new User
             {
@@ -65,6 +78,7 @@ namespace Repository.Tests.GenericCachingRepository
 
             Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate), $"Is equal: {userAfterUpdate.Equals(userBeforeUpdate)}");
             Assert.That(userAfterUpdate, Is.EqualTo(userToUpdate));
+            Assert.That(userAfterUpdate, Is.EqualTo(userAddedToCache));
         }
 
 
@@ -97,7 +111,7 @@ namespace Repository.Tests.GenericCachingRepository
             Assert.That(func, Throws.Exception);
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             _testDbContext.Dispose();

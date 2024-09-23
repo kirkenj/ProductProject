@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Repository.Tests.Models;
 using Repository.Models;
 using Repository.Contracts;
@@ -23,7 +22,7 @@ namespace Repository.Tests.GenericRepository
         {
             var users = await _repository.GetAllAsync();
 
-            Assert.That(users, Is.EqualTo(_testDbContext.Users.ToArray()));
+            Assert.That(users, Is.EquivalentTo(Users));
         }
 
         [TearDown]

@@ -14,7 +14,7 @@ builder.Services.ConfigureApiServices(builder.Configuration);
 builder.Services.ConfigurePersistenceServices(builder.Configuration);
 builder.Services.ConfigureInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
 builder.Services.ConfigureApplicationServices(builder.Configuration);
-builder.Services.ConfigureJwtAuthentication(builder.Configuration);
+builder.Services.ConfigureJwtAuthentication();
 
 builder.Services.AddMemoryCache();
 
