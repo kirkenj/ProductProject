@@ -14,9 +14,9 @@ namespace Persistence
             services.AddScoped<IRoleRepository, RoleRepository>();
 
             services.AddDbContext<AuthDbContext>(options => 
-            { 
-                options.UseSqlServer(configuration.GetConnectionString("AuthDbConnectionString")); 
-                
+            {
+                var cString = Environment.GetEnvironmentVariable("AuthDbConnectionString") ?? throw new ArgumentException("Couldn't get connection string");
+                options.UseSqlServer(cString); 
             });
 
             return services;

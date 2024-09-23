@@ -1,20 +1,35 @@
 ﻿using AuthAPI.Models.Jwt;
+using Cache.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
+using System.Text.Json;
 
 namespace AuthAPI.Registrations
 {
     public static class JwtAuthenticationRegistration
     {
-        public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services)
         {
-            var settings = configuration.GetSection("JwtSettings").Get<JwtSettings>() ?? throw new KeyNotFoundException($"Couldn't get {nameof(JwtSettings)}");
+            var settingsJson = Environment.GetEnvironmentVariable("JwtSettings") ?? throw new ArgumentException("JwtSettings couldn't get from env.variables");
 
+            var settings = JsonSerializer.Deserialize<JwtSettings>(settingsJson) ?? throw new ArgumentException("Couldn't deserialize JwtSettings from env.variables");
 
-            var validIssuer = settings.Issuer ?? throw new KeyNotFoundException(); 
-            var validAudience = settings.Audience ?? throw new KeyNotFoundException(); 
-            var key = settings.Key ?? throw new KeyNotFoundException();
+            services.Configure<JwtSettings>((configuration) =>
+            {
+                configuration.Issuer = settings.Issuer ?? throw new ArgumentException(nameof(settings.Issuer) + " is null");
+                configuration.Audience = settings.Audience ?? throw new ArgumentException(nameof(settings.Audience) + " is null");
+                if (settings.DurationInMinutes == default) throw new ArgumentException(nameof(settings.DurationInMinutes) + $" is {settings.DurationInMinutes.GetType().GetDefaultValue()}");
+                configuration.DurationInMinutes = settings.DurationInMinutes;
+                configuration.SecurityAlgorithm = settings.SecurityAlgorithm ?? throw new ArgumentException(nameof(settings.SecurityAlgorithm) + " is null");
+                configuration.Key = settings.Key ?? throw new ArgumentException(nameof(settings.Key) + " is null");
+            });
+
+            var validIssuer = settings.Issuer; 
+            var validAudience = settings.Audience; 
+            var key = settings.Key;
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

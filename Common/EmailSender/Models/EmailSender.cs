@@ -1,6 +1,7 @@
 ﻿using EmailSender.Contracts;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MimeKit;
 
 namespace EmailSender.Models
@@ -10,6 +11,9 @@ namespace EmailSender.Models
         private EmailSettings Settings { get; }
         private ILogger<EmailSender> Logger {  get; }
 
+        public EmailSender(IOptions<EmailSettings> emailSettings, ILogger<EmailSender> logger) : this(emailSettings.Value, logger)
+        {
+        }
         public EmailSender(EmailSettings emailSettings, ILogger<EmailSender> logger)
         {
             Settings = emailSettings;

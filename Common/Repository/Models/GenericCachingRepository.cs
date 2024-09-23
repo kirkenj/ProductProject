@@ -2,11 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Repository.Contracts;
-using System.Collections.Generic;
 
 namespace Repository.Models
 {
-    public abstract class GenericCachingRepository<T, TIdType> : 
+    public class GenericCachingRepository<T, TIdType> : 
         GenericRepository<T, TIdType>,
         ICachableRepository<T, TIdType>
         where T : class, IIdObject<TIdType> where TIdType : struct
@@ -22,14 +21,16 @@ namespace Repository.Models
 
         public int СacheTimeoutMiliseconds { get; set; } = 2_000;
         protected string CacheKeyPrefix => _repId + " ";
+        private string CacheKeyFormatToAccessSingleViaId => CacheKeyPrefix + "{0}";
+
 
         public override async Task AddAsync(T obj)
         {
             ArgumentNullException.ThrowIfNull(obj);
             
             await base.AddAsync(obj);
-            
-            _ = Task.Run(() => SetCache(CacheKeyPrefix + obj.Id, obj));
+
+            await SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, obj.Id), obj);
         }
 
         public override async Task DeleteAsync(T obj)
@@ -38,9 +39,9 @@ namespace Repository.Models
 
             await base.DeleteAsync(obj);
             
-            var cacheKey = CacheKeyPrefix + obj.Id;
+            var cacheKey = string.Format(CacheKeyFormatToAccessSingleViaId, obj.Id);
 
-            _ = Task.Run(() => CustomMemoryCache.RemoveAsync(cacheKey));
+            await CustomMemoryCache.RemoveAsync(cacheKey);
             
             _logger.Log(LogLevel.Information, $"Removed the key {cacheKey}");
         }
@@ -56,17 +57,13 @@ namespace Repository.Models
                 return cacheResult;
             }
 
-            var result = await base.GetPageContent(DbSet, page, pageSize).AsNoTracking().ToArrayAsync();
+            var result = await base.GetPageContent(DbSet, page, pageSize).ToArrayAsync();
 
-            _ = Task.Run(() =>
-            {
-                CustomMemoryCache.SetAsync(key, result, TimeSpan.FromMilliseconds(СacheTimeoutMiliseconds));
+            await CustomMemoryCache.SetAsync(key, result, TimeSpan.FromMilliseconds(СacheTimeoutMiliseconds));
 
-                foreach (var item in result)
-                {
-                    _ = Task.Run(() => SetCache(CacheKeyPrefix + item.Id, item));
-                }
-            });
+            var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r));
+
+            await Task.WhenAll(tasks);
             
             return result;
         }
@@ -74,7 +71,7 @@ namespace Repository.Models
         public override async Task<T?> GetAsync(TIdType id)
         {
             _logger.Log(LogLevel.Information, $"Got request for {typeof(T).Name} with id = '{id}'. ");
-            var cacheKey = CacheKeyPrefix + id;
+            var cacheKey = string.Format(CacheKeyFormatToAccessSingleViaId, id);
             var result = await CustomMemoryCache.GetAsync<T>(cacheKey);
             
             if (result != null)
@@ -84,12 +81,12 @@ namespace Repository.Models
             }
 
             _logger.Log(LogLevel.Information, "Sending request to database.");
-            result = await base.GetAsync(id);
 
+            result = await base.GetAsync(id);
 
             if (result != null)
             {
-                _ = Task.Run(() => SetCache(cacheKey, result));
+                await SetCacheAsync(cacheKey, result);
             }
 
             return result;
@@ -98,19 +95,35 @@ namespace Repository.Models
         public override async Task UpdateAsync(T obj)
         {
             ArgumentNullException.ThrowIfNull(obj);
-            
-            await base.UpdateAsync(obj);
 
-            _ = Task.Run(() => SetCache(CacheKeyPrefix + obj.Id, obj));
+            await Task.WhenAll
+                (
+                    base.UpdateAsync(obj),
+                    SetCacheAsync(CacheKeyPrefix + obj.Id, obj)
+                );
         }
 
-        protected virtual async Task SetCache(string key, object value)
+        public override async Task<IReadOnlyCollection<T>> GetAllAsync()
+        {
+            var result = await base.GetAllAsync();
+
+            await SetCacheAsync(CacheKeyPrefix + "All", result);
+
+            var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r));
+
+            await Task.WhenAll(tasks);
+
+            return result;
+        }
+
+        protected virtual async Task SetCacheAsync(string key, object value)
         {
             ArgumentNullException.ThrowIfNull(key);
-            
+
             ArgumentNullException.ThrowIfNull(value);
-            
+
             await CustomMemoryCache.SetAsync(key, value, TimeSpan.FromMilliseconds(СacheTimeoutMiliseconds));
+
             _logger.Log(LogLevel.Information, $"Set cache with key '{key}'");
         }
     }

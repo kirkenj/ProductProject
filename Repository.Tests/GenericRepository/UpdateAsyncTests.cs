@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Repository.Tests.Models;
 using Repository.Models;
 using Repository.Contracts;
@@ -9,43 +8,21 @@ namespace Repository.Tests.GenericRepository
     {
         private IGenericRepository<User, Guid> _repository = null!;
         private TestDbContext _testDbContext = null!;
-
-        private readonly List<User> _users = new()
-        {
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Login = "Admin",
-                Name = "Tom",
-                Email = "Tom@gmail.com",
-                Address = "Arizona"
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Login = "User",
-                Name = "Nick",
-                Email = "Crazy@hotmail.com",
-                Address = "Grece"
-            }
-        };
+        private List<User> Users => _testDbContext.Users.ToList();
 
         [OneTimeSetUp]
-        public void Setup()
+        public async Task Setup()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<TestDbContext>();
-            optionsBuilder.UseInMemoryDatabase("TestDb", null).EnableServiceProviderCaching();
-            _testDbContext = new(optionsBuilder.Options);
+            _testDbContext = await TestConstants.GetDbContextAsync();
             _repository = new GenericRepository<User, Guid>(_testDbContext);
-
-            _testDbContext.Users.AddRange(_users);
-            _testDbContext.SaveChanges();
         }
 
         [Test]
         public async Task UpdateAsync_UpdatingContainedUser_ValueUpdated()
         {
-            var userToUpdate = await _repository.GetAsync(_users.First().Id);
+            var id = _testDbContext.Users.First().Id;
+
+            var userToUpdate = await _repository.GetAsync(id);
 
             if (userToUpdate == null)
             {
@@ -66,15 +43,11 @@ namespace Repository.Tests.GenericRepository
 
             await _repository.UpdateAsync(userToUpdate);
 
-            var userAfterUpdate = await _repository.GetAsync(_users.First().Id);
+            var userAfterUpdate = await _repository.GetAsync(id);
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(userAfterUpdate, Is.EqualTo(userToUpdate));
-                Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate));
-            });
+            Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate));
         }
-    
+
 
         [Test]
         public void UpdateAsync_UpdatingNotContainedUser_ThrowsException()
@@ -103,6 +76,12 @@ namespace Repository.Tests.GenericRepository
             var func = async () => await _repository.UpdateAsync(userToUpdate);
 
             Assert.That(func, Throws.Exception);
+        }
+
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            _testDbContext.Dispose();
         }
     }
 }

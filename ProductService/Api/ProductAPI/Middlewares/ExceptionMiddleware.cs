@@ -29,7 +29,6 @@ namespace ProductAPI.Middlewares
             {
                 context.Response.StatusCode = 500; 
                 await context.Response.WriteAsJsonAsync(_environment.IsDevelopment() ? ex.Message : "Ooopsie", typeof(string));
-
             }
         }
     }

@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Repository.Tests.Models;
 using Repository.Models;
 using Repository.Contracts;
@@ -9,37 +8,13 @@ namespace Repository.Tests.GenericRepository
     {
         private IGenericRepository<User, Guid> _repository = null!;
         private TestDbContext _testDbContext = null!;
-
-        private readonly List<User> _users = new()
-        {
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Login = "Admin",
-                Name = "Tom",
-                Email = "Tom@gmail.com",
-                Address = "Arizona"
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Login = "User",
-                Name = "Nick",
-                Email = "Crazy@hotmail.com",
-                Address = "Grece"
-            }
-        };
+        private List<User> Users => _testDbContext.Users.ToList();
 
         [OneTimeSetUp]
-        public void Setup()
+        public async Task Setup()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<TestDbContext>();
-            optionsBuilder.UseInMemoryDatabase("TestDb", null).EnableServiceProviderCaching();
-            _testDbContext = new(optionsBuilder.Options);
+            _testDbContext = await TestConstants.GetDbContextAsync();
             _repository = new GenericRepository<User, Guid>(_testDbContext);
-
-            _testDbContext.Users.AddRange(_users);
-            _testDbContext.SaveChanges();
         }
 
         [Test]
@@ -51,9 +26,9 @@ namespace Repository.Tests.GenericRepository
         }
 
         [Test]
-        public async Task DeleteAsync_UserInDbSet_ThrowsArgumentException()
+        public async Task DeleteAsync_UserInDbSet_RemovesValue()
         {
-            var user = _users.First();
+            var user = Users.First();
 
             await _repository.DeleteAsync(user);
             
@@ -63,7 +38,7 @@ namespace Repository.Tests.GenericRepository
         }
 
         [Test]
-        public async Task DeleteAsync_UserNotInDbSet_ThrowsArgumentException()
+        public void DeleteAsync_UserNotInDbSet_ThrowsArgumentException()
         {
             var user = new User
             {

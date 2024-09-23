@@ -1,51 +1,45 @@
-using Microsoft.EntityFrameworkCore;
 using Repository.Tests.Models;
 using Repository.Models;
 using Repository.Contracts;
+using Cache.Contracts;
+using Cache.Models;
+using Microsoft.Extensions.Logging;
+using Moq;
 
-namespace Repository.Tests.GenericRepository
+namespace Repository.Tests.GenericCachingRepository
 {
-    public class UpdateAsyncTests
+    public class CachingUpdateAsyncTests
     {
         private IGenericRepository<User, Guid> _repository = null!;
         private TestDbContext _testDbContext = null!;
+        private ICustomMemoryCache _customMemoryCache = null!;
 
-        private readonly List<User> _users = new()
+        private List<User> Users => _testDbContext.Users.ToList();
+
+        [SetUp]
+        public async Task Setup()
         {
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Login = "Admin",
-                Name = "Tom",
-                Email = "Tom@gmail.com",
-                Address = "Arizona"
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Login = "User",
-                Name = "Nick",
-                Email = "Crazy@hotmail.com",
-                Address = "Grece"
-            }
-        };
+            var redis = TestConstants.GetReddis();
 
-        [OneTimeSetUp]
-        public void Setup()
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<TestDbContext>();
-            optionsBuilder.UseInMemoryDatabase("TestDb", null).EnableServiceProviderCaching();
-            _testDbContext = new(optionsBuilder.Options);
-            _repository = new GenericRepository<User, Guid>(_testDbContext);
+            redis.ClearDb();
 
-            _testDbContext.Users.AddRange(_users);
-            _testDbContext.SaveChanges();
+            _customMemoryCache = redis;
+
+            _testDbContext = await TestConstants.GetDbContextAsync("TestDb");
+
+            var MockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
+
+            _repository = new GenericCachingRepository<User, Guid>(_testDbContext, _customMemoryCache, MockLogger);
+
+            
         }
 
         [Test]
         public async Task UpdateAsync_UpdatingContainedUser_ValueUpdated()
         {
-            var userToUpdate = await _repository.GetAsync(_users.First().Id);
+            var id = Users.First().Id;
+
+            var userToUpdate = await _repository.GetAsync(id);
 
             if (userToUpdate == null)
             {
@@ -62,19 +56,17 @@ namespace Repository.Tests.GenericRepository
                 Login = userToUpdate.Login
             };
 
-            userToUpdate.Name = "Updated name";
+            userToUpdate.Name = Guid.NewGuid().ToString();
 
             await _repository.UpdateAsync(userToUpdate);
 
-            var userAfterUpdate = await _repository.GetAsync(_users.First().Id);
+            var userAfterUpdate = await _repository.GetAsync(id);
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(userAfterUpdate, Is.EqualTo(userToUpdate));
-                Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate));
-            });
+
+            Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate), $"Is equal: {userAfterUpdate.Equals(userBeforeUpdate)}");
+            Assert.That(userAfterUpdate, Is.EqualTo(userToUpdate));
         }
-    
+
 
         [Test]
         public void UpdateAsync_UpdatingNotContainedUser_ThrowsException()
@@ -103,6 +95,12 @@ namespace Repository.Tests.GenericRepository
             var func = async () => await _repository.UpdateAsync(userToUpdate);
 
             Assert.That(func, Throws.Exception);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _testDbContext.Dispose();
         }
     }
 }

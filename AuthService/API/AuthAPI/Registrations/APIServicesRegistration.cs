@@ -1,18 +1,15 @@
 ﻿using AuthAPI.Contracts;
-using AuthAPI.Models.Jwt;
 using AuthAPI.Models.TokenTracker;
 using AuthAPI.Services;
 
 
-namespace AuthAPI.JwtAuthentication
+namespace AuthAPI.Registrations
 {
     public static class APIServicesRegistration
     {
         public static IServiceCollection ConfigureApiServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.AddTransient<IJwtProviderService, JwtProviderService>();
-
 
             services.Configure<TokenTrackingSettings>(configuration.GetSection("TokenTrackingSettings"));
             services.AddScoped<ITokenTracker<Guid>, TokenTracker<Guid>>();

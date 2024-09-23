@@ -39,7 +39,7 @@ namespace Repository.Models
 
             if (result != null)
             {
-                _ = Task.Run(() => SetCache(key, result));
+                _ = Task.Run(() => SetCacheAsync(key, result));
             }
 
             return result;
@@ -65,11 +65,11 @@ namespace Repository.Models
 
             _ = Task.Run(() =>
             {
-                _ = Task.Run(() => SetCache(key, result));
+                _ = Task.Run(() => SetCacheAsync(key, result));
 
                 foreach (var item in result)
                 {
-                    _ = Task.Run(() => SetCache(CacheKeyPrefix + item.Id, item));
+                    _ = Task.Run(() => SetCacheAsync(CacheKeyPrefix + item.Id, item));
                 }
             });
 

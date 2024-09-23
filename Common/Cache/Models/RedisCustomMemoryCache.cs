@@ -8,13 +8,20 @@ namespace Cache.Models
 {
     public class RedisCustomMemoryCache : ICustomMemoryCache
     {
-        private readonly IDatabase _implementation;
+        protected readonly IDatabase _implementation;
         private readonly ConnectionMultiplexer connection;
 
 
-        public RedisCustomMemoryCache(IOptions<CustomCacheOptions> optionsAccessor)
+        public RedisCustomMemoryCache(IOptions<CustomCacheOptions> optionsAccessor) : this(optionsAccessor?.Value ?? throw new ArgumentNullException(nameof(optionsAccessor)))
         {
-            connection = ConnectionMultiplexer.Connect(optionsAccessor.Value.ConnectionUri);
+        }
+
+        public RedisCustomMemoryCache(CustomCacheOptions optionsAccessor)
+        {
+            ArgumentNullException.ThrowIfNull(optionsAccessor);
+
+            connection = ConnectionMultiplexer.Connect(optionsAccessor.ConnectionUri ?? throw new ArgumentNullException(nameof(optionsAccessor), nameof(optionsAccessor.ConnectionUri)+" is null"));
+
             _implementation = connection.GetDatabase();
             
             var keyToCheckConnection = "hello";
@@ -23,7 +30,7 @@ namespace Cache.Models
             _implementation.KeyDelete(keyToCheckConnection);
         }
 
-        public Task RemoveAsync(string key)
+        public virtual Task RemoveAsync(string key)
         {
             if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
             {
@@ -33,7 +40,7 @@ namespace Cache.Models
             return _implementation.KeyDeleteAsync(key.Trim());
         }
 
-        public async Task SetAsync<T>(string key, T value, TimeSpan expirity)
+        public virtual async Task SetAsync<T>(string key, T value, TimeSpan expirity)
         {
             if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
             {
@@ -52,7 +59,7 @@ namespace Cache.Models
             await _implementation.StringSetAsync(key.Trim(), JsonSerializer.Serialize(value), expirity);
         }
 
-        public async Task<T?> GetAsync<T>(string key)
+        public virtual async Task<T?> GetAsync<T>(string key)
         {
             if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
             {
@@ -68,5 +75,7 @@ namespace Cache.Models
 
             return JsonSerializer.Deserialize<T>(result.ToString());
         }
+
+        public virtual Task<bool> RefreshKeyAsync(string key, double millisecondsToExpire) => _implementation.KeyExpireAsync(key, TimeSpan.FromMilliseconds(millisecondsToExpire));
     }
 }

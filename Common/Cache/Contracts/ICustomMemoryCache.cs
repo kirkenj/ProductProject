@@ -7,5 +7,7 @@
         public Task RemoveAsync(string key);
 
         public Task<T?> GetAsync<T>(string key);
+
+        public Task<bool> RefreshKeyAsync(string key, double millisecondsToExpire);
     }
 }

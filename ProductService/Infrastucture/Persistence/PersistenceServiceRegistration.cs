@@ -12,7 +12,11 @@ namespace Persistence
         {
             services.AddScoped<IProductRepository, ProductRepository>();
 
-            services.AddDbContext<ProductDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AuthDbConnectionString")));
+            services.AddDbContext<ProductDbContext>(options => 
+            {
+                var cString = Environment.GetEnvironmentVariable("ProductDbConnectionString") ?? throw new ArgumentException("Couldn't get connection string");
+                options.UseSqlServer(Environment.GetEnvironmentVariable(cString));
+            });
 
             return services;
         }

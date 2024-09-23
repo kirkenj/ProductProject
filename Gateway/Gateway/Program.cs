@@ -1,4 +1,3 @@
-using CustomGateway.JwtAuthentication;
 using CustomGateway.Middlewares;
 using CustomGateway.Registrations;
 
@@ -9,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.ConfigureApplicationServices(builder.Configuration);
-builder.Services.ConfigureJwtAuthentication(builder.Configuration);
+builder.Services.ConfigureJwtAuthentication();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

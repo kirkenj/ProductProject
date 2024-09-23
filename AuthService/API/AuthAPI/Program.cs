@@ -1,5 +1,4 @@
 using Application;
-using AuthAPI.JwtAuthentication;
 using AuthAPI.Middlewares;
 using AuthAPI.Registrations;
 using Constants;

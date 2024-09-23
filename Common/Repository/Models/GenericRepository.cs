@@ -9,29 +9,33 @@ namespace Repository.Models
     {
         protected static readonly Guid _repId = Guid.NewGuid();
 
-        public DbSet<T> DbSet { get; private set; }
+        private DbContext _dbContext = null!;
 
-        public Func<CancellationToken, Task<int>> SaveChangesAsync { get; private set; }
+        protected DbSet<T> DbSet => _dbContext.Set<T>();
+
+        private Func<CancellationToken, Task<int>> SaveChangesAsync => _dbContext.SaveChangesAsync;
 
         public GenericRepository(DbContext dbContext)
         { 
-            DbSet = dbContext?.Set<T>() ?? throw new ArgumentNullException(nameof(dbContext));
-            SaveChangesAsync = dbContext.SaveChangesAsync;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public virtual async Task AddAsync(T obj)
         {
             ArgumentNullException.ThrowIfNull(obj);
 
-            DbSet.Add(obj);
+            await _dbContext.AddAsync(obj);
+
             await SaveChangesAsync(CancellationToken.None);
         }
 
         public virtual async Task DeleteAsync(T obj)
         {
             ArgumentNullException.ThrowIfNull(obj);
+
+            _dbContext.Remove(obj);
             
-            DbSet.Remove(obj);
+
             await SaveChangesAsync(CancellationToken.None);
         }
 
@@ -62,7 +66,7 @@ namespace Repository.Models
 
         public virtual async Task UpdateAsync(T obj)
         {
-            DbSet.Entry(obj).State = EntityState.Modified;
+            _dbContext.Entry(obj).State = EntityState.Modified;
             await SaveChangesAsync(CancellationToken.None);
         }
     }
