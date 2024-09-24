@@ -6,8 +6,8 @@ using System.Text.Json;
 
 namespace Repository.Models
 {
-    public class GenericFiltrableCachingRepository<T, TIdType, TFilter> : 
-        GenericCachingRepository<T, TIdType>, 
+    public class GenericFiltrableCachingRepository<T, TIdType, TFilter> :
+        GenericCachingRepository<T, TIdType>,
         IGenericFiltrableRepository<T, TIdType, TFilter>
         where T : class, IIdObject<TIdType> where TIdType : struct
     {
@@ -34,7 +34,7 @@ namespace Repository.Models
             }
 
             _logger.LogInformation($"Request {key}. Requesting the database");
-            
+
             result = await GetFilteredSetDelegate(DbSet, filter).FirstOrDefaultAsync();
 
             if (result != null)

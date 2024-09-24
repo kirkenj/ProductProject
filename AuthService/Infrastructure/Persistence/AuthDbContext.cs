@@ -1,7 +1,5 @@
 ﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 

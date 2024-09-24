@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Persistence;
-using Application.DTOs.User;
+﻿using Application.DTOs.User;
 using CustomResponse;
 using MediatR;
 

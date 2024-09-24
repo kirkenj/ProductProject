@@ -3,7 +3,7 @@ using Repository.Contracts;
 
 namespace Repository.Models
 {
-    public class GenericRepository<T, TIdType> : 
+    public class GenericRepository<T, TIdType> :
         IGenericRepository<T, TIdType>
         where T : class, IIdObject<TIdType> where TIdType : struct
     {
@@ -16,7 +16,7 @@ namespace Repository.Models
         private Func<CancellationToken, Task<int>> SaveChangesAsync => _dbContext.SaveChangesAsync;
 
         public GenericRepository(DbContext dbContext)
-        { 
+        {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
@@ -34,7 +34,7 @@ namespace Repository.Models
             ArgumentNullException.ThrowIfNull(obj);
 
             _dbContext.Remove(obj);
-            
+
 
             await SaveChangesAsync(CancellationToken.None);
         }
@@ -54,7 +54,7 @@ namespace Repository.Models
             return query;
         }
 
-        public virtual async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) 
+        public virtual async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default)
         {
             return await GetPageContent(DbSet, page, pageSize).ToArrayAsync();
         }

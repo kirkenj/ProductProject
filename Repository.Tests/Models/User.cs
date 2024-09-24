@@ -15,7 +15,7 @@ namespace Repository.Tests.Models
         {
             if (obj is User u)
             {
-                return 
+                return
                     this.Email == u.Email &&
                     this.Name == u.Name &&
                     this.Address == u.Address &&

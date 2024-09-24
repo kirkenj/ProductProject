@@ -139,7 +139,7 @@ namespace Cache.Tests
             var key = Guid.NewGuid().ToString();
 
             var value = new Human { Name = "Rick", Surname = "Sanckezz" };
-            
+
             int milisecs = 6000;
 
             int inaccuracy = 1200;

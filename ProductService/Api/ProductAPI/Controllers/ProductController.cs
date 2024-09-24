@@ -3,7 +3,6 @@ using Application.Features.Product.Requests.Commands;
 using Application.Features.Product.Requests.Queries;
 using Application.Models.Product;
 using AutoMapper;
-using Clients.AuthApi;
 using Constants;
 using CustomResponse;
 using Extensions.ClaimsPrincipalExtensions;

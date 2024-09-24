@@ -17,7 +17,7 @@ namespace Application.DTOs.Product.Validators
 
             RuleFor(x => x).MustAsync(async (updateProductDto, cancellationToken) =>
             {
-                var currentProductState = await productRepository.GetAsync(updateProductDto.Id) 
+                var currentProductState = await productRepository.GetAsync(updateProductDto.Id)
                 ?? throw new ApplicationException($"Couldn't get {nameof(Product)} with id '{updateProductDto.Id}'");
 
                 if (updateProductDto.ProducerId != currentProductState.ProducerId)

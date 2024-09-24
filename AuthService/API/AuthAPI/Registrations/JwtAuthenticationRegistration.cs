@@ -1,5 +1,4 @@
 ﻿using AuthAPI.Models.Jwt;
-using Cache.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -26,8 +25,8 @@ namespace AuthAPI.Registrations
                 configuration.Key = settings.Key ?? throw new ArgumentException(nameof(settings.Key) + " is null");
             });
 
-            var validIssuer = settings.Issuer; 
-            var validAudience = settings.Audience; 
+            var validIssuer = settings.Issuer;
+            var validAudience = settings.Audience;
             var key = settings.Key;
 
             services.AddAuthentication(options =>

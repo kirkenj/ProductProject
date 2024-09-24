@@ -1,33 +1,21 @@
-using Repository.Tests.Models;
 using Repository.Models;
-using Repository.Contracts;
+using Repository.Tests.Models;
 
 namespace Repository.Tests.GenericRepository
 {
-    public class UpdateAsyncTests
+    [TestFixture(typeof(GenericRepository<,>))]
+    [TestFixture(typeof(GenericCachingRepository<,>))]
+    [TestFixture(typeof(GenericFiltrableRepository<,,>))]
+    [TestFixture(typeof(GenericFiltrableCachingRepository<,,>))]
+    public class UpdateAsyncTests : GenericRepositoryTest
     {
-        private IGenericRepository<User, Guid> _repository = null!;
-        private TestDbContext _testDbContext = null!;
-        private List<User> Users => _testDbContext.Users.ToList();
+        public UpdateAsyncTests(Type repType) : base(repType) { }
 
-        [OneTimeSetUp]
-        public async Task Setup()
-        {
-            _testDbContext = await TestConstants.GetDbContextAsync();
-            _repository = new GenericRepository<User, Guid>(_testDbContext);
-        }
 
         [Test]
         public async Task UpdateAsync_UpdatingContainedUser_ValueUpdated()
         {
             var userToUpdate = Users[Random.Shared.Next(Users.Count)];
-
-
-            if (userToUpdate == null)
-            {
-                Assert.Fail();
-                return;
-            }
 
             var userBeforeUpdate = new User
             {
@@ -35,7 +23,7 @@ namespace Repository.Tests.GenericRepository
                 Name = userToUpdate.Name,
                 Email = userToUpdate.Email,
                 Address = userToUpdate.Address,
-                Login = userToUpdate.Login  
+                Login = userToUpdate.Login
             };
 
             var newValue = $"Updated value {Guid.NewGuid()}";
@@ -45,7 +33,7 @@ namespace Repository.Tests.GenericRepository
             await _repository.UpdateAsync(userToUpdate);
 
             var userAfterUpdate = await _repository.GetAsync(userToUpdate.Id) ?? throw new ArgumentException();
-           
+
             Assert.Multiple(() =>
             {
                 Assert.That(userToUpdate, Is.EqualTo(userAfterUpdate));
@@ -70,14 +58,12 @@ namespace Repository.Tests.GenericRepository
 
             Assert.That(func, Throws.Exception);
         }
-    
+
 
         [Test]
         public void UpdateAsync_UpdatingNull_ThrowsException()
         {
-            User? userToUpdate = null;
-
-            var func = async () => await _repository.UpdateAsync(userToUpdate);
+            var func = async () => await _repository.UpdateAsync(null);
 
             Assert.That(func, Throws.Exception);
         }

@@ -1,8 +1,8 @@
-using Repository.Tests.Models;
-using Repository.Models;
-using Repository.Contracts;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Repository.Contracts;
+using Repository.Models;
+using Repository.Tests.Models;
 
 namespace Repository.Tests.GenericCachingRepository
 {
@@ -16,7 +16,7 @@ namespace Repository.Tests.GenericCachingRepository
         [OneTimeSetUp]
         public async Task Setup()
         {
-            var redis = TestConstants.GetReddis();
+            var redis = TestConstants.GetEmptyReddis();
 
             redis.ClearDb();
 

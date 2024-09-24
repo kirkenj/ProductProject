@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Persistence;
-using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using CustomResponse;
 using MediatR;

@@ -1,7 +1,5 @@
-﻿using Application.Contracts.Infrastructure;
-using Application.Contracts.Persistence;
+﻿using Application.Contracts.Persistence;
 using Application.DTOs.User;
-using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Queries;
 using Application.Models.CacheKeyGenerator;
 using Application.Models.User;

@@ -1,6 +1,6 @@
-using Repository.Tests.Models;
-using Repository.Models;
 using Repository.Contracts;
+using Repository.Models;
+using Repository.Tests.Models;
 
 namespace Repository.Tests.GenericFiltrableRepository
 {

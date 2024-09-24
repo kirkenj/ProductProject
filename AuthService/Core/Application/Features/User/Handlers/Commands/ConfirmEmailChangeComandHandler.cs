@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Persistence;
-using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using Application.Models.CacheKeyGenerator;
 using Application.Models.Email;

@@ -2,7 +2,6 @@ using Cache.Contracts;
 using Cache.Models;
 using Cache.Tests.Models;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 
 #pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
 
@@ -88,7 +87,7 @@ namespace Cache.Tests
                 humansBeforeCache.Add
                 (new KeyValuePair<string, Human>
                     (
-                        Guid.NewGuid().ToString(), 
+                        Guid.NewGuid().ToString(),
                         new Human { Name = Guid.NewGuid().ToString(), Surname = Guid.NewGuid().ToString() }
                     )
                 );

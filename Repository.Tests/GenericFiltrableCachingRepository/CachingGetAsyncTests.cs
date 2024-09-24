@@ -1,11 +1,10 @@
-using Repository.Tests.Models;
-using Repository.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Repository.Models;
+using Repository.Tests.Models;
 
 namespace Repository.Tests.GenericFiltrableCachingRepository
 {
-    //[Test]
     public class CachingGetAsyncTests
     {
         private List<User> Users => _testDbContext.Users.ToList();
@@ -16,7 +15,7 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
         {
-            _customMemoryCache = TestConstants.GetReddis();
+            _customMemoryCache = TestConstants.GetEmptyReddis();
 
             _testDbContext = await TestConstants.GetDbContextAsync();
 
@@ -36,7 +35,7 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
         [Test]
         public async Task GetAsync_IDdefault_ReturnsNull()
         {
-            var user = await _repository.GetAsync(id:default);
+            var user = await _repository.GetAsync(id: default);
 
             Assert.That(user, Is.Null);
         }
@@ -88,7 +87,7 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
                 }
             };
 
-            
+
             //act
 
             var user = await _repository.GetAsync(userId);

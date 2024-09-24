@@ -1,10 +1,10 @@
 ﻿using Application.Contracts.AuthService;
-using Clients.AuthApi;
+using Application.Models.UserClient;
 using AutoMapper;
 using Cache.Contracts;
-using System.Text;
+using Clients.AuthApi;
 using Microsoft.Extensions.Logging;
-using Application.Models.UserClient;
+using System.Text;
 
 namespace Infrastucture.AuthClient
 {
@@ -31,7 +31,7 @@ namespace Infrastucture.AuthClient
                 var parametersAsString = StringifyParameters(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
 
                 var cacheKey = cacheKeyPrefix + parametersAsString;
-                
+
                 _logger.LogInformation($"Sending request for {nameof(AuthClientUser)} with filter: {parametersAsString}");
 
                 ICollection<AuthClientUser> result;

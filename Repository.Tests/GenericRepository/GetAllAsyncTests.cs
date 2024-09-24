@@ -1,21 +1,15 @@
-using Repository.Tests.Models;
 using Repository.Models;
-using Repository.Contracts;
+using Repository.Tests.Models;
 
 namespace Repository.Tests.GenericRepository
 {
-    public class GetAllAsyncTests
+    [TestFixture(typeof(GenericRepository<,>))]
+    [TestFixture(typeof(GenericCachingRepository<,>))]
+    [TestFixture(typeof(GenericFiltrableRepository<,,>))]
+    [TestFixture(typeof(GenericFiltrableCachingRepository<,,>))]
+    public class GetAllAsyncTests : GenericRepositoryTest
     {
-        private IGenericRepository<User, Guid> _repository = null!;
-        private TestDbContext _testDbContext = null!;
-        private List<User> Users => _testDbContext.Users.ToList();
-
-        [OneTimeSetUp]
-        public async Task Setup()
-        {
-            _testDbContext = await TestConstants.GetDbContextAsync();
-            _repository = new GenericRepository<User, Guid>(_testDbContext);
-        }
+        public GetAllAsyncTests(Type reptype) : base(reptype) { }
 
         [Test]
         public async Task GetAllAsync_ReturnsValues()

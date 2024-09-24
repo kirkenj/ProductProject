@@ -1,10 +1,10 @@
-using Repository.Tests.Models;
-using Repository.Models;
-using Repository.Contracts;
 using Cache.Contracts;
 using Cache.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Repository.Contracts;
+using Repository.Models;
+using Repository.Tests.Models;
 using static Repository.Tests.Models.RedisCustomMemoryCacheWithEvents;
 
 namespace Repository.Tests.GenericCachingRepository
@@ -13,7 +13,7 @@ namespace Repository.Tests.GenericCachingRepository
     {
         private IGenericRepository<User, Guid> Repository => _genericCachingRepository;
 
-        private GenericCachingRepository<User, Guid> _genericCachingRepository = null!; 
+        private GenericCachingRepository<User, Guid> _genericCachingRepository = null!;
 
         private TestDbContext _testDbContext = null!;
 
@@ -28,7 +28,7 @@ namespace Repository.Tests.GenericCachingRepository
         public async Task Setup()
         {
             _redis = new RedisCustomMemoryCacheWithEvents(new CustomCacheOptions { ConnectionUri = "localhost:3330" });
-            
+
             _testDbContext = await TestConstants.GetDbContextAsync();
 
             var MockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();

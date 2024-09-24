@@ -3,12 +3,12 @@ using Repository.Contracts;
 
 namespace Repository.Models
 {
-    public class GenericFiltrableRepository<T, TIdType, TFilter> : 
-        GenericRepository<T, TIdType>, 
-        IGenericFiltrableRepository<T, TIdType, TFilter> 
+    public class GenericFiltrableRepository<T, TIdType, TFilter> :
+        GenericRepository<T, TIdType>,
+        IGenericFiltrableRepository<T, TIdType, TFilter>
         where T : class, IIdObject<TIdType> where TIdType : struct
     {
-        public GenericFiltrableRepository(DbContext dbContext, Func<IQueryable<T>, TFilter, IQueryable<T>> getFilteredSetDelegate) 
+        public GenericFiltrableRepository(DbContext dbContext, Func<IQueryable<T>, TFilter, IQueryable<T>> getFilteredSetDelegate)
             : base(dbContext)
         {
             GetFilteredSetDelegate = getFilteredSetDelegate;

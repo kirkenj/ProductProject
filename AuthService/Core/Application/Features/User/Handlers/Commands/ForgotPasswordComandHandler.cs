@@ -1,7 +1,6 @@
 ﻿using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
-using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using Application.Models.User;
 using CustomResponse;

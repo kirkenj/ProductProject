@@ -1,5 +1,5 @@
-﻿using HashProvider.Contracts;
-using AuthAPI.Contracts;
+﻿using AuthAPI.Contracts;
+using HashProvider.Contracts;
 using HashProvider.Models;
 using Microsoft.AspNetCore.Mvc;
 

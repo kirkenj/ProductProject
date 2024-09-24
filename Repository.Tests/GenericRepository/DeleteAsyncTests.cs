@@ -1,21 +1,17 @@
-using Repository.Tests.Models;
 using Repository.Models;
-using Repository.Contracts;
+using Repository.Tests.Models;
 
 namespace Repository.Tests.GenericRepository
 {
-    public class DeleteAsyncTests
-    {
-        private IGenericRepository<User, Guid> _repository = null!;
-        private TestDbContext _testDbContext = null!;
-        private List<User> Users => _testDbContext.Users.ToList();
 
-        [OneTimeSetUp]
-        public async Task Setup()
-        {
-            _testDbContext = await TestConstants.GetDbContextAsync();
-            _repository = new GenericRepository<User, Guid>(_testDbContext);
-        }
+    [TestFixture(typeof(GenericRepository<,>))]
+    [TestFixture(typeof(GenericCachingRepository<,>))]
+    [TestFixture(typeof(GenericFiltrableRepository<,,>))]
+    [TestFixture(typeof(GenericFiltrableCachingRepository<,,>))]
+    public class DeleteAsyncTests : GenericRepositoryTest
+    {
+        public DeleteAsyncTests(Type repType) : base(repType) { }
+
 
         [Test]
         public void DeleteAsync_UserIsNull_ThrowsArgumentNullException()
@@ -31,9 +27,9 @@ namespace Repository.Tests.GenericRepository
             var user = Users.First();
 
             await _repository.DeleteAsync(user);
-            
+
             var repUsers = await _repository.GetAllAsync();
-            
+
             Assert.That(repUsers, Does.Not.Contain(user));
         }
 
@@ -50,8 +46,8 @@ namespace Repository.Tests.GenericRepository
             };
 
             var func = async () => await _repository.DeleteAsync(user);
-            
-            
+
+
             Assert.That(func, Throws.Exception);
         }
     }

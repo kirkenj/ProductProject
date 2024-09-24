@@ -1,27 +1,28 @@
-using Repository.Tests.Models;
-using Repository.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Repository.Contracts;
+using Repository.Models;
+using Repository.Tests.Models;
 
-namespace Repository.Tests.GenericFiltrableCachingRepository
+namespace Repository.Tests.GenericCachingRepository
 {
     public class CachingDeleteAsyncTests
     {
-        private List<User> Users => _testDbContext.Users.ToList();
-        private GenericFiltrableCachingRepository<User, Guid, UserFilter> _repository = null!;
+        private IGenericRepository<User, Guid> _repository = null!;
         private TestDbContext _testDbContext = null!;
         private RedisCustomMemoryCacheWithEvents _customMemoryCache = null!;
+        private List<User> Users => _testDbContext.Users.ToList();
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
         {
-            _customMemoryCache = TestConstants.GetReddis();
+            _customMemoryCache = TestConstants.GetEmptyReddis();
 
             _testDbContext = await TestConstants.GetDbContextAsync();
 
             var MockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
 
-            _repository = new GenericFiltrableCachingRepository<User, Guid, UserFilter>(_testDbContext, _customMemoryCache, MockLogger, UserFilter.GetFilteredSet);
+            _repository = new GenericCachingRepository<User, Guid>(_testDbContext, _customMemoryCache, MockLogger);
         }
 
         [SetUp]
@@ -46,9 +47,9 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
             var user = Users.First();
 
             await _repository.DeleteAsync(user);
-            
+
             var repUsers = await _repository.GetAllAsync();
-            
+
             Assert.That(repUsers, Does.Not.Contain(user));
         }
 
@@ -65,8 +66,8 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
             };
 
             var func = async () => await _repository.DeleteAsync(user);
-            
-            
+
+
             Assert.That(func, Throws.Exception);
         }
 
@@ -97,7 +98,7 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
             var attemptToGetuserFromContext = await _repository.GetAsync(user.Id);
 
             var attemptToGetuserFromCache = await _customMemoryCache.GetAsync<User>(keyToGetCachedUser);
-            
+
             //asssert
             Assert.Multiple(() =>
             {

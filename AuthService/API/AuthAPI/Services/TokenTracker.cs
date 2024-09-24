@@ -1,7 +1,7 @@
-﻿using HashProvider.Contracts;
-using AuthAPI.Contracts;
+﻿using AuthAPI.Contracts;
 using AuthAPI.Models.TokenTracker;
 using Cache.Contracts;
+using HashProvider.Contracts;
 using Microsoft.Extensions.Options;
 
 namespace AuthAPI.Services

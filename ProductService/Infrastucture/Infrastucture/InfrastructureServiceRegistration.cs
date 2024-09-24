@@ -17,7 +17,7 @@ namespace Infrastucture
     {
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
         {
-            services.Configure<AuthClientSettings>((s) =>s.Uri = Environment.GetEnvironmentVariable("AuthApiUri") ?? throw new ArgumentException("Couldn't get AuthApi Uri"));
+            services.Configure<AuthClientSettings>((s) => s.Uri = Environment.GetEnvironmentVariable("AuthApiUri") ?? throw new ArgumentException("Couldn't get AuthApi Uri"));
             services.AddHttpClient();
             services.AddScoped<IAuthApiClient, AuthApiClient>();
             services.AddScoped<IAuthApiClientService, AuthClientService>();
@@ -47,7 +47,7 @@ namespace Infrastucture
             }
 
             services.Configure<CustomCacheOptions>((a) => { a.ConnectionUri = Environment.GetEnvironmentVariable("RedisUri") ?? throw new ArgumentException("Couldn't get RedisUri"); });
-            
+
             services.AddScoped<ICustomMemoryCache, RedisCustomMemoryCache>();
 
             return services;

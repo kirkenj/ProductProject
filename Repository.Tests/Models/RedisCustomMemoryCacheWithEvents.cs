@@ -58,7 +58,7 @@ namespace Repository.Tests.Models
         }
 
         public void DropEvents()
-        { 
+        {
             OnGet = null;
             OnSet = null;
             OnRemove = null;

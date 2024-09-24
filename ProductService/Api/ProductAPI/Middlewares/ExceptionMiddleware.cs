@@ -27,7 +27,7 @@ namespace ProductAPI.Middlewares
             }
             catch (Exception ex)
             {
-                context.Response.StatusCode = 500; 
+                context.Response.StatusCode = 500;
                 await context.Response.WriteAsJsonAsync(_environment.IsDevelopment() ? ex.Message : "Ooopsie", typeof(string));
             }
         }

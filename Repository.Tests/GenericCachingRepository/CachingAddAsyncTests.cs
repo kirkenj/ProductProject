@@ -1,9 +1,8 @@
-using Repository.Tests.Models;
-using Repository.Models;
-using Repository.Contracts;
-using Moq;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
+using Moq;
+using Repository.Contracts;
+using Repository.Models;
+using Repository.Tests.Models;
 
 namespace Repository.Tests.GenericCachingRepository
 {
@@ -12,14 +11,14 @@ namespace Repository.Tests.GenericCachingRepository
         private IGenericRepository<User, Guid> _repository = null!;
         private TestDbContext _testDbContext = null!;
         private RedisCustomMemoryCacheWithEvents _customMemoryCache = null!;
-        private ILogger<GenericCachingRepository<User,Guid>> _logger = null!;
+        private ILogger<GenericCachingRepository<User, Guid>> _logger = null!;
         private List<User> Users => _testDbContext.Users.ToList();
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
         {
-            _customMemoryCache = TestConstants.GetReddis();
-           
+            _customMemoryCache = TestConstants.GetEmptyReddis();
+
             _testDbContext = await TestConstants.GetDbContextAsync();
 
             _logger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
@@ -65,7 +64,7 @@ namespace Repository.Tests.GenericCachingRepository
             var func = async () => await _repository.AddAsync(user);
 
             Assert.That(func, Throws.InvalidOperationException);
-        }   
+        }
 
         [Test]
         public async Task AddAsyncTests_ValueIsValid_AddsValueToContextAndCache()

@@ -1,16 +1,14 @@
 ﻿using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
-using Application.Contracts.Persistence;
-using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using Application.Models.CacheKeyGenerator;
 using Application.Models.User;
-using HashProvider.Contracts;
 using AutoMapper;
 using Cache.Contracts;
 using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using HashProvider.Contracts;
 using MediatR;
 using Microsoft.Extensions.Options;
 

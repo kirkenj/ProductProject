@@ -162,7 +162,7 @@ namespace Cache.Tests
             //arrange
 
             string key = Guid.NewGuid().ToString();
-            List<Human> humansBeforeCache = new ();
+            List<Human> humansBeforeCache = new();
 
             for (int i = 0; i < 3; i++)
             {
@@ -170,7 +170,7 @@ namespace Cache.Tests
                 (new Human()
                 {
                     Name = Guid.NewGuid().ToString(),
-                    Surname = Guid.NewGuid().ToString() 
+                    Surname = Guid.NewGuid().ToString()
                 }
                 );
             }

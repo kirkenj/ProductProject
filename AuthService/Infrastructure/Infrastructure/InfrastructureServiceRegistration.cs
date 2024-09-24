@@ -3,10 +3,10 @@ using Cache.Contracts;
 using Cache.Models;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using HashProvider.Contracts;
 using HashProvider.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using HashProvider.Contracts;
 using System.Text.Json;
 
 namespace Infrastructure
@@ -27,7 +27,7 @@ namespace Infrastructure
 
                 var settings = JsonSerializer.Deserialize<EmailSettings>(EmailSettingsJson) ?? throw new ArgumentException("Couldn't deserialize Emailsettings");
 
-                services.Configure<EmailSettings>((a) => 
+                services.Configure<EmailSettings>((a) =>
                 {
                     a.FromName = settings.FromName ?? throw new ArgumentException($"Value can not be null ({nameof(settings.FromName)})");
                     if (settings.ApiPort == default) throw new ArgumentException($"Value can not be default ({nameof(settings.FromName)})");

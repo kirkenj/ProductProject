@@ -9,8 +9,8 @@ namespace CustomGateway.Registrations
         public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AuthClientSettings>((s) => s.Uri = Environment.GetEnvironmentVariable("AuthApiUri") ?? throw new ArgumentException("AuthApiUri"));
-            services.Configure<ProductClientSettings>((s) =>s.Uri = Environment.GetEnvironmentVariable("ProductApiUri") ?? throw new ArgumentException("ProductApiUri"));
-            
+            services.Configure<ProductClientSettings>((s) => s.Uri = Environment.GetEnvironmentVariable("ProductApiUri") ?? throw new ArgumentException("ProductApiUri"));
+
             services.AddHttpClient();
 
             services.AddScoped<IAuthApiClient, AuthApiClient>();

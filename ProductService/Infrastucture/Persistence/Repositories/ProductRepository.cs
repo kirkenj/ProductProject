@@ -11,7 +11,7 @@ namespace Persistence.Repositories
 {
     public class ProductRepository : GenericFiltrableCachingRepository<Product, Guid, ProductFilter>, IProductRepository
     {
-        public ProductRepository(ProductDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<ProductRepository> logger) : base(dbContext, customMemoryCache, logger, GetFilteredSet)  
+        public ProductRepository(ProductDbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<ProductRepository> logger) : base(dbContext, customMemoryCache, logger, GetFilteredSet)
         {
         }
 

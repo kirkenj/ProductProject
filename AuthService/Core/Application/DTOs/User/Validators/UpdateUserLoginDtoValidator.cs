@@ -12,7 +12,7 @@ namespace Application.DTOs.User.Validators
 
             RuleFor(u => u.NewLogin).MustAsync(async (login, token) =>
             {
-                var result = await userRepository.GetAsync(new (){ AccurateLogin = login });
+                var result = await userRepository.GetAsync(new() { AccurateLogin = login });
                 return result == null;
             });
         }

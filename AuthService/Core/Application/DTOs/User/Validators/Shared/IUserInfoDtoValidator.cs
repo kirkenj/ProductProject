@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Persistence;
-using Application.DTOs.User.Interfaces;
+﻿using Application.DTOs.User.Interfaces;
 using FluentValidation;
 
 namespace Application.DTOs.User.Validators.Shared

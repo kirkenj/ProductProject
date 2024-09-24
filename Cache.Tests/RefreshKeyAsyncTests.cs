@@ -30,7 +30,7 @@ namespace Cache.Tests
             var key = "hello world";
 
             var result = await _cache.RefreshKeyAsync(key, 300);
-        
+
             Assert.That(result, Is.False);
         }
 
@@ -40,7 +40,7 @@ namespace Cache.Tests
             var key = string.Empty;
 
             var result = await _cache.RefreshKeyAsync(key, 300);
-        
+
             Assert.That(result, Is.False);
         }
 
@@ -49,7 +49,7 @@ namespace Cache.Tests
         {
 
             var func = async () => await _cache.RefreshKeyAsync(null, 300);
-        
+
             Assert.That(func, Throws.ArgumentException);
         }
 
@@ -69,7 +69,7 @@ namespace Cache.Tests
             Thread.Sleep(200);
 
             var valueFromCache = await _cache.GetAsync<Guid>(key);
-        
+
             Assert.That(valueFromCache, Is.EqualTo(value));
         }
 
@@ -87,7 +87,7 @@ namespace Cache.Tests
             Assert.That(await _cache.RefreshKeyAsync(key, 300), Is.False);
 
             var valueFromCache = await _cache.GetAsync<Guid>(key);
-        
+
             Assert.That(valueFromCache, Is.EqualTo(Guid.Empty));
         }
     }

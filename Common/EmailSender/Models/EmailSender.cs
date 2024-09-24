@@ -9,7 +9,7 @@ namespace EmailSender.Models
     public class EmailSender : IEmailSender
     {
         private EmailSettings Settings { get; }
-        private ILogger<EmailSender> Logger {  get; }
+        private ILogger<EmailSender> Logger { get; }
 
         public EmailSender(IOptions<EmailSettings> emailSettings, ILogger<EmailSender> logger) : this(emailSettings.Value, logger)
         {

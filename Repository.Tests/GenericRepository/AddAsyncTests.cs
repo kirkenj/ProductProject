@@ -1,9 +1,5 @@
-using Repository.Tests.Models;
-using Repository.Contracts;
 using Repository.Models;
-using Moq;
-using Castle.Core.Logging;
-using Microsoft.Extensions.Logging;
+using Repository.Tests.Models;
 
 namespace Repository.Tests.GenericRepository
 {
@@ -11,40 +7,11 @@ namespace Repository.Tests.GenericRepository
     [TestFixture(typeof(GenericCachingRepository<,>))]
     [TestFixture(typeof(GenericFiltrableRepository<,,>))]
     [TestFixture(typeof(GenericFiltrableCachingRepository<,,>))]
-    public class AddAsyncTests
+    public class AddAsyncTests : GenericRepositoryTest
     {
-        private IGenericRepository<User, Guid> _repository = null!;
-        private TestDbContext _testDbContext = null!;
-        private List<User> Users => _testDbContext.Users.ToList();
+        public AddAsyncTests(Type repType) : base(repType) { }
 
-        public AddAsyncTests(Type repType)
-        {
-            var contextTask = TestConstants.GetDbContextAsync();
-            contextTask.Wait();
-            _testDbContext = contextTask.Result;
-
-            if (repType == typeof(GenericRepository<,>))
-            {
-                _repository = new GenericRepository<User, Guid>(_testDbContext);
-            }
-            else if (repType == typeof(GenericCachingRepository<,>))
-            {
-                var mockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
-
-                _repository = new GenericCachingRepository<User, Guid>(_testDbContext, TestConstants.GetReddis(), mockLogger);
-            }
-            else if (repType == typeof(GenericFiltrableRepository<,,>))
-            {
-                _repository = new GenericFiltrableRepository<User, Guid, UserFilter>(_testDbContext, UserFilter.GetFilteredSet);
-            }
-            else if (repType == typeof(GenericFiltrableCachingRepository<,,>))
-            {
-                var mockLogger = Mock.Of<ILogger<GenericFiltrableCachingRepository<User, Guid, UserFilter>>>();
-
-                _repository = new GenericFiltrableCachingRepository<User, Guid, UserFilter>(_testDbContext, TestConstants.GetReddis(), mockLogger, UserFilter.GetFilteredSet);
-            }
-        }
-
+        [Test]
         public void AddAsync_UserIsNull_ThrowsArgumentNullException()
         {
             var func = async () => await _repository.AddAsync(null);

@@ -1,9 +1,8 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 using Clients.AuthApi;
 using HashProvider.Contracts;
-using HashProvider.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Clients.AuthClientService
 {
@@ -30,7 +29,7 @@ namespace Clients.AuthClientService
 
             Logger.LogInformation($"Request to auth client for hashDefaults - Success.");
 
-            HashProvider = new HashProvider.Models.HashProvider(new HashProvider.Models.HashProviderSettings { EncodingName = defaults.EncodingName, HashAlgorithmName = defaults.HashAlgorithmName});
+            HashProvider = new HashProvider.Models.HashProvider(new HashProvider.Models.HashProviderSettings { EncodingName = defaults.EncodingName, HashAlgorithmName = defaults.HashAlgorithmName });
         }
 
         public async Task<bool> IsTokenValid(string token)

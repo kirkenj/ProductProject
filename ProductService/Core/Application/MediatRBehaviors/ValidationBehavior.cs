@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.MediatRBehaviors
 {
-    public class ValidationBehavior<TRequest, TResponse>: IPipelineBehavior<TRequest, TResponse> where TRequest : class
+    public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : class
     {
         public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
         {
@@ -16,7 +16,7 @@ namespace Application.MediatRBehaviors
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(next);
-            
+
             if (_validators.Any())
             {
                 var context = new ValidationContext<TRequest>(request);

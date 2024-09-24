@@ -5,7 +5,7 @@ using Repository.Contracts;
 
 namespace Repository.Models
 {
-    public class GenericCachingRepository<T, TIdType> : 
+    public class GenericCachingRepository<T, TIdType> :
         GenericRepository<T, TIdType>,
         ICachableRepository<T, TIdType>
         where T : class, IIdObject<TIdType> where TIdType : struct
@@ -27,7 +27,7 @@ namespace Repository.Models
         public override async Task AddAsync(T obj)
         {
             ArgumentNullException.ThrowIfNull(obj);
-            
+
             await base.AddAsync(obj);
 
             await SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, obj.Id), obj);
@@ -38,15 +38,15 @@ namespace Repository.Models
             ArgumentNullException.ThrowIfNull(obj);
 
             await base.DeleteAsync(obj);
-            
+
             var cacheKey = string.Format(CacheKeyFormatToAccessSingleViaId, obj.Id);
 
             await CustomMemoryCache.RemoveAsync(cacheKey);
-            
+
             _logger.Log(LogLevel.Information, $"Removed the key {cacheKey}");
         }
 
-        public override async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) 
+        public override async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default)
         {
             var key = CacheKeyPrefix + $"(page:{page}, pagesize:{pageSize}";
 
@@ -63,7 +63,7 @@ namespace Repository.Models
                 .Append(CustomMemoryCache.SetAsync(key, result, TimeSpan.FromMilliseconds(СacheTimeoutMiliseconds)));
 
             await Task.WhenAll(tasks);
-            
+
             return result;
         }
 
@@ -72,7 +72,7 @@ namespace Repository.Models
             _logger.Log(LogLevel.Information, $"Got request for {typeof(T).Name} with id = '{id}'. ");
             var cacheKey = string.Format(CacheKeyFormatToAccessSingleViaId, id);
             var result = await CustomMemoryCache.GetAsync<T>(cacheKey);
-            
+
             if (result != null)
             {
                 _logger.Log(LogLevel.Information, $"Found in it cache.");
@@ -108,7 +108,7 @@ namespace Repository.Models
 
             var cacheResult = await CustomMemoryCache.GetAsync<IReadOnlyCollection<T>>(key);
 
-            if (cacheResult != null) 
+            if (cacheResult != null)
             {
                 return cacheResult;
             }

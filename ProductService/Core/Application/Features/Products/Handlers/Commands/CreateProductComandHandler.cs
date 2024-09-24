@@ -37,7 +37,7 @@ namespace Application.Features.Product.Handlers.Commands
 
             var user = userResponse.Result ?? throw new ApplicationException($"Couldn't get user with id '{producerId}'");
 
-            _ =Task.Run(() => _emailSender.SendEmailAsync(new Email
+            _ = Task.Run(() => _emailSender.SendEmailAsync(new Email
             {
                 Body = $"You added a product with id '{product.Id}'",
                 Subject = "Product creation",

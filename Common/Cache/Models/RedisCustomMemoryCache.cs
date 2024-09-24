@@ -1,6 +1,6 @@
 ﻿using Cache.Contracts;
-using StackExchange.Redis;
 using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
 
@@ -20,10 +20,10 @@ namespace Cache.Models
         {
             ArgumentNullException.ThrowIfNull(optionsAccessor);
 
-            connection = ConnectionMultiplexer.Connect(optionsAccessor.ConnectionUri ?? throw new ArgumentNullException(nameof(optionsAccessor), nameof(optionsAccessor.ConnectionUri)+" is null"));
+            connection = ConnectionMultiplexer.Connect(optionsAccessor.ConnectionUri ?? throw new ArgumentNullException(nameof(optionsAccessor), nameof(optionsAccessor.ConnectionUri) + " is null"));
 
             _implementation = connection.GetDatabase();
-            
+
             var keyToCheckConnection = "hello";
             Encoding encoding = Encoding.UTF8;
             _implementation.StringSet(keyToCheckConnection, encoding.GetBytes("World"));

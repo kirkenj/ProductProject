@@ -1,9 +1,8 @@
 ﻿using Application.Contracts.Application;
-using HashProvider.Contracts;
 using Application.Contracts.Persistence;
-using Application.DTOs.User.Validators;
 using Application.Features.User.Requests.Commands;
 using CustomResponse;
+using HashProvider.Contracts;
 using MediatR;
 
 namespace Application.Features.User.Handlers.Commands

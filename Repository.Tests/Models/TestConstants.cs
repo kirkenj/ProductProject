@@ -1,7 +1,5 @@
 ﻿using Cache.Models;
 using Microsoft.EntityFrameworkCore;
-using Repository.Contracts;
-using Repository.Models;
 
 namespace Repository.Tests.Models
 {
@@ -84,9 +82,11 @@ namespace Repository.Tests.Models
             ConnectionUri = "localhost:3330",
         };
 
-        public static RedisCustomMemoryCacheWithEvents GetReddis()
+        public static RedisCustomMemoryCacheWithEvents GetEmptyReddis()
         {
             var val = new RedisCustomMemoryCacheWithEvents(CustomCacheOptions);
+            val.ClearDb();
+            val.DropEvents();
             return val;
         }
     }
