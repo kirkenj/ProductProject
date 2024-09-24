@@ -59,9 +59,8 @@ namespace Repository.Models
 
             var result = await base.GetPageContent(DbSet, page, pageSize).ToArrayAsync();
 
-            await CustomMemoryCache.SetAsync(key, result, TimeSpan.FromMilliseconds(СacheTimeoutMiliseconds));
-
-            var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r));
+            var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r))
+                .Append(CustomMemoryCache.SetAsync(key, result, TimeSpan.FromMilliseconds(СacheTimeoutMiliseconds)));
 
             await Task.WhenAll(tasks);
             
@@ -105,9 +104,18 @@ namespace Repository.Models
 
         public override async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
+            var key = CacheKeyPrefix + "All";
+
+            var cacheResult = await CustomMemoryCache.GetAsync<IReadOnlyCollection<T>>(key);
+
+            if (cacheResult != null) 
+            {
+                return cacheResult;
+            }
+
             var result = await base.GetAllAsync();
 
-            await SetCacheAsync(CacheKeyPrefix + "All", result);
+            await SetCacheAsync(key, result);
 
             var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r));
 

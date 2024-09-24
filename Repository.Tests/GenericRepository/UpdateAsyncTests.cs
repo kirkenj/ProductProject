@@ -20,9 +20,8 @@ namespace Repository.Tests.GenericRepository
         [Test]
         public async Task UpdateAsync_UpdatingContainedUser_ValueUpdated()
         {
-            var id = Users.First().Id;
+            var userToUpdate = Users[Random.Shared.Next(Users.Count)];
 
-            var userToUpdate = await _repository.GetAsync(id);
 
             if (userToUpdate == null)
             {
@@ -45,12 +44,14 @@ namespace Repository.Tests.GenericRepository
 
             await _repository.UpdateAsync(userToUpdate);
 
-            var userAfterUpdate = await _repository.GetAsync(id);
-
-            Assert.That(userToUpdate, Is.EqualTo(userAfterUpdate));
-            Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate));
+            var userAfterUpdate = await _repository.GetAsync(userToUpdate.Id) ?? throw new ArgumentException();
+           
+            Assert.Multiple(() =>
+            {
+                Assert.That(userToUpdate, Is.EqualTo(userAfterUpdate));
+                Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate));
+            });
         }
-
 
         [Test]
         public void UpdateAsync_UpdatingNotContainedUser_ThrowsException()

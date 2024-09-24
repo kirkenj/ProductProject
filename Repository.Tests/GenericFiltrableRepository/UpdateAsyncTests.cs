@@ -1,55 +1,33 @@
 using Repository.Tests.Models;
 using Repository.Models;
 using Repository.Contracts;
-using Microsoft.Extensions.Logging;
-using Moq;
 
-namespace Repository.Tests.GenericCachingRepository
+namespace Repository.Tests.GenericFiltrableRepository
 {
-    public class CachingUpdateAsyncTests
+    public class UpdateAsyncTests
     {
         private IGenericRepository<User, Guid> _repository = null!;
         private TestDbContext _testDbContext = null!;
-        private RedisCustomMemoryCacheWithEvents _customMemoryCache = null!;
         private List<User> Users => _testDbContext.Users.ToList();
 
         [OneTimeSetUp]
         public async Task Setup()
         {
-            var redis = TestConstants.GetReddis();
-
-            redis.ClearDb();
-
-            _customMemoryCache = redis;
-
-            _testDbContext = await TestConstants.GetDbContextAsync("TestDb");
-
-            var MockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
-
-            _repository = new GenericCachingRepository<User, Guid>(_testDbContext, _customMemoryCache, MockLogger);           
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            _customMemoryCache.ClearDb();
-            _customMemoryCache.DropEvents();
+            _testDbContext = await TestConstants.GetDbContextAsync();
+            _repository = new GenericRepository<User, Guid>(_testDbContext);
         }
 
         [Test]
-        public async Task UpdateAsync_UpdatingContainedUser_ValueUpdatedAndAddedToCache()
+        public async Task UpdateAsync_UpdatingContainedUser_ValueUpdated()
         {
             var userToUpdate = Users[Random.Shared.Next(Users.Count)];
 
-            User? userAddedToCache = null;
 
-            _customMemoryCache.OnSet += (key, value, offset) =>
+            if (userToUpdate == null)
             {
-                if (value is User uVal && uVal.Id == userToUpdate.Id)
-                {
-                    userAddedToCache = uVal;
-                }
-            };
+                Assert.Fail();
+                return;
+            }
 
             var userBeforeUpdate = new User
             {
@@ -57,23 +35,23 @@ namespace Repository.Tests.GenericCachingRepository
                 Name = userToUpdate.Name,
                 Email = userToUpdate.Email,
                 Address = userToUpdate.Address,
-                Login = userToUpdate.Login
+                Login = userToUpdate.Login  
             };
 
-            userToUpdate.Name = Guid.NewGuid().ToString();
+            var newValue = $"Updated value {Guid.NewGuid()}";
+
+            userToUpdate.Name = newValue;
 
             await _repository.UpdateAsync(userToUpdate);
 
             var userAfterUpdate = await _repository.GetAsync(userToUpdate.Id) ?? throw new ArgumentException();
-
+           
             Assert.Multiple(() =>
             {
-                Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate), $"Is equal: {userAfterUpdate.Equals(userBeforeUpdate)}");
-                Assert.That(userAfterUpdate, Is.EqualTo(userToUpdate));
-                Assert.That(userAfterUpdate, Is.EqualTo(userAddedToCache));
+                Assert.That(userToUpdate, Is.EqualTo(userAfterUpdate));
+                Assert.That(userAfterUpdate, Is.Not.EqualTo(userBeforeUpdate));
             });
         }
-
 
         [Test]
         public void UpdateAsync_UpdatingNotContainedUser_ThrowsException()

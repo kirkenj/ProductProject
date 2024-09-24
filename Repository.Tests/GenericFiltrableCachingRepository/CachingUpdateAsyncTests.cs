@@ -1,32 +1,27 @@
 using Repository.Tests.Models;
 using Repository.Models;
-using Repository.Contracts;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Repository.Tests.GenericCachingRepository
+namespace Repository.Tests.GenericFiltrableCachingRepository
 {
     public class CachingUpdateAsyncTests
     {
-        private IGenericRepository<User, Guid> _repository = null!;
+        private List<User> Users => _testDbContext.Users.ToList();
+        private GenericFiltrableCachingRepository<User, Guid, UserFilter> _repository = null!;
         private TestDbContext _testDbContext = null!;
         private RedisCustomMemoryCacheWithEvents _customMemoryCache = null!;
-        private List<User> Users => _testDbContext.Users.ToList();
 
         [OneTimeSetUp]
-        public async Task Setup()
+        public async Task OneTimeSetUp()
         {
-            var redis = TestConstants.GetReddis();
+            _customMemoryCache = TestConstants.GetReddis();
 
-            redis.ClearDb();
-
-            _customMemoryCache = redis;
-
-            _testDbContext = await TestConstants.GetDbContextAsync("TestDb");
+            _testDbContext = await TestConstants.GetDbContextAsync();
 
             var MockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
 
-            _repository = new GenericCachingRepository<User, Guid>(_testDbContext, _customMemoryCache, MockLogger);           
+            _repository = new GenericFiltrableCachingRepository<User, Guid, UserFilter>(_testDbContext, _customMemoryCache, MockLogger, UserFilter.GetFilteredSet);
         }
 
         [SetUp]

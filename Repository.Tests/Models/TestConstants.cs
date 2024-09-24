@@ -1,5 +1,7 @@
 ﻿using Cache.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.Contracts;
+using Repository.Models;
 
 namespace Repository.Tests.Models
 {
