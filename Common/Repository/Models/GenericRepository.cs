@@ -35,7 +35,6 @@ namespace Repository.Models
 
             _dbContext.Remove(obj);
 
-
             await SaveChangesAsync(CancellationToken.None);
         }
 

@@ -1,28 +1,11 @@
-using Microsoft.Extensions.Logging;
-using Moq;
-using Repository.Models;
 using Repository.Tests.Models;
+using Repository.Tests.Models.TestBases;
 
 namespace Repository.Tests.GenericFiltrableCachingRepository
 {
-    public class CachingGetAsyncTests
+    public class CachingGetAsyncTests : CachingFiltrableRepositoryTest
     {
-        private List<User> Users => _testDbContext.Users.ToList();
-        private GenericFiltrableCachingRepository<User, Guid, UserFilter> _repository = null!;
-        private TestDbContext _testDbContext = null!;
-        private RedisCustomMemoryCacheWithEvents _customMemoryCache = null!;
-
-        [OneTimeSetUp]
-        public async Task OneTimeSetUp()
-        {
-            _customMemoryCache = TestConstants.GetEmptyReddis();
-
-            _testDbContext = await TestConstants.GetDbContextAsync();
-
-            var MockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
-
-            _repository = new GenericFiltrableCachingRepository<User, Guid, UserFilter>(_testDbContext, _customMemoryCache, MockLogger, UserFilter.GetFilteredSet);
-        }
+        public CachingGetAsyncTests() : base() { }
 
 
         [SetUp]
@@ -32,82 +15,11 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
             _customMemoryCache.ClearDb();
         }
 
-        [Test]
-        public async Task GetAsync_IDdefault_ReturnsNull()
-        {
-            var user = await _repository.GetAsync(id: default);
-
-            Assert.That(user, Is.Null);
-        }
 
         [Test]
-        public async Task GetAsync_IDNotContained_ReturnsNull()
-        {
-            var user = await _repository.GetAsync(Guid.NewGuid());
-
-            Assert.That(user, Is.Null);
-        }
-
-        [Test]
-        public async Task GetAsync_IDContained_ReturnsTheUser()
-        {
-            var user = Users[Random.Shared.Next(0, Users.Count)];
-
-            var users = await _repository.GetAsync(user.Id);
-
-            Assert.That(users, Is.EqualTo(user));
-        }
-
-
-        [Test]
-        public async Task GetAsync_ValueExcists_NotFoundInCacheReturnsValueAddsValueToCache()
+        public async Task GetAsyncFilter_GetTwiseInARowWithDelay_SecondValueGotFromContext()
         {
             //arrange
-
-            Guid userId = Users[Random.Shared.Next(0, Users.Count)].Id;
-
-            User? preCachedResult = null;
-
-            User? valueAddedToCache = null;
-
-            _customMemoryCache.OnGet += (key, result) =>
-            {
-                if (result is User uResult)
-                {
-                    preCachedResult = uResult;
-                }
-            };
-
-
-            _customMemoryCache.OnSet += (key, value, span) =>
-            {
-                if (value is User uResult)
-                {
-                    valueAddedToCache = uResult;
-                }
-            };
-
-
-            //act
-
-            var user = await _repository.GetAsync(userId);
-
-            //assert
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(preCachedResult, Is.Null, "Precached Result Check");
-                Assert.That(valueAddedToCache, Is.EqualTo(user), "After act cached result");
-            });
-        }
-
-
-        [Test]
-        public async Task GetAsync_GetTwiseInARowWithDelay_SecondValueGotFromContext()
-        {
-            //arrange
-
-            Guid userId = Users[Random.Shared.Next(0, Users.Count)].Id;
 
             User? firstPreCachedResult = null;
 
@@ -136,11 +48,11 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
 
             //act
 
-            var firstGottenResult = await _repository.GetAsync(userId);
+            var firstGottenResult = await _repository.GetAsync(null);
 
             await Task.Delay(_repository.ÑacheTimeoutMiliseconds);
 
-            var secondGottenResult = await _repository.GetAsync(userId);
+            var secondGottenResult = await _repository.GetAsync(null);
 
             //assert
 
@@ -151,12 +63,11 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
                 Assert.That(firstGottenResult, Is.EqualTo(secondGottenResult), $"{nameof(firstGottenResult)} must be same as {nameof(secondGottenResult)}");
             });
         }
+
         [Test]
-        public async Task GetAsync_GetTwiseInARow_SecondValueGotFromCache()
+        public async Task GetAsyncFilter_GetTwiseInARow_SecondValueGotFromCache()
         {
             //arrange
-
-            Guid userId = Users[Random.Shared.Next(0, Users.Count)].Id;
 
             User? firstPreCachedResult = null;
 
@@ -185,9 +96,9 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
 
             //act
 
-            var firstGottenResult = await _repository.GetAsync(userId);
+            var firstGottenResult = await _repository.GetAsync(null);
 
-            var secondGottenResult = await _repository.GetAsync(userId);
+            var secondGottenResult = await _repository.GetAsync(null);
 
             //assert
 
@@ -200,6 +111,7 @@ namespace Repository.Tests.GenericFiltrableCachingRepository
                 Assert.That(secondPreCachedResult, Is.EqualTo(secondGottenResult), "Second precached result has to be same as context value");
             });
         }
+
 
         [OneTimeTearDown]
         public void OneTimeTearDown()

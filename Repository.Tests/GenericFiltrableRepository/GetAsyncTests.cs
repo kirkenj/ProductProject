@@ -1,46 +1,68 @@
-using Repository.Contracts;
 using Repository.Models;
 using Repository.Tests.Models;
+using Repository.Tests.Models.TestBases;
+using System.Text.Json;
 
 namespace Repository.Tests.GenericFiltrableRepository
 {
-    public class GetAsyncTests
+    [TestFixture(typeof(GenericFiltrableCachingRepository<,,>))]
+    [TestFixture(typeof(GenericFiltrableRepository<,,>))]
+    public class GetAsyncTests : FiltrableRepositoryTest
     {
-        private IGenericRepository<User, Guid> _repository = null!;
-        private TestDbContext _testDbContext = null!;
-        private List<User> Users => _testDbContext.Users.ToList();
+        public GetAsyncTests(Type type) : base(type) { }
 
-        [OneTimeSetUp]
-        public async Task Setup()
+        [Test]
+        public async Task GetAsyncFilter_FilterIsNull_ReturnsValueOrNull()
         {
-            _testDbContext = await TestConstants.GetDbContextAsync();
-            _repository = new GenericRepository<User, Guid>(_testDbContext);
+            var result = await _repository.GetAsync(null);
+
+            Assert.That(Users, Does.Contain(result).Or.Null);
         }
 
         [Test]
-        public async Task GetAsync_IDdefault_ReturnsNull()
+        public async Task GetAsyncFilter_FilterEmpty_ReturnsValues()
         {
-            var users = await _repository.GetAsync(default);
+            var filter = new UserFilter();
 
-            Assert.That(users, Is.Null);
+            var userResult = await _repository.GetAsync(filter);
+
+            var possibleUsers = UserFilter.GetFilteredSet(Users.AsQueryable(), filter);
+
+            Assert.That(possibleUsers, Does.Contain(userResult));
         }
 
         [Test]
-        public async Task GetAsync_IDNotContained_ReturnsNull()
+        public async Task GetAsyncFilter_FilterSetSomeId_ReturnsValue()
         {
-            var user = await _repository.GetAsync(Guid.NewGuid());
+            var filter = new UserFilter();
 
-            Assert.That(user, Is.Null);
+            List<Guid> ids = new();
+
+            for (int i = 0; i < 3; i++)
+            {
+                ids.Add(Users[Random.Shared.Next(Users.Count)].Id);
+            }
+
+            filter.Ids = ids;
+
+            var userResult = await _repository.GetAsync(filter);
+
+            var possibleUsers = UserFilter.GetFilteredSet(Users.AsQueryable(), filter);
+
+            Assert.That(possibleUsers, Does.Contain(userResult));
         }
 
-        [Test]
-        public async Task GetAsync_IDContained_ReturnsTheUser()
+        [TestCase("{\"Ids\":null,\"LoginPart\":null,\"EmailPart\":null,\"NamePart\":\"i\",\"AddressPart\":null}")]
+        [TestCase("{\"Ids\":null,\"LoginPart\":null,\"EmailPart\":\"e\",\"NamePart\":null,\"AddressPart\":\"sk\"}")]
+        public async Task GetPageContentTests_FilterSetNullPageNullSize_ReturnsValues(string filterJson)
         {
-            var user = Users.First();
+            var filter = JsonSerializer.Deserialize<UserFilter>(filterJson) ?? throw new Exception();
 
-            var users = await _repository.GetAsync(user.Id);
+            var userResult = await _repository.GetAsync(filter);
 
-            Assert.That(users, Is.EqualTo(user));
+            var possibleUsers = UserFilter.GetFilteredSet(Users.AsQueryable(), filter).ToArray();
+
+            Assert.That(possibleUsers, Does.Contain(userResult));
         }
 
         [OneTimeTearDown]

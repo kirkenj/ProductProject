@@ -3,7 +3,7 @@ using Moq;
 using Repository.Contracts;
 using Repository.Models;
 
-namespace Repository.Tests.Models
+namespace Repository.Tests.Models.TestBases
 {
     public class GenericRepositoryTest
     {

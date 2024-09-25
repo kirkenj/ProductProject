@@ -7,7 +7,7 @@ namespace Repository.Models
 {
     public class GenericCachingRepository<T, TIdType> :
         GenericRepository<T, TIdType>,
-        ICachableRepository<T, TIdType>
+        IGenericCachingRepository<T, TIdType>
         where T : class, IIdObject<TIdType> where TIdType : struct
     {
         protected readonly ILogger<GenericCachingRepository<T, TIdType>> _logger;
@@ -21,7 +21,7 @@ namespace Repository.Models
 
         public int СacheTimeoutMiliseconds { get; set; } = 2_000;
         protected string CacheKeyPrefix => _repId + " ";
-        private string CacheKeyFormatToAccessSingleViaId => CacheKeyPrefix + "{0}";
+        protected string CacheKeyFormatToAccessSingleViaId => CacheKeyPrefix + "{0}";
 
 
         public override async Task AddAsync(T obj)
@@ -115,9 +115,8 @@ namespace Repository.Models
 
             var result = await base.GetAllAsync();
 
-            await SetCacheAsync(key, result);
-
-            var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r));
+            var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r))
+                .Append(SetCacheAsync(key, result));
 
             await Task.WhenAll(tasks);
 

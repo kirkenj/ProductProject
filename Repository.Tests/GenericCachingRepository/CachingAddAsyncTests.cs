@@ -1,70 +1,14 @@
-using Microsoft.Extensions.Logging;
-using Moq;
-using Repository.Contracts;
 using Repository.Models;
 using Repository.Tests.Models;
+using Repository.Tests.Models.TestBases;
 
 namespace Repository.Tests.GenericCachingRepository
 {
-    public class CachingAddAsyncTests
+    [TestFixture(typeof(GenericCachingRepository<,>))]
+    [TestFixture(typeof(GenericFiltrableCachingRepository<,,>))]
+    public class CachingAddAsyncTests : CachingRepositoryTest
     {
-        private IGenericRepository<User, Guid> _repository = null!;
-        private TestDbContext _testDbContext = null!;
-        private RedisCustomMemoryCacheWithEvents _customMemoryCache = null!;
-        private ILogger<GenericCachingRepository<User, Guid>> _logger = null!;
-        private List<User> Users => _testDbContext.Users.ToList();
-
-        [OneTimeSetUp]
-        public async Task OneTimeSetUp()
-        {
-            _customMemoryCache = TestConstants.GetEmptyReddis();
-
-            _testDbContext = await TestConstants.GetDbContextAsync();
-
-            _logger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
-
-            _repository = new GenericCachingRepository<User, Guid>(_testDbContext, _customMemoryCache, _logger);
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            _customMemoryCache.DropEvents();
-            _customMemoryCache.ClearDb();
-        }
-
-        [Test]
-        public void AddAsync_UserIsNull_ThrowsArgumentNullException()
-        {
-            var func = async () => await _repository.AddAsync(null);
-
-            Assert.That(func, Throws.ArgumentNullException);
-        }
-
-        [Test]
-        public void AddAsyncTests_UserAlreadyInDbSet_ThrowsException()
-        {
-            var func = async () => await _repository.AddAsync(Users.First());
-
-            Assert.That(func, Throws.Exception);
-        }
-
-        [Test]
-        public void AddAsyncTests_IDIsTaken_ThrowsInvalidOperationException()
-        {
-            var user = new User
-            {
-                Address = "Zone 51",
-                Name = "Natan",
-                Email = "Natan228@ya.ru",
-                Login = "BBCReporter",
-                Id = _testDbContext.Users.First().Id
-            };
-
-            var func = async () => await _repository.AddAsync(user);
-
-            Assert.That(func, Throws.InvalidOperationException);
-        }
+        public CachingAddAsyncTests(Type type) : base(type) { }
 
         [Test]
         public async Task AddAsyncTests_ValueIsValid_AddsValueToContextAndCache()

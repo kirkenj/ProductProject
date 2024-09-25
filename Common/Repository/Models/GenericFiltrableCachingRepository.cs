@@ -8,6 +8,7 @@ namespace Repository.Models
 {
     public class GenericFiltrableCachingRepository<T, TIdType, TFilter> :
         GenericCachingRepository<T, TIdType>,
+        IGenericCachingRepository<T, TIdType>,
         IGenericFiltrableRepository<T, TIdType, TFilter>
         where T : class, IIdObject<TIdType> where TIdType : struct
     {
@@ -25,24 +26,24 @@ namespace Repository.Models
 
             _logger.LogInformation($"Got request: {key}");
 
-            var result = await CustomMemoryCache.GetAsync<T>(key);
+            var cacheResult = await CustomMemoryCache.GetAsync<T>(key);
 
-            if (result != null)
+            if (cacheResult != null)
             {
                 _logger.LogInformation($"Request {key}. Found in cache");
-                return result;
+                return cacheResult;
             }
 
             _logger.LogInformation($"Request {key}. Requesting the database");
 
-            result = await GetFilteredSetDelegate(DbSet, filter).FirstOrDefaultAsync();
+            var repResult = await GetFilteredSetDelegate(DbSet, filter).FirstOrDefaultAsync();
 
-            if (result != null)
+            if (repResult != null)
             {
-                _ = Task.Run(() => SetCacheAsync(key, result));
+                await SetCacheAsync(key, repResult);
             }
 
-            return result;
+            return repResult;
         }
 
 
@@ -63,15 +64,10 @@ namespace Repository.Models
             _logger.LogInformation($"Request {key}. Requesting the database");
             result = await GetPageContent(GetFilteredSetDelegate(DbSet, filter), page, pageSize).ToArrayAsync();
 
-            _ = Task.Run(() =>
-            {
-                _ = Task.Run(() => SetCacheAsync(key, result));
+            var tasks = result.Select(item => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, item.Id), item))
+                .Append(SetCacheAsync(key, result));
 
-                foreach (var item in result)
-                {
-                    _ = Task.Run(() => SetCacheAsync(CacheKeyPrefix + item.Id, item));
-                }
-            });
+            await Task.WhenAll(tasks);
 
             return result;
         }

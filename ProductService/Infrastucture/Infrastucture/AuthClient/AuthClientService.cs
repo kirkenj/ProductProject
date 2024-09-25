@@ -41,26 +41,19 @@ namespace Infrastucture.AuthClient
                 if (cacheResult != null)
                 {
                     _logger.LogInformation("Found it into cache");
-                    result = cacheResult;
-                }
-                else
-                {
-                    _logger.LogInformation($"Sending request to {nameof(AuthClientService)}");
-
-                    var qResult = await _authClient.ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
-
-                    result = _mapper.Map<List<AuthClientUser>>(qResult);
+                    return new ClientResponse<ICollection<AuthClientUser>> { Result = cacheResult, Success = true };
                 }
 
-                _ = Task.Run(() =>
-                {
-                    _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, TimeSpan.FromMilliseconds(10_000)));
+                _logger.LogInformation($"Sending request to {nameof(AuthClientService)}");
 
-                    foreach (var item in result)
-                    {
-                        _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKeyPrefix + "userId_" + item.Id, result, TimeSpan.FromMilliseconds(10_000)));
-                    }
-                });
+                var qResult = await _authClient.ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
+
+                result = _mapper.Map<List<AuthClientUser>>(qResult);
+
+                var tasks = result.Select(r => _customMemoryCache.SetAsync(cacheKeyPrefix + "userId_" + r.Id, result, TimeSpan.FromMilliseconds(10_000)))
+                .Append(_customMemoryCache.SetAsync(cacheKey, result, TimeSpan.FromMilliseconds(10_000)));
+
+                await Task.WhenAll(tasks);
 
                 return new ClientResponse<ICollection<AuthClientUser>> { Result = result, Success = true };
             }
@@ -86,15 +79,13 @@ namespace Infrastucture.AuthClient
                 if (cacheResult != null)
                 {
                     Console.WriteLine("Found it into cache");
-                    result = cacheResult;
-                }
-                else
-                {
-                    Console.WriteLine($"Sending request to {nameof(AuthClientService)}");
-                    result = _mapper.Map<AuthClientUser>(await _authClient.UsersGETAsync(userId));
+                    return new ClientResponse<AuthClientUser?> { Result = cacheResult, Success = true };
                 }
 
-                _ = Task.Run(() => _customMemoryCache.SetAsync(cacheKey, result, TimeSpan.FromMilliseconds(10_000)));
+                Console.WriteLine($"Sending request to {nameof(AuthClientService)}");
+                result = _mapper.Map<AuthClientUser>(await _authClient.UsersGETAsync(userId));
+
+                await _customMemoryCache.SetAsync(cacheKey, result, TimeSpan.FromMilliseconds(10_000));
 
                 return new ClientResponse<AuthClientUser?> { Result = result, Success = true };
             }

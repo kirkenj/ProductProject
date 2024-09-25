@@ -1,73 +1,21 @@
-using Cache.Contracts;
-using Cache.Models;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Repository.Contracts;
 using Repository.Models;
 using Repository.Tests.Models;
-using static Repository.Tests.Models.RedisCustomMemoryCacheWithEvents;
+using Repository.Tests.Models.TestBases;
 
 namespace Repository.Tests.GenericCachingRepository
 {
-    public class CachingGetAsyncTests
+    [TestFixture(typeof(GenericCachingRepository<,>))]
+    [TestFixture(typeof(GenericFiltrableCachingRepository<,,>))]
+    public class CachingGetAsyncTests : CachingRepositoryTest
     {
-        private IGenericRepository<User, Guid> Repository => _genericCachingRepository;
-
-        private GenericCachingRepository<User, Guid> _genericCachingRepository = null!;
-
-        private TestDbContext _testDbContext = null!;
-
-        private RedisCustomMemoryCacheWithEvents _redis;
-        private ICustomMemoryCache CustomMemoryCache => _redis;
-
-        private ILogger<GenericCachingRepository<User, Guid>> _logger = null!;
-
-        private List<User> Users => _testDbContext.Users.ToList();
-
-        [OneTimeSetUp]
-        public async Task Setup()
-        {
-            _redis = new RedisCustomMemoryCacheWithEvents(new CustomCacheOptions { ConnectionUri = "localhost:3330" });
-
-            _testDbContext = await TestConstants.GetDbContextAsync();
-
-            var MockLogger = Mock.Of<ILogger<GenericCachingRepository<User, Guid>>>();
-
-            _genericCachingRepository = new GenericCachingRepository<User, Guid>(_testDbContext, CustomMemoryCache, MockLogger);
-        }
+        public CachingGetAsyncTests(Type type) : base(type) { }
 
 
         [SetUp]
         public void SetUp()
         {
-            _redis.DropEvents();
-            _redis.ClearDb();
-        }
-
-        [Test]
-        public async Task GetAsync_IDdefault_ReturnsNull()
-        {
-            var users = await Repository.GetAsync(default);
-
-            Assert.That(users, Is.Null);
-        }
-
-        [Test]
-        public async Task GetAsync_IDNotContained_ReturnsNull()
-        {
-            var user = await Repository.GetAsync(Guid.NewGuid());
-
-            Assert.That(user, Is.Null);
-        }
-
-        [Test]
-        public async Task GetAsync_IDContained_ReturnsTheUser()
-        {
-            var user = Users[Random.Shared.Next(0, Users.Count)];
-
-            var users = await Repository.GetAsync(user.Id);
-
-            Assert.That(users, Is.EqualTo(user));
+            _customMemoryCache.DropEvents();
+            _customMemoryCache.ClearDb();
         }
 
 
@@ -82,7 +30,7 @@ namespace Repository.Tests.GenericCachingRepository
 
             User? valueAddedToCache = null;
 
-            OnGetHandler onGetHandler = (key, result) =>
+            _customMemoryCache.OnGet += (key, result) =>
             {
                 if (result is User uResult)
                 {
@@ -91,7 +39,7 @@ namespace Repository.Tests.GenericCachingRepository
             };
 
 
-            OnSetHandler onSetHandler = (key, value, span) =>
+            _customMemoryCache.OnSet += (key, value, span) =>
             {
                 if (value is User uResult)
                 {
@@ -99,12 +47,9 @@ namespace Repository.Tests.GenericCachingRepository
                 }
             };
 
-            _redis.OnSet += onSetHandler;
-            _redis.OnGet += onGetHandler;
-
             //act
 
-            var user = await Repository.GetAsync(userId);
+            var user = await _repository.GetAsync(userId);
 
             //assert
 
@@ -129,7 +74,7 @@ namespace Repository.Tests.GenericCachingRepository
 
             int cacheGetCounter = 0;
 
-            _redis.OnGet += (key, result) =>
+            _customMemoryCache.OnGet += (key, result) =>
             {
                 cacheGetCounter++;
 
@@ -150,11 +95,11 @@ namespace Repository.Tests.GenericCachingRepository
 
             //act
 
-            var firstGottenResult = await Repository.GetAsync(userId);
+            var firstGottenResult = await _repository.GetAsync(userId);
 
-            await Task.Delay(_genericCachingRepository.ÑacheTimeoutMiliseconds);
+            await Task.Delay(_repository.ÑacheTimeoutMiliseconds);
 
-            var secondGottenResult = await Repository.GetAsync(userId);
+            var secondGottenResult = await _repository.GetAsync(userId);
 
             //assert
 
@@ -165,6 +110,7 @@ namespace Repository.Tests.GenericCachingRepository
                 Assert.That(firstGottenResult, Is.EqualTo(secondGottenResult), $"{nameof(firstGottenResult)} must be same as {nameof(secondGottenResult)}");
             });
         }
+
         [Test]
         public async Task GetAsync_GetTwiseInARow_SecondValueGotFromCache()
         {
@@ -178,7 +124,7 @@ namespace Repository.Tests.GenericCachingRepository
 
             int cacheGetCounter = 0;
 
-            _redis.OnGet += (key, result) =>
+            _customMemoryCache.OnGet += (key, result) =>
             {
                 cacheGetCounter++;
 
@@ -199,9 +145,9 @@ namespace Repository.Tests.GenericCachingRepository
 
             //act
 
-            var firstGottenResult = await Repository.GetAsync(userId);
+            var firstGottenResult = await _repository.GetAsync(userId);
 
-            var secondGottenResult = await Repository.GetAsync(userId);
+            var secondGottenResult = await _repository.GetAsync(userId);
 
             //assert
 

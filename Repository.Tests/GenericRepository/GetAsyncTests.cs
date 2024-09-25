@@ -1,5 +1,5 @@
 using Repository.Models;
-using Repository.Tests.Models;
+using Repository.Tests.Models.TestBases;
 
 namespace Repository.Tests.GenericRepository
 {

@@ -1,60 +1,66 @@
-using Repository.Contracts;
 using Repository.Models;
 using Repository.Tests.Models;
+using Repository.Tests.Models.TestBases;
+using System.Text.Json;
 
 namespace Repository.Tests.GenericFiltrableRepository
 {
-    public class GetPageContentTests
+    [TestFixture(typeof(GenericFiltrableCachingRepository<,,>))]
+    [TestFixture(typeof(GenericFiltrableRepository<,,>))]
+    public class GetPageContentTests : FiltrableRepositoryTest
     {
-        private IGenericRepository<User, Guid> _repository = null!;
-        private TestDbContext _testDbContext = null!;
-        private List<User> Users => _testDbContext.Users.ToList();
+        public GetPageContentTests(Type type) : base(type) { }
 
-        [OneTimeSetUp]
-        public async Task Setup()
+
+        [Test]
+        public async Task GetPageContentTests_FilterNullNullPageNullSize_ReturnsAllValues()
         {
-            _testDbContext = await TestConstants.GetDbContextAsync();
-            _repository = new GenericRepository<User, Guid>(_testDbContext);
+            var users = await _repository.GetPageContent(null, null, null);
+
+            Assert.That(users, Is.EqualTo(Users));
         }
 
         [Test]
-        public async Task GetPageContentTests_NullPageNullSize_ReturnsAllValues()
+        public async Task GetPageContentTests_FilterEmptyNullPageNullSize_ReturnsAllValues()
         {
-            var users = await _repository.GetPageContent(null, null);
+            var filter = new UserFilter();
 
-            Assert.That(users, Is.EqualTo(_testDbContext.Users.ToArray()));
+            var users = await _repository.GetPageContent(filter, null, null);
+
+            Assert.That(users, Is.EqualTo(Users));
         }
 
         [Test]
-        public async Task GetPageContentTests_NullPageNotNullSize_ReturnsAllValues()
+        public async Task GetPageContentTests_FilterSetSomeIdNullPageNullSize_ReturnsValues()
         {
-            var users = await _repository.GetPageContent(null, 1);
+            var filter = new UserFilter();
 
-            Assert.That(users, Is.EqualTo(_testDbContext.Users.ToArray()));
+            List<Guid> ids = new();
+
+            for (int i = 0; i < 3; i++)
+            {
+                ids.Add(Users[Random.Shared.Next(Users.Count)].Id);
+            }
+
+            filter.Ids = ids;
+
+            var users = await _repository.GetPageContent(filter, null, null);
+
+            Assert.That(users, Is.SubsetOf(Users));
         }
 
-        [Test]
-        public async Task GetPageContentTests_NotNullPageNullSize_ReturnsAllValues()
+        [TestCase("{\"Ids\":null,\"LoginPart\":null,\"EmailPart\":null,\"NamePart\":\"i\",\"AddressPart\":null}")]
+        [TestCase("{\"Ids\":null,\"LoginPart\":null,\"EmailPart\":\"e\",\"NamePart\":null,\"AddressPart\":\"sk\"}")]
+        public async Task GetPageContentTests_FilterSetNullPageNullSize_ReturnsValues(string filterJson)
         {
-            var users = await _repository.GetPageContent(1, null);
+            var filter = JsonSerializer.Deserialize<UserFilter>(filterJson) ?? throw new Exception();
+            var usersResult = await _repository.GetPageContent(filter, null, null);
+            var expectedUsers = UserFilter.GetFilteredSet(Users.AsQueryable(), filter);
 
-            Assert.That(users, Is.EqualTo(_testDbContext.Users.ToArray()));
+            Assert.That(usersResult, Is.SubsetOf(Users));
+            Assert.That(usersResult, Is.EquivalentTo(expectedUsers));
         }
 
-        [TestCase(1, 1, 0, 1)]
-        [TestCase(2, 1, 1, 1)]
-        [TestCase(2, 2, 2, 2)]
-        [TestCase(1, 3, 0, 3)]
-        [TestCase(2, 3, 3, 3)]
-        [TestCase(3, 2, 4, 2)]
-        public async Task GetPageContentTests_NotNullPageNullSize_ReturnsAllValues(int page, int pageSize, int expectedResultIndex, int expectedResultCount)
-        {
-            var users = await _repository.GetPageContent(page, pageSize);
-
-            var expectedResult = Users.GetRange(expectedResultIndex, expectedResultCount);
-
-            Assert.That(users, Is.EqualTo(expectedResult));
-        }
 
         [OneTimeTearDown]
         public void TearDown()
