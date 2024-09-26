@@ -64,13 +64,18 @@ namespace Cache.Tests
 
             Thread.Sleep(200);
 
-            Assert.That(await _cache.RefreshKeyAsync(key, 300), Is.True);
+            var refreshResult = await _cache.RefreshKeyAsync(key, 300);
 
             Thread.Sleep(200);
 
             var valueFromCache = await _cache.GetAsync<Guid>(key);
 
-            Assert.That(valueFromCache, Is.EqualTo(value));
+            Assert.Multiple(() =>
+            {
+                Assert.That(refreshResult, Is.True);
+
+                Assert.That(valueFromCache, Is.EqualTo(value));
+            });
         }
 
         [Test]
@@ -84,11 +89,16 @@ namespace Cache.Tests
 
             Thread.Sleep(300);
 
-            Assert.That(await _cache.RefreshKeyAsync(key, 300), Is.False);
+            var refreshResult = await _cache.RefreshKeyAsync(key, 300);
 
             var valueFromCache = await _cache.GetAsync<Guid>(key);
 
-            Assert.That(valueFromCache, Is.EqualTo(Guid.Empty));
+            Assert.Multiple(() =>
+            {
+                Assert.That(refreshResult, Is.False);
+
+                Assert.That(valueFromCache, Is.EqualTo(Guid.Empty));
+            });
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using Cache.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.Tests.Models;
 
-namespace Repository.Tests.Models
+namespace Repository.Tests.Common
 {
     public static class TestConstants
     {

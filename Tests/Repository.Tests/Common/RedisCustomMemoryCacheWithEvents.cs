@@ -1,7 +1,7 @@
 ﻿using Cache.Models;
 using Microsoft.Extensions.Options;
 
-namespace Repository.Tests.Models
+namespace Repository.Tests.Common
 {
     public class RedisCustomMemoryCacheWithEvents : RedisCustomMemoryCache
     {

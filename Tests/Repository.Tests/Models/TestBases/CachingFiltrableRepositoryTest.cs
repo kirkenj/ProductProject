@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Repository.Models;
+using Repository.Tests.Common;
 
 namespace Repository.Tests.Models.TestBases
 {

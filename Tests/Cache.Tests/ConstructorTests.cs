@@ -21,10 +21,10 @@ namespace Cache.Tests
             IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
 
             //act
-            var instanseInitDelefate = () => new RedisCustomMemoryCache(options);
+            var instanseInitDelegate = () => new RedisCustomMemoryCache(options);
 
             //assert
-            Assert.That(instanseInitDelefate, Throws.ArgumentNullException);
+            Assert.That(instanseInitDelegate, Throws.ArgumentNullException);
         }
 
         [Test]
@@ -39,10 +39,10 @@ namespace Cache.Tests
             IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
 
             //act
-            var instanseInitDelefate = () => new RedisCustomMemoryCache(options);
+            var instanseInitDelegate = () => new RedisCustomMemoryCache(options);
 
             //assert
-            Assert.That(instanseInitDelefate, Throws.TypeOf<RedisConnectionException>());
+            Assert.That(instanseInitDelegate, Throws.TypeOf<RedisConnectionException>());
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace Cache.Tests
             IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
 
             //act
-            var instanseInitDelefate = new RedisCustomMemoryCache(options);
+            var instanseInitDelegate = new RedisCustomMemoryCache(options);
 
             //assert
             Assert.Pass();

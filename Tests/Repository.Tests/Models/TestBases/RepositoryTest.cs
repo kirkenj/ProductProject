@@ -2,6 +2,7 @@
 using Moq;
 using Repository.Contracts;
 using Repository.Models;
+using Repository.Tests.Common;
 
 namespace Repository.Tests.Models.TestBases
 {

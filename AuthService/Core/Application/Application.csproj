@@ -6,6 +6,15 @@
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Features\Role\Handlers\Commands\**" />
+    <Compile Remove="Features\Role\Requests\Commands\**" />
+    <EmbeddedResource Remove="Features\Role\Handlers\Commands\**" />
+    <EmbeddedResource Remove="Features\Role\Requests\Commands\**" />
+    <None Remove="Features\Role\Handlers\Commands\**" />
+    <None Remove="Features\Role\Requests\Commands\**" />
+  </ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
@@ -18,13 +27,9 @@
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Common\EmailSender\EmailSender.csproj" />
-	  <ProjectReference Include="..\..\..\HashProvider\HashProvider.csproj" />
-	  <ProjectReference Include="..\..\..\Response\CustomResponse.csproj" />
+	  <ProjectReference Include="..\..\..\Common\Response\CustomResponse.csproj" />
+	  <ProjectReference Include="..\..\..\Common\HashProvider\HashProvider.csproj" />
+	  <ProjectReference Include="..\..\..\Common\Response\CustomResponse.csproj" />
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <Folder Include="Features\Role\Handlers\Commands\" />
-	  <Folder Include="Features\Role\Requests\Commands\" />
 	</ItemGroup>
 </Project>
