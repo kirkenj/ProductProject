@@ -1,4 +1,5 @@
-﻿using Application.MediatRBehaviors;
+﻿using Application.Contracts.Persistence;
+using Application.MediatRBehaviors;
 using Application.Models.User;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,15 @@ namespace Application
 {
     public static class ConfigureServiceRegistration
     {
+        /// <summary>
+        /// Has to be called after repositories configured because this registration calls repository to validate settings
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ValidationException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -25,8 +35,14 @@ namespace Application
             var res = createUserSettings.Validate(new System.ComponentModel.DataAnnotations.ValidationContext(createUserSettings));
             if (res.Any()) throw new ValidationException(string.Join("\n", res.Select(r => $"{string.Join(",", r.MemberNames)}: {r.ErrorMessage}")));
 
-            services.Configure<CreateUserSettings>(createUserSettingsSection);
+            var provider = services.BuildServiceProvider();
+            var roleRep = provider.GetRequiredService<IRoleRepository>();
+            var getRoleTask = roleRep.GetAsync(createUserSettings.DefaultRoleID);
+            getRoleTask.Wait();
+            if (getRoleTask.Result == null) throw new ArgumentException($"Role with id '{createUserSettings.DefaultRoleID}' doesn't excist.");
 
+            services.Configure<CreateUserSettings>(createUserSettingsSection);
+            
             return services;
         }
     }

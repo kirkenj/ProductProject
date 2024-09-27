@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
+using Application.Contracts.Persistence;
 using Application.Features.User.Requests.Commands;
 using Application.Models.User;
 using AutoMapper;
@@ -18,13 +19,15 @@ namespace Application.Features.User.Handlers.Commands
         private readonly CreateUserSettings _createUserSettings;
         private readonly ICustomMemoryCache _memoryCache;
         private readonly IPasswordGenerator _passwordGenerator;
+        private readonly IRoleRepository _roleRepository;
         private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
 
-        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IMapper mapper, IHashProvider passwordSetter, IPasswordGenerator passwordGenerator, IEmailSender emailSender, ICustomMemoryCache memoryCache)
+        public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IMapper mapper, IHashProvider passwordSetter, IPasswordGenerator passwordGenerator, IEmailSender emailSender, ICustomMemoryCache memoryCache, IRoleRepository roleRepository)
         {
             _createUserSettings = createUserSettings.Value;
             _passwordGenerator = passwordGenerator;
+            _roleRepository = roleRepository;
             HashPrvider = passwordSetter;
             _memoryCache = memoryCache;
             _emailSender = emailSender;
