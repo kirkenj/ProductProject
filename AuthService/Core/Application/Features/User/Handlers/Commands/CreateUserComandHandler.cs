@@ -1,7 +1,6 @@
 ﻿using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
 using Application.Features.User.Requests.Commands;
-using Application.Models.CacheKeyGenerator;
 using Application.Models.User;
 using AutoMapper;
 using Cache.Contracts;
@@ -16,20 +15,20 @@ namespace Application.Features.User.Handlers.Commands
 {
     public class CreateUserComandHandler : IRequestHandler<CreateUserCommand, Response<Guid>>, IPasswordSettingHandler
     {
-        private readonly IMapper _mapper;
         private readonly CreateUserSettings _createUserSettings;
         private readonly ICustomMemoryCache _memoryCache;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly IEmailSender _emailSender;
+        private readonly IMapper _mapper;
 
         public CreateUserComandHandler(IOptions<CreateUserSettings> createUserSettings, IMapper mapper, IHashProvider passwordSetter, IPasswordGenerator passwordGenerator, IEmailSender emailSender, ICustomMemoryCache memoryCache)
         {
-            _mapper = mapper;
-            HashPrvider = passwordSetter;
             _createUserSettings = createUserSettings.Value;
-            _memoryCache = memoryCache;
             _passwordGenerator = passwordGenerator;
+            HashPrvider = passwordSetter;
+            _memoryCache = memoryCache;
             _emailSender = emailSender;
+            _mapper = mapper;
         }
 
         public IHashProvider HashPrvider { get; private set; }
@@ -46,21 +45,21 @@ namespace Application.Features.User.Handlers.Commands
 
             (this as IPasswordSettingHandler).SetPassword(password, user);
 
-            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForRegistrationCaching(user.Email), user, TimeSpan.FromHours(_createUserSettings.EmailConfirmationTimeoutHours));
+            await _memoryCache.SetAsync(string.Format(_createUserSettings.KeyForRegistrationCachingFormat, user.Email), user, TimeSpan.FromHours(_createUserSettings.EmailConfirmationTimeoutHours));
 
             bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {
                 Subject = "Registration",
-                Body = $"Confirm registration by loggining in with email: {user.Email}, password {password}",
+                Body = string.Format(_createUserSettings.BodyMessageFormat, user.Email, password),
                 To = user.Email
             });
 
             if (isEmailSent == false)
             {
-                throw new ApplicationException("User created, but email was not sent");
+                throw new ApplicationException("User request created, but email was not sent");
             }
 
-            return Response<Guid>.OkResponse(user.Id, $"Created user's id: {user.Id}. Further details sent on email");
+            return Response<Guid>.OkResponse(user.Id, $"Created user registration request. Further details sent on email");
         }
     }
 }

@@ -2,7 +2,7 @@
 using CustomResponse;
 using MediatR;
 
-namespace Application.Features.User.Requests.Queries
+namespace Application.Features.Role.Requests.Queries
 {
     public class GetRoleListRequest : IRequest<Response<List<RoleDto>>>
     {

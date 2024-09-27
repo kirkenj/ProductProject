@@ -5,11 +5,12 @@ namespace Repository.Models
 {
     public class GenericRepository<T, TIdType> :
         IGenericRepository<T, TIdType>
-        where T : class, IIdObject<TIdType> where TIdType : struct
+        where T : class, IIdObject<TIdType>
+        where TIdType : struct
     {
         protected static readonly Guid _repId = Guid.NewGuid();
 
-        private DbContext _dbContext = null!;
+        private readonly DbContext _dbContext = null!;
 
         protected DbSet<T> DbSet => _dbContext.Set<T>();
 

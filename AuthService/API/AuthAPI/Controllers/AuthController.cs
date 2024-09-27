@@ -1,6 +1,5 @@
 ﻿using Application.DTOs.User;
 using Application.Features.User.Requests.Commands;
-using Application.Features.User.Requests.Queries;
 using AuthAPI.Contracts;
 using AuthAPI.Models.Requests;
 using CustomResponse;

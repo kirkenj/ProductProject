@@ -19,7 +19,13 @@ namespace Application
                 cfg.AddOpenBehavior(typeof(RequestResponseLoggingBehavior<,>));
                 cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
-            services.Configure<CreateUserSettings>(configuration.GetSection("CreateUserSettings"));
+
+            var createUserSettingsSection = configuration.GetSection("CreateUserSettings");
+            var createUserSettings = createUserSettingsSection.Get<CreateUserSettings>() ?? throw new Exception("Got null here");
+            var res = createUserSettings.Validate(new System.ComponentModel.DataAnnotations.ValidationContext(createUserSettings));
+            if (res.Any()) throw new ValidationException(string.Join("\n", res.Select(r => $"{string.Join(",", r.MemberNames)}: {r.ErrorMessage}")));
+
+            services.Configure<CreateUserSettings>(createUserSettingsSection);
 
             return services;
         }

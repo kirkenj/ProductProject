@@ -1,11 +1,11 @@
 ﻿using Application.Contracts.Persistence;
 using Application.DTOs.Role;
-using Application.Features.User.Requests.Queries;
+using Application.Features.Role.Requests.Queries;
 using AutoMapper;
 using CustomResponse;
 using MediatR;
 
-namespace Application.Features.User.Handlers.Queries
+namespace Application.Features.Role.Handlers.Queries
 {
     public class GetRoleListRequestHandler : IRequestHandler<GetRoleListRequest, Response<List<RoleDto>>>
     {

@@ -1,7 +1,6 @@
 ﻿using Application.Contracts.Persistence;
 using Application.DTOs.User;
-using Application.Features.User.Requests.Queries;
-using Application.Models.CacheKeyGenerator;
+using Application.Features.User.Requests.Commands;
 using Application.Models.User;
 using AutoMapper;
 using Cache.Contracts;
@@ -9,6 +8,7 @@ using CustomResponse;
 using EmailSender.Contracts;
 using HashProvider.Contracts;
 using MediatR;
+using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace Application.Features.User.Handlers.Commands
@@ -20,9 +20,10 @@ namespace Application.Features.User.Handlers.Commands
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly ICustomMemoryCache _memoryCache;
+        private readonly CreateUserSettings _createUserSettings;
         private readonly IRoleRepository _roleRepository;
 
-        public LoginHandler(IUserRepository userRepository, IRoleRepository roleRepository, IHashProvider hashProvider, IMapper mapper, ICustomMemoryCache memoryCache, IEmailSender emailSender)
+        public LoginHandler(IUserRepository userRepository, IRoleRepository roleRepository, IHashProvider hashProvider, IMapper mapper, ICustomMemoryCache memoryCache, IEmailSender emailSender, IOptions<CreateUserSettings> createUserSettings)
         {
             _userRepository = userRepository;
             _hashProvider = hashProvider;
@@ -30,13 +31,14 @@ namespace Application.Features.User.Handlers.Commands
             _mapper = mapper;
             _emailSender = emailSender;
             _memoryCache = memoryCache;
+            _createUserSettings = createUserSettings.Value;
         }
 
         public async Task<Response<UserDto>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             string loginEmail = request.LoginDto.Email;
 
-            string cacheKey = CacheKeyGenerator.KeyForRegistrationCaching(loginEmail);
+            string cacheKey = string.Format(_createUserSettings.KeyForRegistrationCachingFormat, loginEmail);
 
             Domain.Models.User? cachedUserValue = await _memoryCache.GetAsync<Domain.Models.User>(cacheKey);
 
@@ -46,10 +48,7 @@ namespace Application.Features.User.Handlers.Commands
                 cachedUserValue
                 : await _userRepository.GetAsync(new UserFilter { Email = loginEmail });
 
-            if (userToHandle == null)
-            {
-                return Response<UserDto>.NotFoundResponse(nameof(loginEmail), true);
-            }
+            if (userToHandle == null) return Response<UserDto>.BadRequestResponse("Wrong password or email");
 
             _hashProvider.HashAlgorithmName = userToHandle.HashAlgorithm;
             _hashProvider.Encoding = Encoding.GetEncoding(userToHandle.StringEncoding);
@@ -58,7 +57,7 @@ namespace Application.Features.User.Handlers.Commands
 
             if (loginPasswordHash != userToHandle.PasswordHash)
             {
-                return Response<UserDto>.BadRequestResponse("Wrong password");
+                return Response<UserDto>.BadRequestResponse("Wrong password or email");
             }
 
             if (isRegistration == true)
@@ -75,8 +74,6 @@ namespace Application.Features.User.Handlers.Commands
         private async Task RegisterUser(Domain.Models.User userToHandle)
         {
             await _userRepository.AddAsync(userToHandle);
-
-            userToHandle.Role = await _roleRepository.GetAsync(userToHandle.RoleID) ?? throw new ApplicationException();
 
             var isEmailSent = await _emailSender.SendEmailAsync(new()
             {

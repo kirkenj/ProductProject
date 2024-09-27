@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Role;
-using Application.Features.User.Requests.Queries;
+using Application.Features.Role.Requests.Queries;
 using CustomResponse;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

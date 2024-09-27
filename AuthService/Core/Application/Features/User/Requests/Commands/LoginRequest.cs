@@ -2,7 +2,7 @@
 using CustomResponse;
 using MediatR;
 
-namespace Application.Features.User.Requests.Queries
+namespace Application.Features.User.Requests.Commands
 {
     public class LoginRequest : IRequest<Response<UserDto>>
     {

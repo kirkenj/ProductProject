@@ -9,7 +9,7 @@ using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;
 
-namespace Application.Features.User.Handlers.Queries
+namespace Application.Features.User.Handlers.Commands
 {
     public class SendTokenToUpdateUserEmailComandHandler : IRequestHandler<SendTokenToUpdateUserEmailRequest, Response<string>>
     {

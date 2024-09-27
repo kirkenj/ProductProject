@@ -12,7 +12,7 @@ namespace EmailSender.Models
             Logger = logger;
         }
 
-        public Task<bool> SendEmailAsync(Email email)
+        public virtual Task<bool> SendEmailAsync(Email email)
         {
             Logger.LogInformation($"Sending email to {email.To}");
 
