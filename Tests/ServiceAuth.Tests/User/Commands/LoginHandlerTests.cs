@@ -44,6 +44,7 @@ namespace ServiceAuth.Tests.User.Commands
             RedisWithEvents = rwe;
             CreateUserSettings = serviceProvider.GetRequiredService<IOptions<CreateUserSettings>>().Value;
             Context.ChangeTracker.Clear();
+            EmailSender.LastSentEmail = null;
         }
 
         [Test]
@@ -214,7 +215,7 @@ namespace ServiceAuth.Tests.User.Commands
                 }
             };
 
-            var lastEmail = EmailSender.LastSentEmail;
+            var lastEmail = EmailSender.LastSentEmail ?? throw new Exception();
             var password = lastEmail.Body.ParseExact(CreateUserSettings.BodyMessageFormat)[1];
             //act
 
@@ -261,7 +262,7 @@ namespace ServiceAuth.Tests.User.Commands
                 CreateUserDto = createUserDto
             });
 
-            var lastEmail = EmailSender.LastSentEmail;
+            var lastEmail = EmailSender.LastSentEmail ?? throw new Exception();
             var password = lastEmail.Body.ParseExact(CreateUserSettings.BodyMessageFormat)[1];
             string? droppedKey = null;
 

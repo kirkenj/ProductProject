@@ -42,8 +42,8 @@ namespace ServiceAuth.Tests.User.Commands
             EmailSender = tes;
             if (serviceProvider.GetRequiredService<ICustomMemoryCache>() is not RedisCustomMemoryCacheWithEvents rwe) throw new Exception();
             RedisWithEvents = rwe;
-
             CreateUserSettings = serviceProvider.GetRequiredService<IOptions<CreateUserSettings>>().Value;
+            EmailSender.LastSentEmail = null;
         }
 
         [Test]
@@ -218,6 +218,7 @@ namespace ServiceAuth.Tests.User.Commands
                 Assert.That(Users, Does.Not.Contain(user));
                 Assert.That(cacheKey, Is.EqualTo(string.Format(CreateUserSettings.KeyForRegistrationCachingFormat, user.Email)));
                 Assert.That(emailFromMessage, Is.EqualTo(userEmail));
+                Assert.That(timeSpan, Is.EqualTo(TimeSpan.FromHours(CreateUserSettings.EmailConfirmationTimeoutHours)));
                 Assert.That(emailFromMessage, Is.EqualTo(user.Email));
                 Assert.That(emailFromMessage, Is.Not.Null.Or.Empty);
                 Assert.That(passwordFromMessage, Is.Not.Null.Or.Empty);

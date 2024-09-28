@@ -8,7 +8,7 @@ namespace Application.Features.User.Requests.Commands.Validators
     {
         public ConfirmEmailChangeComandValidator(IUserRepository userRepository)
         {
-            RuleFor(r => r.ConfirmEmailChangeDto).SetValidator(new ConfirmEmailChangeDtoValidator(userRepository));
+            RuleFor(r => r.ConfirmEmailChangeDto).NotNull().SetValidator(new ConfirmEmailChangeDtoValidator(userRepository));
         }
     }
 }

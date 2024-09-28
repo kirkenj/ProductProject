@@ -65,7 +65,7 @@ namespace AuthAPI.Controllers
         [HttpPut("Email")]
         [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> UpdateEmail([FromBody] SendTokenToUpdateUserEmailDto request)
+        public async Task<ActionResult<string>> UpdateEmail([FromBody] UpdateUserEmailDto request)
         {
             Response<string> result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {

@@ -1,13 +1,13 @@
 ﻿using Application.Contracts.Infrastructure;
 using Application.Contracts.Persistence;
-using Application.Features.User.Requests.Queries;
-using Application.Models.CacheKeyGenerator;
-using Application.Models.Email;
+using Application.Features.User.Requests.Commands;
+using Application.Models.User;
 using Cache.Contracts;
 using CustomResponse;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Application.Features.User.Handlers.Commands
 {
@@ -17,19 +17,19 @@ namespace Application.Features.User.Handlers.Commands
         private readonly IEmailSender _emailSender;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly ICustomMemoryCache _memoryCache;
+        private readonly UpdateUserEmailSettings _updateUserEmailSettings;
 
-        public SendTokenToUpdateUserEmailComandHandler(IUserRepository userRepository, ICustomMemoryCache memoryCache, IEmailSender emailSender, IPasswordGenerator passwordGenerator)
+        public SendTokenToUpdateUserEmailComandHandler(IUserRepository userRepository, ICustomMemoryCache memoryCache, IEmailSender emailSender, IPasswordGenerator passwordGenerator, IOptions<UpdateUserEmailSettings> options)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;
             _passwordGenerator = passwordGenerator;
             _memoryCache = memoryCache;
+            _updateUserEmailSettings = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         public async Task<Response<string>> Handle(SendTokenToUpdateUserEmailRequest request, CancellationToken cancellationToken)
         {
-            string newEmail = request.UpdateUserEmailDto.Email;
-
             Domain.Models.User? user = await _userRepository.GetAsync(request.UpdateUserEmailDto.Id);
 
             if (user == null)
@@ -46,13 +46,11 @@ namespace Application.Features.User.Handlers.Commands
 
             string token = _passwordGenerator.Generate();
 
-            EmailUpdateDetails updateDetails = new() { UserId = user.Id, NewEmail = newEmail };
-
             bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {
-                To = newEmail,
+                To = request.UpdateUserEmailDto.Email,
                 Subject = "Change email confirmation",
-                Body = $"Confirmation token: '{token}'"
+                Body = string.Format(_updateUserEmailSettings.UpdateUserEmailMessageBodyFormat, token)
             });
 
             if (isEmailSent == false)
@@ -60,7 +58,10 @@ namespace Application.Features.User.Handlers.Commands
                 throw new ApplicationException("Email was not sent");
             }
 
-            await _memoryCache.SetAsync(CacheKeyGenerator.KeyForEmailChangeTokenCaching(token), updateDetails, TimeSpan.FromHours(1));
+            await _memoryCache.SetAsync(
+                string.Format(_updateUserEmailSettings.UpdateUserEmailCacheKeyFormat,token), 
+                request.UpdateUserEmailDto, 
+                TimeSpan.FromHours(_updateUserEmailSettings.EmailUpdateTimeOutHours));
 
             return Response<string>.OkResponse("Check emails to get further details", string.Empty);
         }

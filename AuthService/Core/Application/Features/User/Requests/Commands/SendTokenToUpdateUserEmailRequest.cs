@@ -2,10 +2,10 @@
 using CustomResponse;
 using MediatR;
 
-namespace Application.Features.User.Requests.Queries
+namespace Application.Features.User.Requests.Commands
 {
     public class SendTokenToUpdateUserEmailRequest : IRequest<Response<string>>
     {
-        public SendTokenToUpdateUserEmailDto UpdateUserEmailDto { get; set; } = null!;
+        public UpdateUserEmailDto UpdateUserEmailDto { get; set; } = null!;
     }
 }

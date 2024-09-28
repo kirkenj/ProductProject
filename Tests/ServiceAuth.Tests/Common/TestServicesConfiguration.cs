@@ -51,6 +51,13 @@ namespace ServiceAuth.Tests.Common
                 a.DefaultRoleID = 2;
                 a.KeyForRegistrationCachingFormat = "Test user registration {0}";
             });
+            
+            services.Configure<UpdateUserEmailSettings>(a =>
+            {
+                a.UpdateUserEmailMessageBodyFormat = "{0}";
+                a.UpdateUserEmailCacheKeyFormat = "{0}";
+                a.EmailUpdateTimeOutHours = 1d / 2400d;
+            });
 
             services.Configure<HashProvider.Models.HashProviderSettings>(a =>
             {

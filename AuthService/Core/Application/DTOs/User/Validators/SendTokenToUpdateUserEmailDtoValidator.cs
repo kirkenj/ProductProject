@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.DTOs.User
 {
-    public class SendTokenToUpdateUserEmailDtoValidator : AbstractValidator<SendTokenToUpdateUserEmailDto>
+    public class SendTokenToUpdateUserEmailDtoValidator : AbstractValidator<UpdateUserEmailDto>
     {
         public SendTokenToUpdateUserEmailDtoValidator()
         {

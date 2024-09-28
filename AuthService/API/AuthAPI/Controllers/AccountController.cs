@@ -107,7 +107,7 @@ namespace AuthAPI.Controllers
         {
             Response<string> result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {
-                UpdateUserEmailDto = new SendTokenToUpdateUserEmailDto
+                UpdateUserEmailDto = new UpdateUserEmailDto
                 {
                     Email = newEmail,
                     Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id")
