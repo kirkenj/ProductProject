@@ -8,6 +8,7 @@ using EmailSender.Contracts;
 using EmailSender.Models;
 using HashProvider.Contracts;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 
 namespace Application.Features.User.Handlers.Commands
@@ -17,13 +18,15 @@ namespace Application.Features.User.Handlers.Commands
         private readonly IUserRepository _userRepository;
         private readonly IEmailSender _emailSender;
         private readonly IPasswordGenerator _passwordGenerator;
+        private readonly ForgotPasswordSettings _forgotPasswordSettings;
 
-        public ForgotPasswordComandHandler(IUserRepository userRepository, IEmailSender emailSender, IHashProvider hashPrvider, IPasswordGenerator passwordGenerator)
+        public ForgotPasswordComandHandler(IUserRepository userRepository, IEmailSender emailSender, IHashProvider hashPrvider, IPasswordGenerator passwordGenerator, IOptions<ForgotPasswordSettings> options)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;
             HashPrvider = hashPrvider;
             _passwordGenerator = passwordGenerator;
+            _forgotPasswordSettings = options.Value;
         }
 
         public IHashProvider HashPrvider { get; private set; }
@@ -34,16 +37,18 @@ namespace Application.Features.User.Handlers.Commands
 
             Domain.Models.User? user = await _userRepository.GetAsync(new UserFilter { Email = emailAddress });
 
+            var response = Response<string>.OkResponse("New password was sent on your email", "Success");
+
             if (user == null)
             {
-                return Response<string>.NotFoundResponse(nameof(request.ForgotPasswordDto.Email), true);
+                return response;
             }
 
             string newPassword = _passwordGenerator.Generate();
 
             bool isEmailSent = await _emailSender.SendEmailAsync(new Email
             {
-                Body = $"Dear {user.Name}. Your new password is: {newPassword}",
+                Body = string.Format(_forgotPasswordSettings.EmailBodyFormat, newPassword),
                 Subject = "Password recovery",
                 To = user.Email ?? throw new ApplicationException($"User's email is null. User id: '{user.Id}'"),
             });
@@ -55,7 +60,8 @@ namespace Application.Features.User.Handlers.Commands
 
             (this as IPasswordSettingHandler).SetPassword(newPassword, user);
             await _userRepository.UpdateAsync(user);
-            return Response<string>.OkResponse("New password was sent on your emial", "Success");
+
+            return response;
         }
     }
 }

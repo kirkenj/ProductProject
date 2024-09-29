@@ -16,6 +16,7 @@ builder.Services.ConfigureInfrastructureServices(builder.Configuration, builder.
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureJwtAuthentication();
 
+
 builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers();

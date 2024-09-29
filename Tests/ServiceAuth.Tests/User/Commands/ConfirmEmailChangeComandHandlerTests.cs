@@ -118,8 +118,8 @@ namespace ServiceAuth.Tests.User.Commands
             var useroTokenFor = Users.First();
             var userForInvalidConfirmRequest = Users.Last();
 
-            var clonedUseroTokenFor = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(useroTokenFor)) ?? throw new Exception();
-            var clonedUserForInvalidConfirmRequest = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(userForInvalidConfirmRequest)) ?? throw new Exception();
+            var clonedUseroTokenFor = JsonCloner.Clone(useroTokenFor);
+            var clonedUserForInvalidConfirmRequest = JsonCloner.Clone(userForInvalidConfirmRequest);
 
 
             var requestCreatonDto = new UpdateUserEmailDto { Email = newEmail, Id = useroTokenFor.Id };
@@ -172,7 +172,7 @@ namespace ServiceAuth.Tests.User.Commands
             var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
             var useroTokenFor = Users.First();
             
-            var clonedUseroTokenFor = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(useroTokenFor)) ?? throw new Exception();
+            var clonedUseroTokenFor = JsonCloner.Clone(useroTokenFor);
             
 
             var requestCreatonDto = new UpdateUserEmailDto { Email = newEmail, Id = useroTokenFor.Id };
@@ -233,8 +233,8 @@ namespace ServiceAuth.Tests.User.Commands
             var useroTokenFor = Users.First();
             var userForInvalidConfirmRequest = Users.Last();
 
-            var clonedUseroTokenFor = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(useroTokenFor)) ?? throw new Exception();
-            var clonedUserForInvalidConfirmRequest = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(userForInvalidConfirmRequest)) ?? throw new Exception();
+            var clonedUseroTokenFor = JsonCloner.Clone(useroTokenFor);
+            var clonedUserForInvalidConfirmRequest = JsonCloner.Clone(userForInvalidConfirmRequest);
 
 
             var requestCreatonDto = new UpdateUserEmailDto { Email = newEmail, Id = useroTokenFor.Id };
@@ -298,7 +298,7 @@ namespace ServiceAuth.Tests.User.Commands
             var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
             var user = Users.First();
 
-            var clonedUserBeforeUpdate = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(user)) ?? throw new Exception();
+            var clonedUserBeforeUpdate = JsonCloner.Clone(user); 
 
 
             var testRequestDto = new UpdateUserEmailDto { Email = newEmail, Id = user.Id };

@@ -7,7 +7,7 @@ namespace Application.Features.User.Requests.Commands.Validators
     {
         public ForgotPasswordComandValidator()
         {
-            RuleFor(r => r.ForgotPasswordDto).SetValidator(new ForgotPasswordDtoValidator());
+            RuleFor(r => r.ForgotPasswordDto).NotNull().SetValidator(new ForgotPasswordDtoValidator());
         }
     }
 }
