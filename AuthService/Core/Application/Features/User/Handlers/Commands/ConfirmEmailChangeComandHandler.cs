@@ -15,7 +15,7 @@ namespace Application.Features.User.Handlers.Commands
     {
         private readonly IUserRepository _userRepository;
         private readonly ICustomMemoryCache _memoryCache;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailSender  _emailSender;
         private readonly UpdateUserEmailSettings _updateUserEmailSettings;
 
         public ConfirmEmailChangeComandHandler(IUserRepository userRepository, ICustomMemoryCache memoryCache, IEmailSender emailSender, IOptions<UpdateUserEmailSettings> options)
@@ -28,30 +28,26 @@ namespace Application.Features.User.Handlers.Commands
 
         public async Task<Response<string>> Handle(ConfirmEmailChangeComand request, CancellationToken cancellationToken)
         {
-            UpdateUserEmailDto? cachedDetailsValue = await _memoryCache.GetAsync<UpdateUserEmailDto>(string.Format(_updateUserEmailSettings.UpdateUserEmailCacheKeyFormat, request.ConfirmEmailChangeDto.Token));
+            var cacheKey = string.Format(_updateUserEmailSettings.UpdateUserEmailCacheKeyFormat, request.ConfirmEmailChangeDto.Token);
+            UpdateUserEmailDto? cachedDetailsValue = await _memoryCache.GetAsync<UpdateUserEmailDto>(cacheKey);
 
             if (cachedDetailsValue == null)
             {
-                return Response<string>.NotFoundResponse("No email change requests for this token. Try sending token agan.");
-            }
-            
-            Domain.Models.User? userToUpdate = await _userRepository.GetAsync(cachedDetailsValue.Id);
-
-            if (userToUpdate == null)
-            {
-                return Response<string>.NotFoundResponse(nameof(Domain.Models.User), true);
+                return Response<string>.BadRequestResponse("Invalid token");
             }
 
-            if (userToUpdate.Id != cachedDetailsValue.Id)
+            Domain.Models.User? userToUpdate = await _userRepository.GetAsync(request.ConfirmEmailChangeDto.Id);
+
+            if (userToUpdate == null || userToUpdate.Id != cachedDetailsValue.Id)
             {
-                return Response<string>.NotFoundResponse(nameof(request.ConfirmEmailChangeDto.Token), true);
+                return Response<string>.BadRequestResponse("Invalid token");
             }
 
             userToUpdate.Email = cachedDetailsValue.Email;
 
             await _userRepository.UpdateAsync(userToUpdate);
 
-            await _memoryCache.RemoveAsync(request.ConfirmEmailChangeDto.Token);
+            await _memoryCache.RemoveAsync(cacheKey);
 
             return Response<string>.OkResponse("Email updated.", string.Empty);
         }

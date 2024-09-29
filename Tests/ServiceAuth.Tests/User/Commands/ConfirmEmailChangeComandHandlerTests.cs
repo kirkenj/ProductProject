@@ -1,3 +1,4 @@
+using Application.DTOs.User;
 using Application.Features.User.Requests.Commands;
 using Application.Models.User;
 using AutoMapper;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Persistence;
 using ServiceAuth.Tests.Common;
+using System.Text.Json;
 
 
 namespace ServiceAuth.Tests.User.Commands
@@ -109,49 +111,259 @@ namespace ServiceAuth.Tests.User.Commands
         }
 
         [Test]
-        public void ConfirmEmailChangeComandHandler_TokenInvalid_ThrowsValidationException()
-        {
+        public async Task ConfirmEmailChangeComandHandler_TokenInvalid_CacheReturnsNullReturnsBadRequest()
+        { 
             //arrange
-            throw new NotImplementedException();
+            var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
+            var useroTokenFor = Users.First();
+            var userForInvalidConfirmRequest = Users.Last();
 
-            //act
-            var func = async () => await Mediator.Send(new ConfirmEmailChangeComand
+            var clonedUseroTokenFor = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(useroTokenFor)) ?? throw new Exception();
+            var clonedUserForInvalidConfirmRequest = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(userForInvalidConfirmRequest)) ?? throw new Exception();
+
+
+            var requestCreatonDto = new UpdateUserEmailDto { Email = newEmail, Id = useroTokenFor.Id };
+            await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = requestCreatonDto });
+
+
+            var lastMessage = EmailSender.LastSentEmail;
+            if (lastMessage.To != newEmail) throw new Exception("EmailSender.LastSentEmail.To != newEmail");
+
+            var confirmToken = Guid.NewGuid().ToString();
+
+            var keyToTrack = string.Format(UpdateUserEmailSettings.UpdateUserEmailCacheKeyFormat, confirmToken);
+            bool keyToTrackGetInvoked = false;
+            UpdateUserEmailDto? cachedValueOnKey = null;
+
+            RedisWithEvents.OnGet += (key, value) =>
             {
-                ConfirmEmailChangeDto = new()
+                if (key == keyToTrack)
                 {
-                    Token = "SomeEmail223@",
-                    Id = default
+                    keyToTrackGetInvoked = true;
+                    cachedValueOnKey = value is UpdateUserEmailDto dtoVal ? dtoVal : cachedValueOnKey;
                 }
-            });
-
-            //assert
-            Assert.That(func, Throws.TypeOf<ValidationException>());
-        }
-
-        [Test]
-        public async Task ConfirmEmailChangeComandHandler_EmailTakenInvalidPassword_ReturnsBadRequest()
-        {
-            //arrange
-            var email = Users.First().Email;
-            throw new NotImplementedException();
+            };
 
             //act
             var result = await Mediator.Send(new ConfirmEmailChangeComand
             {
                 ConfirmEmailChangeDto = new()
                 {
-                    Token = "SomeEmail223@",
-                    Id = default
+                    Token = confirmToken,
+                    Id = useroTokenFor.Id
                 }
             });
 
             //assert
             Assert.Multiple(() =>
             {
-                Assert.That(result.Success, Is.False);
-                Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest));
+                Assert.That(result.Success, Is.False, $"{nameof(result.Success)} has to be fals");
+                Assert.That(result.Result, Is.Null, $"{nameof(result.Result)} has to be null");
+                Assert.That(result.Message, Is.Not.Empty, $"{nameof(result.Message)} has to be not empty");
+                Assert.That(keyToTrackGetInvoked, Is.True, $"{nameof(RedisWithEvents.OnGet)} event was not invoked with key {keyToTrack}");
+                Assert.That(cachedValueOnKey, Is.Null, $"{nameof(cachedValueOnKey)} has to be null");
             });
         }
+
+        [Test]
+        public async Task ConfirmEmailChangeComandHandler_TokenValidUserRemovedAfterTokenSent_ReturnsBadRequest()
+        {
+            //arrange
+            var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
+            var useroTokenFor = Users.First();
+            
+            var clonedUseroTokenFor = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(useroTokenFor)) ?? throw new Exception();
+            
+
+            var requestCreatonDto = new UpdateUserEmailDto { Email = newEmail, Id = useroTokenFor.Id };
+            await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = requestCreatonDto });
+
+
+            var lastMessage = EmailSender.LastSentEmail;
+            if (lastMessage.To != newEmail) throw new Exception("EmailSender.LastSentEmail.To != newEmail");
+
+            var confirmToken = lastMessage.Body.ParseExact(UpdateUserEmailSettings.UpdateUserEmailMessageBodyFormat)[0];
+
+            var keyToTrack = string.Format(UpdateUserEmailSettings.UpdateUserEmailCacheKeyFormat, confirmToken);
+            bool keyToTrackGetInvoked = false;
+            UpdateUserEmailDto? cachedValueOnKey = null;
+
+            RedisWithEvents.OnGet += (key, value) =>
+            {
+                if (key == keyToTrack)
+                {
+                    keyToTrackGetInvoked = true;
+                    cachedValueOnKey = value is UpdateUserEmailDto dtoVal ? dtoVal : cachedValueOnKey;
+                }
+            };
+
+            //act
+            Context.Remove(useroTokenFor);
+            await Context.SaveChangesAsync();
+
+            var result = await Mediator.Send(new ConfirmEmailChangeComand
+            {
+                ConfirmEmailChangeDto = new()
+                {
+                    Token = confirmToken,
+                    Id = useroTokenFor.Id
+                }
+            });
+
+            //assert
+            Assert.Multiple(() =>
+            {
+
+                Assert.That(result.Success, Is.False,$"{nameof(result.Success)} has to be true");
+                Assert.That(result.Result, Is.Null, $"{nameof(result.Result)} has to be null");
+                Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), $"{nameof(result.StatusCode)} has to be {System.Net.HttpStatusCode.BadRequest}");
+                Assert.That(result.Message, Is.Not.Empty);
+                Assert.That(keyToTrackGetInvoked, Is.True, $"{nameof(RedisWithEvents.OnGet)} event was not invoked with key {keyToTrack}");
+                Assert.That(cachedValueOnKey, Is.Not.Null, $"{nameof(cachedValueOnKey)} has to be null");
+            });
+        }
+
+
+
+        [Test]
+        public async Task ConfirmEmailChangeComandHandler_TokenValidUserIdIsNotEqualToTheCachedUpdateRequestUserId_FindsOutOfWrongIdReturnsBadRequest()
+        {
+            //arrange
+            var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
+            var useroTokenFor = Users.First();
+            var userForInvalidConfirmRequest = Users.Last();
+
+            var clonedUseroTokenFor = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(useroTokenFor)) ?? throw new Exception();
+            var clonedUserForInvalidConfirmRequest = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(userForInvalidConfirmRequest)) ?? throw new Exception();
+
+
+            var requestCreatonDto = new UpdateUserEmailDto { Email = newEmail, Id = useroTokenFor.Id };
+            await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = requestCreatonDto });
+
+
+            var lastMessage = EmailSender.LastSentEmail;
+            if (lastMessage.To != newEmail) throw new Exception("EmailSender.LastSentEmail.To != newEmail");
+
+            var confirmToken = lastMessage.Body.ParseExact(UpdateUserEmailSettings.UpdateUserEmailMessageBodyFormat)[0];
+
+            var keyToTrack = string.Format(UpdateUserEmailSettings.UpdateUserEmailCacheKeyFormat, confirmToken);
+            bool keyToTrackGetInvoked = false;
+            bool keyToTrackRemoveInvoked = false;
+            UpdateUserEmailDto? cachedValueOnKey = null;
+
+            RedisWithEvents.OnGet += (key, value) =>
+            {
+                if (key == keyToTrack)
+                {
+                    keyToTrackGetInvoked = true;
+                    cachedValueOnKey = value is UpdateUserEmailDto dtoVal ? dtoVal : cachedValueOnKey;
+                }
+            };
+
+            RedisWithEvents.OnRemove += (key) =>
+            {
+                keyToTrackRemoveInvoked = key == keyToTrack;
+            };
+
+            //act
+            var result = await Mediator.Send(new ConfirmEmailChangeComand
+            {
+                ConfirmEmailChangeDto = new()
+                {
+                    Token = confirmToken,
+                    Id = userForInvalidConfirmRequest.Id
+                }
+            });
+
+            //assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Success, Is.False, $"{nameof(result.Success)} has to be false");
+                Assert.That(result.Result, Is.Null, $"{nameof(result.Result)} has to be null");
+                Assert.That(result.Message, Is.Not.Empty, $"{nameof(result.Message)} has to be not empty");
+                Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), $"{nameof(result.StatusCode)} has to be {System.Net.HttpStatusCode.BadRequest}");
+                Assert.That(keyToTrackGetInvoked, Is.True, $"Event {nameof(RedisWithEvents.OnGet)} with key '{keyToTrack}' was not invoked");
+                Assert.That(keyToTrackRemoveInvoked, Is.False, $"Event {nameof(RedisWithEvents.OnRemove)} with key '{keyToTrack}' was invoked");
+                Assert.That(cachedValueOnKey, Is.EqualTo(requestCreatonDto));
+
+                Assert.That(useroTokenFor, Is.EqualTo(clonedUseroTokenFor), $"{nameof(useroTokenFor)} mustn't be upadted after invalid command");
+                Assert.That(userForInvalidConfirmRequest, Is.EqualTo(clonedUserForInvalidConfirmRequest), $"{nameof(userForInvalidConfirmRequest)} mustn't be upadted after invalid command");
+            });
+        }
+
+        [Test]
+        public async Task ConfirmEmailChangeComandHandler_ArgumentsAreValid_GetsCachedValueUpdatesValueInContextRemovesCacheKey()
+        {
+            //arrange
+            var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
+            var user = Users.First();
+
+            var clonedUserBeforeUpdate = JsonSerializer.Deserialize<Domain.Models.User>(JsonSerializer.Serialize(user)) ?? throw new Exception();
+
+
+            var testRequestDto = new UpdateUserEmailDto { Email = newEmail, Id = user.Id };
+            await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = testRequestDto });
+              
+
+            var lastMessage = EmailSender.LastSentEmail;
+            if (lastMessage.To != newEmail) throw new Exception("EmailSender.LastSentEmail.To != newEmail");
+
+            var confirmToken = lastMessage.Body.ParseExact(UpdateUserEmailSettings.UpdateUserEmailMessageBodyFormat)[0];
+            
+            var keyToTrack = string.Format(UpdateUserEmailSettings.UpdateUserEmailCacheKeyFormat, confirmToken); 
+            bool keyToTrackGetInvoked = false;
+            bool keyToTrackRemoveInvoked = false;
+            UpdateUserEmailDto? cachedValueOnKey = null;
+
+            RedisWithEvents.OnGet += (key, value) =>
+            {
+                if (key == keyToTrack)
+                {
+                    keyToTrackGetInvoked = true;
+                    cachedValueOnKey = value is UpdateUserEmailDto dtoVal ? dtoVal : cachedValueOnKey;
+                }
+            };
+
+            RedisWithEvents.OnRemove += (key) =>
+            {
+                keyToTrackRemoveInvoked = key == keyToTrack;
+            };
+
+            //act
+            var result = await Mediator.Send(new ConfirmEmailChangeComand
+            {
+                ConfirmEmailChangeDto = new()
+                {
+                    Token = confirmToken,
+                    Id = user.Id
+                }
+            });
+
+            //assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Success, Is.True, $"{nameof(result.Success)} has to be true");
+                Assert.That(result.Result, Is.Not.Empty, $"{nameof(result.Result)} has to be not emty");
+                Assert.That(result.Message, Is.Empty, $"{nameof(result.Message)} has to be empty");
+                Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), $"{nameof(result.StatusCode)} has to be {System.Net.HttpStatusCode.OK}");
+                Assert.That(keyToTrackGetInvoked, Is.True, $"Event {nameof(RedisWithEvents.OnGet)} with key '{keyToTrack}' was not invoked");
+                Assert.That(keyToTrackRemoveInvoked, Is.True, $"Event {nameof(RedisWithEvents.OnRemove)} with key '{keyToTrack}' was not invoked");
+                Assert.That(cachedValueOnKey, Is.EqualTo(testRequestDto));
+
+                Assert.That(clonedUserBeforeUpdate.Login, Is.EqualTo(user.Login), $"Parameter {nameof(user.Login)} has to be the same after email updated");
+                Assert.That(clonedUserBeforeUpdate.Name, Is.EqualTo(user.Name), $"Parameter {nameof(user.Name)} has to be the same after email updated");
+                Assert.That(clonedUserBeforeUpdate.Address, Is.EqualTo(user.Address), $"Parameter {nameof(user.Address)} has to be the same after email updated");
+                Assert.That(clonedUserBeforeUpdate.RoleID, Is.EqualTo(user.RoleID), $"Parameter {nameof(user.RoleID)} has to be the same after email updated");
+                Assert.That(clonedUserBeforeUpdate.PasswordHash, Is.EqualTo(user.PasswordHash), $"Parameter {nameof(user.PasswordHash)} has to be the same after email updated");
+                Assert.That(clonedUserBeforeUpdate.StringEncoding, Is.EqualTo(user.StringEncoding), $"Parameter {nameof(user.StringEncoding)} has to be the same after email updated");
+                Assert.That(clonedUserBeforeUpdate.HashAlgorithm, Is.EqualTo(user.HashAlgorithm), $"Parameter {nameof(user.HashAlgorithm)} has to be the same after email updated");
+
+                Assert.That(clonedUserBeforeUpdate.Email, Is.Not.EqualTo(user.Email), $"Parameter {nameof(user.Email)} has to be updated");
+                Assert.That(user.Email, Is.EqualTo(newEmail), $"Parameter {nameof(user.Email)} has to be the same as email in the request");
+                Assert.That(user.Email, Is.EqualTo(cachedValueOnKey.Email), $"Parameter {nameof(user.Email)} has to be the same email in cached request");
+            });
+        }
+
 
 
         [TearDown]

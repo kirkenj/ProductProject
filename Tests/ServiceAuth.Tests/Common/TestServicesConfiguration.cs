@@ -54,8 +54,8 @@ namespace ServiceAuth.Tests.Common
             
             services.Configure<UpdateUserEmailSettings>(a =>
             {
-                a.UpdateUserEmailMessageBodyFormat = "{0}";
-                a.UpdateUserEmailCacheKeyFormat = "{0}";
+                a.UpdateUserEmailMessageBodyFormat = "sdfghjkl{0}";
+                a.UpdateUserEmailCacheKeyFormat = "{0}fghjkl";
                 a.EmailUpdateTimeOutHours = 1d / 2400d;
             });
 

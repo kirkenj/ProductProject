@@ -5,7 +5,13 @@ namespace Application.DTOs.User
 {
     public class UpdateUserEmailDto : IEmailUpdateDto, IIdObject<Guid>
     {
+        /// <summary>
+        /// User's Id where email will be updated
+        /// </summary>
         public Guid Id { get; set; }
+        /// <summary>
+        /// New email
+        /// </summary>
         public string Email { get; set; } = null!;
 
         public override bool Equals(object? obj)
