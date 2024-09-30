@@ -1,31 +1,26 @@
 using Application.DTOs.User;
 using Application.Features.User.Requests.Commands;
 using Application.Models.User;
-using AutoMapper;
 using Cache.Contracts;
 using EmailSender.Contracts;
 using FluentValidation;
-using HashProvider.Contracts;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Persistence;
 using ServiceAuth.Tests.Common;
-using System.Text.Json;
 
 
 namespace ServiceAuth.Tests.User.Commands
 {
     public class ConfirmEmailChangeComandHandlerTests
     {
-        public IMapper Mapper { get; set; } = null!;
         public IMediator Mediator { get; set; } = null!;
         public AuthDbContext Context { get; set; } = null!;
         public IEnumerable<Domain.Models.User> Users => Context.Users;
         public TestEmailSender EmailSender { get; set; } = null!;
         public RedisCustomMemoryCacheWithEvents RedisWithEvents { get; set; } = null!;
         public UpdateUserEmailSettings UpdateUserEmailSettings { get; set; } = null!;
-        public IHashProvider HashProvider { get; set; } = null!;
 
 
         [SetUp]
@@ -34,9 +29,7 @@ namespace ServiceAuth.Tests.User.Commands
             var services = new ServiceCollection();
             services.ConfigureTestServices();
             var serviceProvider = services.BuildServiceProvider();
-            Mapper = serviceProvider.GetRequiredService<IMapper>();
             Mediator = serviceProvider.GetRequiredService<IMediator>();
-            HashProvider = serviceProvider.GetRequiredService<IHashProvider>();
             Context = serviceProvider.GetRequiredService<AuthDbContext>();
             Context.Database.EnsureCreated();
             if (serviceProvider.GetRequiredService<IEmailSender>() is not TestEmailSender tes) throw new Exception();
@@ -112,7 +105,7 @@ namespace ServiceAuth.Tests.User.Commands
 
         [Test]
         public async Task ConfirmEmailChangeComandHandler_TokenInvalid_CacheReturnsNullReturnsBadRequest()
-        { 
+        {
             //arrange
             var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
             var useroTokenFor = Users.First();
@@ -171,9 +164,9 @@ namespace ServiceAuth.Tests.User.Commands
             //arrange
             var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
             var useroTokenFor = Users.First();
-            
+
             var clonedUseroTokenFor = JsonCloner.Clone(useroTokenFor);
-            
+
 
             var requestCreatonDto = new UpdateUserEmailDto { Email = newEmail, Id = useroTokenFor.Id };
             await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = requestCreatonDto });
@@ -214,7 +207,7 @@ namespace ServiceAuth.Tests.User.Commands
             Assert.Multiple(() =>
             {
 
-                Assert.That(result.Success, Is.False,$"{nameof(result.Success)} has to be true");
+                Assert.That(result.Success, Is.False, $"{nameof(result.Success)} has to be false");
                 Assert.That(result.Result, Is.Null, $"{nameof(result.Result)} has to be null");
                 Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), $"{nameof(result.StatusCode)} has to be {System.Net.HttpStatusCode.BadRequest}");
                 Assert.That(result.Message, Is.Not.Empty);
@@ -300,17 +293,17 @@ namespace ServiceAuth.Tests.User.Commands
 
             var mayBeModifiedFields = new string[] { nameof(user.Email) };
 
-            var clonedUserBeforeUpdate = JsonCloner.Clone(user); 
+            var clonedUserBeforeUpdate = JsonCloner.Clone(user);
 
             var testRequestDto = new UpdateUserEmailDto { Email = newEmail, Id = user.Id };
-            await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = testRequestDto });              
+            await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = testRequestDto });
 
             var lastMessage = EmailSender.LastSentEmail;
             if (lastMessage.To != newEmail) throw new Exception("EmailSender.LastSentEmail.To != newEmail");
 
             var confirmToken = lastMessage.Body.ParseExact(UpdateUserEmailSettings.UpdateUserEmailMessageBodyFormat)[0];
-            
-            var keyToTrack = string.Format(UpdateUserEmailSettings.UpdateUserEmailCacheKeyFormat, confirmToken); 
+
+            var keyToTrack = string.Format(UpdateUserEmailSettings.UpdateUserEmailCacheKeyFormat, confirmToken);
             bool keyToTrackGetInvoked = false;
             bool keyToTrackRemoveInvoked = false;
             UpdateUserEmailDto? cachedValueOnKey = null;

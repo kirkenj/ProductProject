@@ -59,8 +59,8 @@ namespace Application.Features.User.Handlers.Commands
             }
 
             await _memoryCache.SetAsync(
-                string.Format(_updateUserEmailSettings.UpdateUserEmailCacheKeyFormat,token), 
-                request.UpdateUserEmailDto, 
+                string.Format(_updateUserEmailSettings.UpdateUserEmailCacheKeyFormat, token),
+                request.UpdateUserEmailDto,
                 TimeSpan.FromHours(_updateUserEmailSettings.EmailUpdateTimeOutHours));
 
             return Response<string>.OkResponse("Check emails to get further details", string.Empty);

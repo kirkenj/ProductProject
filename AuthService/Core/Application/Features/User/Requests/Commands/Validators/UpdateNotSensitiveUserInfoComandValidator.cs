@@ -7,7 +7,7 @@ namespace Application.Features.User.Requests.Commands.Validators
     {
         public UpdateNotSensitiveUserInfoComandValidator()
         {
-            RuleFor(r => r.UpdateUserInfoDto).SetValidator(new UpdateUserInfoDtoValidator());
+            RuleFor(r => r.UpdateUserInfoDto).NotNull().SetValidator(new UpdateUserInfoDtoValidator());
         }
     }
 }

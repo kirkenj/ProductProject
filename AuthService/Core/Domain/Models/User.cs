@@ -24,16 +24,16 @@ namespace Domain.Models
         {
             if (obj is User uObj)
             {
-                return 
-                    uObj.Id             == Id &&
-                    uObj.Login          == Login &&
-                    uObj.Email          == Email &&
-                    uObj.Name           == Name &&
-                    uObj.Address        == Address &&
-                    uObj.HashAlgorithm  == HashAlgorithm &&
+                return
+                    uObj.Id == Id &&
+                    uObj.Login == Login &&
+                    uObj.Email == Email &&
+                    uObj.Name == Name &&
+                    uObj.Address == Address &&
+                    uObj.HashAlgorithm == HashAlgorithm &&
                     uObj.StringEncoding == StringEncoding &&
-                    uObj.PasswordHash   == PasswordHash &&
-                    uObj.RoleID         == RoleID;
+                    uObj.PasswordHash == PasswordHash &&
+                    uObj.RoleID == RoleID;
             }
 
 

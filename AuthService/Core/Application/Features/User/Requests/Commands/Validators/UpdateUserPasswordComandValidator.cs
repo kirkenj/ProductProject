@@ -7,7 +7,7 @@ namespace Application.Features.User.Requests.Commands.Validators
     {
         public UpdateUserPasswordComandValidator()
         {
-            RuleFor(r => r.UpdateUserPasswordDto).SetValidator(new UpdateUserPasswordDTOValidator());
+            RuleFor(r => r.UpdateUserPasswordDto).NotNull().SetValidator(new UpdateUserPasswordDTOValidator());
         }
     }
 }

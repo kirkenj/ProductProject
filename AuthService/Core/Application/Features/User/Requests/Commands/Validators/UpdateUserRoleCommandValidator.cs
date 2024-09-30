@@ -8,7 +8,7 @@ namespace Application.Features.User.Requests.Commands.Validators
     {
         public UpdateUserRoleCommandValidator(IRoleRepository roleRepository)
         {
-            RuleFor(r => r.UpdateUserRoleDTO).SetValidator(new UpdateUserRoleDTOValidator(roleRepository));
+            RuleFor(r => r.UpdateUserRoleDTO).NotNull().SetValidator(new UpdateUserRoleDTOValidator(roleRepository));
         }
     }
 }

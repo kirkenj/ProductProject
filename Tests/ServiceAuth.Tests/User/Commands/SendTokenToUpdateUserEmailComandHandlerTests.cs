@@ -1,11 +1,9 @@
 using Application.DTOs.User;
 using Application.Features.User.Requests.Commands;
 using Application.Models.User;
-using AutoMapper;
 using Cache.Contracts;
 using EmailSender.Contracts;
 using FluentValidation;
-using HashProvider.Contracts;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -17,14 +15,12 @@ namespace ServiceAuth.Tests.User.Commands
 {
     public class SendTokenToUpdateUserEmailComandHandlerTests
     {
-        public IMapper Mapper { get; set; } = null!;
         public IMediator Mediator { get; set; } = null!;
         public AuthDbContext Context { get; set; } = null!;
         public IEnumerable<Domain.Models.User> Users => Context.Users;
         public TestEmailSender EmailSender { get; set; } = null!;
         public RedisCustomMemoryCacheWithEvents RedisWithEvents { get; set; } = null!;
         public UpdateUserEmailSettings UpdateUserEmailSettings { get; set; } = null!;
-        public IHashProvider HashProvider { get; set; } = null!;
 
 
         [SetUp]
@@ -33,9 +29,7 @@ namespace ServiceAuth.Tests.User.Commands
             var services = new ServiceCollection();
             services.ConfigureTestServices();
             var serviceProvider = services.BuildServiceProvider();
-            Mapper = serviceProvider.GetRequiredService<IMapper>();
             Mediator = serviceProvider.GetRequiredService<IMediator>();
-            HashProvider = serviceProvider.GetRequiredService<IHashProvider>();
             Context = serviceProvider.GetRequiredService<AuthDbContext>();
             Context.Database.EnsureCreated();
             if (serviceProvider.GetRequiredService<IEmailSender>() is not TestEmailSender tes) throw new Exception();
@@ -191,7 +185,7 @@ namespace ServiceAuth.Tests.User.Commands
                 Assert.That(updateEmailDto, Is.EqualTo(dtoFromCache));
                 Assert.That(dtoTimeout, Is.EqualTo(TimeSpan.FromHours(UpdateUserEmailSettings.EmailUpdateTimeOutHours)));
             });
-        }      
+        }
 
         [TearDown]
         public void TearDown()

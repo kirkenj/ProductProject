@@ -15,9 +15,9 @@
 
             var filteredProps = props.Where(f =>
             {
-                if (ignoreFieldNames.Contains(f.Name)) 
-                { 
-                    return false; 
+                if (ignoreFieldNames.Contains(f.Name))
+                {
+                    return false;
                 }
 
                 var valueB = f.GetValue(b);

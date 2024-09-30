@@ -16,17 +16,17 @@ namespace Application.Models.User
             {
                 _ = string.Format(UpdateUserEmailCacheKeyFormat, EmailUpdateTimeOutHours);
             }
-            catch(FormatException ex)
+            catch (FormatException ex)
             {
-                result.Add(new (ex.Message, new List<string> { nameof(UpdateUserEmailMessageBodyFormat) }));
+                result.Add(new(ex.Message, new List<string> { nameof(UpdateUserEmailMessageBodyFormat) }));
             }
             try
             {
                 _ = string.Format(UpdateUserEmailMessageBodyFormat, EmailUpdateTimeOutHours);
             }
-            catch(FormatException ex)
+            catch (FormatException ex)
             {
-                result.Add(new (ex.Message, new List<string> { nameof(UpdateUserEmailCacheKeyFormat) }));
+                result.Add(new(ex.Message, new List<string> { nameof(UpdateUserEmailCacheKeyFormat) }));
             }
 
             var timeoutMinimalValue = 1d / 240d;

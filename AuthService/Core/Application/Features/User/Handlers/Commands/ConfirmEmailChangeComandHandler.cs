@@ -15,7 +15,7 @@ namespace Application.Features.User.Handlers.Commands
     {
         private readonly IUserRepository _userRepository;
         private readonly ICustomMemoryCache _memoryCache;
-        private readonly IEmailSender  _emailSender;
+        private readonly IEmailSender _emailSender;
         private readonly UpdateUserEmailSettings _updateUserEmailSettings;
 
         public ConfirmEmailChangeComandHandler(IUserRepository userRepository, ICustomMemoryCache memoryCache, IEmailSender emailSender, IOptions<UpdateUserEmailSettings> options)

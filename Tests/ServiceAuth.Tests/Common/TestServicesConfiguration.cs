@@ -56,7 +56,7 @@ namespace ServiceAuth.Tests.Common
                 a.DefaultRoleID = 2;
                 a.KeyForRegistrationCachingFormat = "Test user registration {0}";
             });
-            
+
             services.Configure<UpdateUserEmailSettings>(a =>
             {
                 a.UpdateUserEmailMessageBodyFormat = "sdfghjkl{0}";

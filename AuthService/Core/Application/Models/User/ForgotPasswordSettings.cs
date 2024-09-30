@@ -19,7 +19,7 @@ namespace Application.Models.User
             }
             catch (FormatException ex)
             {
-                list.Add(new (ex.Message, new List<string> { nameof(EmailBodyFormat)}));
+                list.Add(new(ex.Message, new List<string> { nameof(EmailBodyFormat) }));
             }
 
             return list;

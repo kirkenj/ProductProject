@@ -31,14 +31,14 @@ namespace Application
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
                 cfg.AddOpenBehavior(typeof(RequestResponseLoggingBehavior<,>));
                 cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
-            });        
-            
+            });
+
             services.Configure<CreateUserSettings>(configuration.GetSection("CreateUserSettings"));
             services.Configure<UpdateUserEmailSettings>(configuration.GetSection("UpdateUserEmailSettings"));
             services.Configure<ForgotPasswordSettings>(configuration.GetSection("ForgotPasswordSettings"));
 
-            var provider = services.BuildServiceProvider();          
-            
+            var provider = services.BuildServiceProvider();
+
             var listToValidate = new List<Type>()
             {
                 typeof(IOptions<CreateUserSettings>),

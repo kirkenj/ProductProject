@@ -1,7 +1,6 @@
 using Application.DTOs.User;
 using Application.Features.User.Requests.Commands;
 using Application.Models.User;
-using AutoMapper;
 using Cache.Contracts;
 using EmailSender.Contracts;
 using FluentValidation;
@@ -17,7 +16,6 @@ namespace ServiceAuth.Tests.User.Commands
 {
     public class CreateUserComandHandlerTests
     {
-        public IMapper Mapper { get; set; } = null!;
         public IMediator Mediator { get; set; } = null!;
         public AuthDbContext Context { get; set; } = null!;
         public IEnumerable<Domain.Models.User> Users => Context.Users;
@@ -33,7 +31,6 @@ namespace ServiceAuth.Tests.User.Commands
             var services = new ServiceCollection();
             services.ConfigureTestServices();
             var serviceProvider = services.BuildServiceProvider();
-            Mapper = serviceProvider.GetRequiredService<IMapper>();
             Mediator = serviceProvider.GetRequiredService<IMediator>();
             HashProvider = serviceProvider.GetRequiredService<IHashProvider>();
             Context = serviceProvider.GetRequiredService<AuthDbContext>();
