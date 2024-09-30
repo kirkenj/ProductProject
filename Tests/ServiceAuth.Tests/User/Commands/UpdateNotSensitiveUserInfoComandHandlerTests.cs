@@ -91,6 +91,7 @@ namespace ServiceAuth.Tests.User.Commands
             Assert.That(func, Throws.TypeOf<ValidationException>());
         }
 
+        [Test]
         public async Task UpdateNotSensitiveUserInfoComandHandlerTests_IdNotContained_ReturnsBadRequest()
         {
             //arrange
@@ -115,8 +116,8 @@ namespace ServiceAuth.Tests.User.Commands
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Result, Is.Not.Empty);
                 Assert.That(result.Message, Is.Not.Empty);
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest));
+                Assert.That(result.Success, Is.False);
+                Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.NotFound));
             });
         }
 

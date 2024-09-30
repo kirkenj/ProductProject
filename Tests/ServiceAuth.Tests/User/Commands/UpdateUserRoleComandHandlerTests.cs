@@ -9,11 +9,12 @@ using ServiceAuth.Tests.Common;
 
 namespace ServiceAuth.Tests.User.Commands
 {
-    public class UpdateUserLoginComandHandlerTests
+    public class UpdateUserRoleCommandHandlerTests
     {
         public IMediator Mediator { get; set; } = null!;
         public AuthDbContext Context { get; set; } = null!;
         public IEnumerable<Domain.Models.User> Users => Context.Users;
+        public IEnumerable<Domain.Models.Role> Roles => Context.Roles;
 
 
         [SetUp]
@@ -28,42 +29,38 @@ namespace ServiceAuth.Tests.User.Commands
         }
 
         [Test]
-        public void UpdateUserLoginComandHandlerTests_DtoIsNull_ThrowsValidationException()
+        public void UpdateUserRoleComandHandlerTests_DtoIsNull_ThrowsValidationException()
         {
             //arrange
 
             //act;
-            var func = async () => await Mediator.Send(new UpdateUserLoginComand { UpdateUserLoginDto = null });
+            var func = async () => await Mediator.Send(new UpdateUserRoleCommand { UpdateUserRoleDTO = null });
 
             //assert
             Assert.That(func, Throws.TypeOf<ValidationException>());
         }
 
         [Test]
-        public void UpdateUserLoginComandHandlerTests_DtoNotSet_ThrowsValidationException()
+        public void UpdateUserRoleComandHandlerTests_DtoNotSet_ThrowsValidationException()
         {
             //arrange
 
             //act
-            var func = async () => await Mediator.Send(new UpdateUserLoginComand { UpdateUserLoginDto = new() });
+            var func = async () => await Mediator.Send(new UpdateUserRoleCommand { UpdateUserRoleDTO = new() });
 
             //assert
             Assert.That(func, Throws.TypeOf<ValidationException>());
         }
 
         [Test]
-        public void UpdateUserLoginComandHandlerTests_ArgumentsAreNull_ThrowsValidationException()
+        public void UpdateUserRoleComandHandlerTests_ArgumentsAreDefault_ThrowsValidationException()
         {
             //arrange
 
             //act
-            var func = async () => await Mediator.Send(new UpdateUserLoginComand
+            var func = async () => await Mediator.Send(new UpdateUserRoleCommand
             {
-                UpdateUserLoginDto = new()
-                {
-                    Id = Guid.Empty,
-                    NewLogin = null
-                }
+                UpdateUserRoleDTO = new UpdateUserRoleDTO { Id = default, RoleID = default }
             });
 
             //assert
@@ -71,39 +68,16 @@ namespace ServiceAuth.Tests.User.Commands
         }
 
         [Test]
-        public void UpdateUserLoginComandHandlerTests_ArgumentsAreEmpty_ThrowsValidationException()
-        {
-            //arrange
-
-            //act
-            var func = async () => await Mediator.Send(new UpdateUserLoginComand
-            {
-                UpdateUserLoginDto = new()
-                {
-                    Id = Guid.Empty,
-                    NewLogin = string.Empty
-                }
-            });
-
-            //assert
-            Assert.That(func, Throws.TypeOf<ValidationException>());
-        }
-
-        [Test]
-        public async Task UpdateUserLoginComandHandlerTests_IdNotContained_ReturnsBadRequest()
+        public async Task UpdateUserRoleComandHandlerTests_UserIdNotContained_ReturnsBadRequest()
         {
             //arrange
 
 
             //act
 
-            var result = await Mediator.Send(new UpdateUserLoginComand
+            var result = await Mediator.Send(new UpdateUserRoleCommand
             {
-                UpdateUserLoginDto = new()
-                {
-                    Id = Guid.NewGuid(),
-                    NewLogin = "Some name"
-                }
+                UpdateUserRoleDTO = new() { Id = Guid.NewGuid(), RoleID = Roles.Last().Id }
             });
 
             //assert
@@ -119,26 +93,53 @@ namespace ServiceAuth.Tests.User.Commands
         }
 
         [Test]
-        public async Task UpdateUserLoginComandHandlerTests_ArgumentsValid_UpdatesValue()
+        public void UpdateUserRoleComandHandlerTests_RoleIdNotContained_ThrowsValidationException()
+        {
+            //arrange
+
+
+            //act
+
+            var func = async () => await Mediator.Send(new UpdateUserRoleCommand
+            {
+                UpdateUserRoleDTO = new()
+                {
+                    Id = Users.First().Id,
+                    RoleID = Random.Shared.Next()
+                }
+            });
+
+            //assert
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(func, Throws.TypeOf<ValidationException>());
+            });
+        }
+
+        [Test]
+        public async Task UpdateUserRoleComandHandlerTests_ArgumentsValid_UpdatesValue()
         {
             //arrange
 
             var user = Users.First();
 
-            var mayBeModifiedFields = new string[] { nameof(user.Login) };
+            var role = Roles.Last();
+
+            var mayBeModifiedFields = new string[] { nameof(user.RoleID) };
 
             var clonedUserBeforeUpdate = JsonCloner.Clone(user);
 
-            var updateDto = new UpdateUserLoginDto()
+            var updateDto = new UpdateUserRoleDTO()
             {
                 Id = user.Id,
-                NewLogin = "Some name"
+                RoleID = role.Id
             };
             //act
 
-            var result = await Mediator.Send(new UpdateUserLoginComand
+            var result = await Mediator.Send(new UpdateUserRoleCommand
             {
-                UpdateUserLoginDto = updateDto
+                UpdateUserRoleDTO = updateDto
             });
 
             //assert
@@ -153,7 +154,7 @@ namespace ServiceAuth.Tests.User.Commands
                 Assert.That(result.Success, Is.True);
                 Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK));
 
-                Assert.That(user.Login, Is.EqualTo(updateDto.NewLogin));
+                Assert.That(user.RoleID, Is.EqualTo(updateDto.RoleID));
                 Assert.That(cmpResult, Is.SubsetOf(mayBeModifiedFields), $"Only these fields and properties may be modified: ({string.Join(", ", mayBeModifiedFields)})");
             });
         }
