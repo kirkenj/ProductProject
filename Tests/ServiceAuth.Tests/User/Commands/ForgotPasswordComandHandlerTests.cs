@@ -160,11 +160,14 @@ namespace ServiceAuth.Tests.User.Commands
             });
         }
 
+        [Test]
         public async Task ForgotPasswordComandHandler_EmailValid_SendsEmailWithPasswordUpdatesUserModel()
         {
             //arrange
 
             var user = Users.First();
+
+            var mayBeModifiedFields = new string[] { nameof(user.StringEncoding), nameof(user.HashAlgorithm), nameof(user.PasswordHash) };
 
             ForgotPasswordDto forgotPasswordDto = new()
             {
@@ -190,6 +193,9 @@ namespace ServiceAuth.Tests.User.Commands
 
             //assert
 
+
+            var cmpResult = FieldComparator.GetNotEqualPropertiesAndFieldsNames(clonedUserBeforeUpdate, user, nameof(user.Role));
+
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
@@ -197,14 +203,9 @@ namespace ServiceAuth.Tests.User.Commands
                 Assert.That(result.Message, Is.Not.Empty);
                 Assert.That(result.Success, Is.True);
                 Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK));
-                Assert.That(EmailSender.LastSentEmail, Is.Null);
+                Assert.That(EmailSender.LastSentEmail, Is.Not.Null);
 
-                Assert.That(user, Is.Not.EqualTo(clonedUserBeforeUpdate), "Model was updated. It can't stay not changed after this command");
-                Assert.That(clonedUserBeforeUpdate.Email, Is.EqualTo(user.Email), $"Parameter {nameof(user.Email)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.Login, Is.EqualTo(user.Login), $"Parameter {nameof(user.Login)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.Name, Is.EqualTo(user.Name), $"Parameter {nameof(user.Name)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.Address, Is.EqualTo(user.Address), $"Parameter {nameof(user.Address)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.RoleID, Is.EqualTo(user.RoleID), $"Parameter {nameof(user.RoleID)} has to be the same after email updated");
+                Assert.That(cmpResult, Is.SubsetOf(mayBeModifiedFields), $"Only these fields and properties may be modified: ({string.Join(", ", mayBeModifiedFields)})");
 
                 Assert.That(newPasswordHash, Is.EqualTo(user.PasswordHash));
             });

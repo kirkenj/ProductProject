@@ -298,12 +298,12 @@ namespace ServiceAuth.Tests.User.Commands
             var newEmail = Random.Shared.Next().ToString() + "someEmail@meow";
             var user = Users.First();
 
+            var mayBeModifiedFields = new string[] { nameof(user.Email) };
+
             var clonedUserBeforeUpdate = JsonCloner.Clone(user); 
 
-
             var testRequestDto = new UpdateUserEmailDto { Email = newEmail, Id = user.Id };
-            await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = testRequestDto });
-              
+            await Mediator.Send(new SendTokenToUpdateUserEmailRequest { UpdateUserEmailDto = testRequestDto });              
 
             var lastMessage = EmailSender.LastSentEmail;
             if (lastMessage.To != newEmail) throw new Exception("EmailSender.LastSentEmail.To != newEmail");
@@ -340,6 +340,9 @@ namespace ServiceAuth.Tests.User.Commands
             });
 
             //assert
+
+            var cmpResult = FieldComparator.GetNotEqualPropertiesAndFieldsNames(clonedUserBeforeUpdate, user, nameof(user.Role));
+
             Assert.Multiple(() =>
             {
                 Assert.That(result.Success, Is.True, $"{nameof(result.Success)} has to be true");
@@ -350,15 +353,8 @@ namespace ServiceAuth.Tests.User.Commands
                 Assert.That(keyToTrackRemoveInvoked, Is.True, $"Event {nameof(RedisWithEvents.OnRemove)} with key '{keyToTrack}' was not invoked");
                 Assert.That(cachedValueOnKey, Is.EqualTo(testRequestDto));
 
-                Assert.That(clonedUserBeforeUpdate.Login, Is.EqualTo(user.Login), $"Parameter {nameof(user.Login)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.Name, Is.EqualTo(user.Name), $"Parameter {nameof(user.Name)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.Address, Is.EqualTo(user.Address), $"Parameter {nameof(user.Address)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.RoleID, Is.EqualTo(user.RoleID), $"Parameter {nameof(user.RoleID)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.PasswordHash, Is.EqualTo(user.PasswordHash), $"Parameter {nameof(user.PasswordHash)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.StringEncoding, Is.EqualTo(user.StringEncoding), $"Parameter {nameof(user.StringEncoding)} has to be the same after email updated");
-                Assert.That(clonedUserBeforeUpdate.HashAlgorithm, Is.EqualTo(user.HashAlgorithm), $"Parameter {nameof(user.HashAlgorithm)} has to be the same after email updated");
+                Assert.That(cmpResult, Is.SubsetOf(mayBeModifiedFields), $"Only these fields and properties may be modified: ({string.Join(", ", mayBeModifiedFields)})");
 
-                Assert.That(clonedUserBeforeUpdate.Email, Is.Not.EqualTo(user.Email), $"Parameter {nameof(user.Email)} has to be updated");
                 Assert.That(user.Email, Is.EqualTo(newEmail), $"Parameter {nameof(user.Email)} has to be the same as email in the request");
                 Assert.That(user.Email, Is.EqualTo(cachedValueOnKey.Email), $"Parameter {nameof(user.Email)} has to be the same email in cached request");
             });
