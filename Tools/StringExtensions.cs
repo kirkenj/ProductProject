@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace ServiceAuth.Tests.Common
+namespace Tools
 {
     public static class StringExtensions
     {

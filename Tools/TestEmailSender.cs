@@ -1,11 +1,13 @@
 ﻿using EmailSender.Models;
 using Microsoft.Extensions.Logging;
 
-namespace ServiceAuth.Tests.Common
+namespace Tools
 {
     public class TestEmailSender : ConsoleEmailSender
     {
-        public Email LastSentEmail { get; set; } = null!;
+        public Email? LastSentEmail => Emails.LastOrDefault();
+
+        public readonly List<Email> Emails = new();
 
         public TestEmailSender(ILogger<EmailSender.Models.EmailSender> logger) : base(logger)
         {
@@ -16,7 +18,7 @@ namespace ServiceAuth.Tests.Common
             var emailSent = await base.SendEmailAsync(email);
             if (emailSent)
             {
-                LastSentEmail = email;
+                Emails.Add(email);
             }
 
             return emailSent;

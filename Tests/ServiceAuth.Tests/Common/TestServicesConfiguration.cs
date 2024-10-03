@@ -19,6 +19,7 @@ using Persistence;
 using Persistence.Repositories;
 using Repository.Models;
 using System.Reflection;
+using Tools;
 
 namespace ServiceAuth.Tests.Common
 {

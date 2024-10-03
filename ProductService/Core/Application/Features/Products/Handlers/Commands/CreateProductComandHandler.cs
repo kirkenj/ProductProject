@@ -29,20 +29,28 @@ namespace Application.Features.Product.Handlers.Commands
         {
             Domain.Models.Product product = _mapper.Map<Domain.Models.Product>(request.CreateProductDto);
 
-            await _productRepository.AddAsync(product);
+            var addTask = _productRepository.AddAsync(product);
 
-            var producerId = request.CreateProductDto.ProducerId;
-
-            var userResponse = await _authClientService.GetUser(producerId);
-
-            var user = userResponse.Result ?? throw new ApplicationException($"Couldn't get user with id '{producerId}'");
-
-            _ = Task.Run(() => _emailSender.SendEmailAsync(new Email
+            var msgTask = Task.Run(async () =>
             {
-                Body = $"You added a product with id '{product.Id}'",
-                Subject = "Product creation",
-                To = user.Email
-            }));
+                var producerId = request.CreateProductDto.ProducerId;
+
+                var userResponse = await _authClientService.GetUser(producerId);
+
+                var user = userResponse.Result ?? throw new ApplicationException($"Couldn't get user with id '{producerId}'");
+
+                if (user.Email != null)
+                {
+                    await _emailSender.SendEmailAsync(new Email
+                    {
+                        Body = $"You added a product with id '{product.Id}'",
+                        Subject = "Product creation",
+                        To = user.Email
+                    });
+                }
+            }, cancellationToken);
+
+            await Task.WhenAll(msgTask, msgTask);
 
             return Response<Guid>.OkResponse(product.Id, $"Product created with id {product.Id}");
         }

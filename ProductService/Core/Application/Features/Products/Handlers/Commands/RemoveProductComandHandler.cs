@@ -38,7 +38,7 @@ namespace Application.Features.Product.Handlers.Commands
 
             UserDto ownerResult = _mapper.Map<UserDto>(await _authClientService.UsersGETAsync(product.ProducerId, cancellationToken));
 
-            if (ownerResult != null)
+            if (ownerResult != null && ownerResult.Email != null)
             {
                 await _emailSender.SendEmailAsync(new Email
                 {

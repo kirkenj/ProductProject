@@ -83,7 +83,10 @@ namespace Infrastucture.AuthClient
                 }
 
                 Console.WriteLine($"Sending request to {nameof(AuthClientService)}");
-                result = _mapper.Map<AuthClientUser>(await _authClient.UsersGETAsync(userId));
+
+                var response = await _authClient.UsersGETAsync(userId);
+
+                result = _mapper.Map<AuthClientUser>(response);
 
                 await _customMemoryCache.SetAsync(cacheKey, result, TimeSpan.FromMilliseconds(10_000));
 

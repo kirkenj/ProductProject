@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence;
 using ServiceAuth.Tests.Common;
+using Tools;
 
 
 namespace ServiceAuth.Tests.User.Commands

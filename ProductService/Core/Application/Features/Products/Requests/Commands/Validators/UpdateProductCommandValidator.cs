@@ -10,7 +10,7 @@ namespace Application.Features.Products.Requests.Commands.Validators
     {
         public UpdateProductCommandValidator(IAuthApiClientService authApiClientService, IProductRepository productRepository)
         {
-            RuleFor(u => u.UpdateProductDto).SetValidator(new UpdateProductDtoValidator(authApiClientService, productRepository));
+            RuleFor(u => u.UpdateProductDto).NotNull().SetValidator(new UpdateProductDtoValidator(authApiClientService, productRepository));
         }
     }
 }

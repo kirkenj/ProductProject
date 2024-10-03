@@ -45,13 +45,11 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateUser(UpdateUserModel updateUserModel)
         {
-            var userId = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id");
-
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
                 UpdateUserInfoDto = new UpdateUserInfoDto
                 {
-                    Id = userId,
+                    Id = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id"),
                     Address = updateUserModel.Address,
                     Name = updateUserModel.Name
                 }

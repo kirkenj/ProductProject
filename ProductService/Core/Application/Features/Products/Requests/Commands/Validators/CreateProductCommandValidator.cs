@@ -9,7 +9,7 @@ namespace Application.Features.Products.Requests.Commands.Validators
     {
         public CreateProductCommandValidator(IAuthApiClientService authApiClient)
         {
-            RuleFor(o => o.CreateProductDto).SetValidator(new CreateProductDtoValidator(authApiClient));
+            RuleFor(o => o.CreateProductDto).NotNull().SetValidator(new CreateProductDtoValidator(authApiClient));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ServiceAuth.Tests.Common
+﻿namespace Tools
 {
     public static class FieldComparator
     {

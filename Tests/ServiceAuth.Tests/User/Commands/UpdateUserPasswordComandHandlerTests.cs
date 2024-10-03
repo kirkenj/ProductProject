@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Persistence;
 using ServiceAuth.Tests.Common;
 using System.Text;
+using Tools;
 
 
 namespace ServiceAuth.Tests.User.Commands

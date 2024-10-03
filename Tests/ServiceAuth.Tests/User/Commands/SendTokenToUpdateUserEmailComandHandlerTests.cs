@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Persistence;
 using ServiceAuth.Tests.Common;
+using Tools;
 
 
 namespace ServiceAuth.Tests.User.Commands

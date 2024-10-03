@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace ServiceAuth.Tests.Common
+namespace Tools
 {
     public static class JsonCloner
     {

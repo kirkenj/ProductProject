@@ -1,7 +1,7 @@
 ﻿using Cache.Models;
 using Microsoft.Extensions.Options;
 
-namespace ServiceAuth.Tests.Common
+namespace Tools
 {
     public class RedisCustomMemoryCacheWithEvents : RedisCustomMemoryCache
     {

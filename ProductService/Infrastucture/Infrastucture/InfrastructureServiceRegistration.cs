@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Text.Json;
 
 
-namespace Infrastucture
+namespace Infrastructure
 {
     public static class InfrastructureServiceRegistration
     {
