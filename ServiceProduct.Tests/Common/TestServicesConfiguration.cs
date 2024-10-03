@@ -29,7 +29,7 @@ namespace ServiceProduct.Tests.Common
             });
 
             services.AddAutoMapper(typeof(ProductDto).Assembly);
-            
+
             services.AddAutoMapper(a => a.CreateMap<UserDto, AuthClientUser>().ReverseMap());
             services.AddAutoMapper(a => a.CreateMap<RoleDto, AuthClientRole>().ReverseMap());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

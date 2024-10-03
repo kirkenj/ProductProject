@@ -7,7 +7,7 @@ namespace ServiceProduct.Tests.Common
     {
         private readonly IMapper _mapper;
         public readonly List<UserDto> _users = null!;
-        private readonly RoleDto roleDto = new() 
+        private readonly RoleDto roleDto = new()
         {
             Id = 1,
             Name = "Regular"
@@ -61,7 +61,7 @@ namespace ServiceProduct.Tests.Common
             var q = _mapper.Map<ICollection<UserListDto>>(_users);
 
             var a = GetPageContent(GetFilteredSet(q.AsQueryable(), ids, accurateLogin, loginPart, email, address), page, pageSize);
-            
+
             var res = _mapper.Map<ICollection<UserListDto>>(a) ?? throw new ArgumentNullException();
 
             return Task.FromResult(res);
@@ -307,7 +307,7 @@ namespace ServiceProduct.Tests.Common
         public Task<string> UserTagAsync(string newLogin, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
-        } 
+        }
         #endregion
     }
 }

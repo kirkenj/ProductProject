@@ -1,10 +1,5 @@
 using Application.DTOs.Product;
 using Application.Features.Product.Requests.Queries;
-using AutoMapper;
-using Clients.AuthApi;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using Persistence;
 using ServiceProduct.Tests.Common;
 using System.Net;
 

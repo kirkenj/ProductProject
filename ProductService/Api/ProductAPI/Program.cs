@@ -1,5 +1,5 @@
 using Application;
-using Infrastucture;
+using Infrastructure;
 using Persistence;
 using ProductAPI.JwtAuthentication;
 using ProductAPI.Middlewares;
