@@ -15,13 +15,9 @@ namespace Application.DTOs.Product.Validators
                 return null != await productRepository.GetAsync(id);
             });
 
-            RuleFor(x => x).MustAsync(async (updateProductDto, cancellationToken) =>
+            RuleFor(x => x).Cascade(CascadeMode.Stop).MustAsync(async (updateProductDto, cancellationToken) =>
             {
-                var currentProductState = await productRepository.GetAsync(updateProductDto.Id);
-                if (currentProductState == null)
-                {
-                    return false;
-                }
+                var currentProductState = await productRepository.GetAsync(updateProductDto.Id) ?? throw new Exception();
 
                 if (updateProductDto.ProducerId != currentProductState.ProducerId)
                 {
