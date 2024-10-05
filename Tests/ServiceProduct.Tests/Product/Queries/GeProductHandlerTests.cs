@@ -47,9 +47,9 @@ namespace ServiceAuth.Tests.User.Queries
         public async Task GetUserDtoRequest_IdExcists_ReturnsValue()
         {
             //arrange
-            var users = Products.ToArray();
+            var prods = Products.ToArray();
 
-            var prod = users[Random.Shared.Next(users.Length)];
+            var prod = prods[Random.Shared.Next(prods.Length)];
 
             var expectedResult = Mapper.Map<ProductDto>(prod);
 

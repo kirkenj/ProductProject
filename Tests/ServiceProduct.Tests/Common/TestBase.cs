@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Clients.AuthApi;
+using Domain.Models;
 using EmailSender.Contracts;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,8 @@ namespace ServiceProduct.Tests.Common
         public IEnumerable<Domain.Models.Product> Products => Context.Products;
         public TestAuthClient AuthClient { get; set; } = null!;
         public TestEmailSender EmailSender { get; } = null!;
+        public readonly IEnumerable<Product> SourceProducts;
+
 
         public TestBase()
         {
@@ -81,6 +84,14 @@ namespace ServiceProduct.Tests.Common
             });
 
             Context.SaveChanges();
+
+            var lst = new List<Product>();
+
+            lst.AddRange(Context.Products.ToArray().Select(p => JsonCloner.Clone(p)));
+
+            SourceProducts = lst;
+
+            Context.ChangeTracker.Clear();
         }
     }
 }

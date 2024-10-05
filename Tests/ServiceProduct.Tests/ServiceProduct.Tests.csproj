@@ -24,11 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\Common\Repository\Repository.csproj" />
-	  <ProjectReference Include="..\ProductService\Core\Application\Application.csproj" />
-	  <ProjectReference Include="..\ProductService\Core\Domain\Domain.csproj" />
-	  <ProjectReference Include="..\ProductService\Infrastucture\Infrastucture\Infrastructure.csproj" />
-	  <ProjectReference Include="..\ProductService\Infrastucture\Persistence\Persistence.csproj" />
+	  <ProjectReference Include="..\..\Common\Repository\Repository.csproj" />
+	  <ProjectReference Include="..\..\ProductService\Core\Application\Application.csproj" />
+	  <ProjectReference Include="..\..\ProductService\Core\Domain\Domain.csproj" />
+	  <ProjectReference Include="..\..\ProductService\Infrastucture\Infrastucture\Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\ProductService\Infrastucture\Persistence\Persistence.csproj" />
 	  <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 

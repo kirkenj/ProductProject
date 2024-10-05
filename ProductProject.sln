@@ -75,9 +75,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository.Tests", "Tests\R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceAuth.Tests", "Tests\ServiceAuth.Tests\ServiceAuth.Tests.csproj", "{80D2A6B9-5456-4508-BC2D-01411D4AD045}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceProduct.Tests", "ServiceProduct.Tests\ServiceProduct.Tests.csproj", "{177F6FED-1969-4F0B-B2F3-FC2BE6954038}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceProduct.Tests", "Tests\ServiceProduct.Tests\ServiceProduct.Tests.csproj", "{177F6FED-1969-4F0B-B2F3-FC2BE6954038}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "Tools\Tools.csproj", "{8F0003EA-3EA3-45B3-98AE-626884E8F4D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "Tests\Tools\Tools.csproj", "{8F0003EA-3EA3-45B3-98AE-626884E8F4D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
