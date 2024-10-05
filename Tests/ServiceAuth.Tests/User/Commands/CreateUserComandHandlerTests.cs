@@ -41,7 +41,7 @@ namespace ServiceAuth.Tests.User.Commands
             if (serviceProvider.GetRequiredService<ICustomMemoryCache>() is not RedisCustomMemoryCacheWithEvents rwe) throw new Exception();
             RedisWithEvents = rwe;
             CreateUserSettings = serviceProvider.GetRequiredService<IOptions<CreateUserSettings>>().Value;
-            EmailSender.LastSentEmail = null;
+            EmailSender.Emails.Clear();
         }
 
         [Test]

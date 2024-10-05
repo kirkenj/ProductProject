@@ -38,7 +38,7 @@ namespace ServiceAuth.Tests.User.Commands
             if (serviceProvider.GetRequiredService<IEmailSender>() is not TestEmailSender tes) throw new Exception();
             EmailSender = tes;
             forgotPasswordSettings = serviceProvider.GetRequiredService<IOptions<ForgotPasswordSettings>>().Value;
-            EmailSender.LastSentEmail = null;
+            EmailSender.Emails.Clear();
         }
 
         [Test]

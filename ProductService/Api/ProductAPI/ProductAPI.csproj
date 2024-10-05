@@ -14,11 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\AuthService\Infrastructure\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Common\Constants\Constants.csproj" />
     <ProjectReference Include="..\..\..\Common\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\..\Core\Application\Application.csproj" />
-    <ProjectReference Include="..\..\Infrastucture\Infrastucture\Infrastucture.csproj" />
+    <ProjectReference Include="..\..\Infrastucture\Infrastucture\Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastucture\Persistence\Persistence.csproj" />
   </ItemGroup>
 

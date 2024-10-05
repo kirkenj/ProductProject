@@ -39,7 +39,7 @@ namespace ServiceAuth.Tests.User.Commands
             RedisWithEvents = rwe;
             UpdateUserEmailSettings = serviceProvider.GetRequiredService<IOptions<UpdateUserEmailSettings>>().Value;
             Context.ChangeTracker.Clear();
-            EmailSender.LastSentEmail = null;
+            EmailSender.Emails.Clear();
         }
 
         [Test]
