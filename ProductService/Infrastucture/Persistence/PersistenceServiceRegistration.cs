@@ -15,7 +15,7 @@ namespace Persistence
             services.AddDbContext<ProductDbContext>(options =>
             {
                 var cString = Environment.GetEnvironmentVariable("ProductDbConnectionString") ?? throw new ArgumentException("Couldn't get connection string");
-                options.UseSqlServer(Environment.GetEnvironmentVariable(cString));
+                options.UseSqlServer(cString);
             });
 
             return services;

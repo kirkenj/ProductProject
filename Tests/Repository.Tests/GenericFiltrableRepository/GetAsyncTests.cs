@@ -1,4 +1,5 @@
 using Repository.Models;
+using Repository.Tests.Common;
 using Repository.Tests.Models;
 using Repository.Tests.Models.TestBases;
 using System.Text.Json;
@@ -10,6 +11,12 @@ namespace Repository.Tests.GenericFiltrableRepository
     public class GetAsyncTests : FiltrableRepositoryTest
     {
         public GetAsyncTests(Type type) : base(type) { }
+
+        [SetUp]
+        public async Task SetUp() 
+        {
+            _testDbContext = await TestConstants.GetDbContextAsync();
+        }
 
         [Test]
         public async Task GetAsyncFilter_FilterIsNull_ReturnsValueOrNull()
@@ -65,7 +72,7 @@ namespace Repository.Tests.GenericFiltrableRepository
             Assert.That(possibleUsers, Does.Contain(userResult));
         }
 
-        [OneTimeTearDown]
+        [TearDown]
         public void TearDown()
         {
             _testDbContext.Dispose();

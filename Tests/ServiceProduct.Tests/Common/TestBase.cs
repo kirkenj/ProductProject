@@ -14,10 +14,9 @@ namespace ServiceProduct.Tests.Common
         public IMapper Mapper { get; set; } = null!;
         public IMediator Mediator { get; set; } = null!;
         public ProductDbContext Context { get; set; } = null!;
-        public IEnumerable<Domain.Models.Product> Products => Context.Products;
+        public IEnumerable<Product> Products => Context.Products;
         public TestAuthClient AuthClient { get; set; } = null!;
         public TestEmailSender EmailSender { get; } = null!;
-        public readonly IEnumerable<Product> SourceProducts;
 
 
         public TestBase()
@@ -84,13 +83,7 @@ namespace ServiceProduct.Tests.Common
             });
 
             Context.SaveChanges();
-
-            var lst = new List<Product>();
-
-            lst.AddRange(Context.Products.ToArray().Select(p => JsonCloner.Clone(p)));
-
-            SourceProducts = lst;
-
+            
             Context.ChangeTracker.Clear();
         }
     }

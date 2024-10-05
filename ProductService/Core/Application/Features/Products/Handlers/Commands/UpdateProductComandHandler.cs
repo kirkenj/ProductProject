@@ -51,42 +51,34 @@ namespace Application.Features.Product.Handlers.Commands
 
             var newOwnerResponse = await _authClientService.GetUser(newProducerId);
 
-            if (newOwnerResponse.Success)
+            if (!newOwnerResponse.Success)
             {
                 throw new ApplicationException($"Couldn't find user with id = '{newProducerId}'");
             }
 
-            _ = Task.Run(() =>
-            {
-                _ = Task.Run(async () =>
-                {
-                    var newOwnerEmail = newOwnerResponse.Result?.Email ?? null;
-                    if (string.IsNullOrEmpty(newOwnerEmail) == false)
-                    {
-                        await _emailSender.SendEmailAsync(new Email
-                        {
-                            Subject = "You were given a product",
-                            To = newOwnerEmail,
-                            Body = $"Your new product id is {product.Id}"
-                        });
-                    }
-                });
 
-                _ = Task.Run(async () =>
+            var newOwnerEmail = newOwnerResponse.Result?.Email ?? null;
+            if (string.IsNullOrEmpty(newOwnerEmail) == false)
+            {
+                await _emailSender.SendEmailAsync(new Email
                 {
-                    var prevOwner = await _authClientService.GetUser(prevOwnedId);
-                    var prevOwnerEmail = newOwnerResponse.Result?.Email ?? null;
-                    if (string.IsNullOrEmpty(prevOwnerEmail) == false)
-                    {
-                        await _emailSender.SendEmailAsync(new Email
-                        {
-                            Subject = "Your product was given to other user",
-                            To = prevOwnerEmail,
-                            Body = $"Your product with id '{product.Id}' was given to other user"
-                        });
-                    }
+                    Subject = "You were given a product",
+                    To = newOwnerEmail,
+                    Body = $"Your new product id is {product.Id}"
                 });
-            });
+            }
+
+            var prevOwner = await _authClientService.GetUser(prevOwnedId);
+            var prevOwnerEmail = prevOwner.Result?.Email ?? null;
+            if (string.IsNullOrEmpty(prevOwnerEmail) == false)
+            {
+                await _emailSender.SendEmailAsync(new Email
+                {
+                    Subject = "Your product was given to other user",
+                    To = prevOwnerEmail,
+                    Body = $"Your product with id '{product.Id}' was given to other user"
+                });
+            }
         }
     }
 }

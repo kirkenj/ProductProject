@@ -29,7 +29,7 @@ namespace ServiceAuth.Tests.User.Commands
         }
 
         [Test]
-        public void UpdateNotSensitiveUserInfoComandHandlerTests_ForgotPasswordDtoIsNull_ThrowsValidationException()
+        public void UpdateNotSensitiveUserInfoComandHandlerTests_DtoIsNull_ThrowsValidationException()
         {
             //arrange
 
@@ -41,7 +41,7 @@ namespace ServiceAuth.Tests.User.Commands
         }
 
         [Test]
-        public void UpdateNotSensitiveUserInfoComandHandlerTests_ForgotPasswordDtoNotSet_ThrowsValidationException()
+        public void UpdateNotSensitiveUserInfoComandHandlerTests_DtoNotSet_ThrowsValidationException()
         {
             //arrange
 

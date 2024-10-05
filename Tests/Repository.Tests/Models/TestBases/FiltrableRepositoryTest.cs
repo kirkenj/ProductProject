@@ -10,7 +10,7 @@ namespace Repository.Tests.Models.TestBases
     {
         protected List<User> Users => _testDbContext.Users.ToList();
         protected IGenericFiltrableRepository<User, Guid, UserFilter> _repository = null!;
-        protected readonly TestDbContext _testDbContext = null!;
+        protected TestDbContext _testDbContext { get; set; } = null!;
         protected readonly Func<IQueryable<User>, UserFilter, IQueryable<User>> filterDelegate;
 
         public FiltrableRepositoryTest(Type repType)

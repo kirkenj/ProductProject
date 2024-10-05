@@ -25,7 +25,7 @@
     <ProjectReference Include="..\..\AuthService\Infrastructure\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\..\AuthService\Infrastructure\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\..\Common\Repository\Repository.csproj" />
-    <ProjectReference Include="..\..\Tools\Tools.csproj" />
+    <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>
