@@ -18,6 +18,12 @@ namespace Persistence
                 options.UseSqlServer(cString);
             });
 
+            using (var scope = services.BuildServiceProvider())
+            using (var context = scope.GetService<ProductDbContext>() ?? throw new Exception())
+            {
+                context.Database.EnsureCreated();
+            }
+
             return services;
         }
     }

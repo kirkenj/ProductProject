@@ -6,7 +6,6 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "AuthDbConnectionString": "Server=localhost;Database=AuthDb;User Id=SA;Password=He11oWorld;TrustServerCertificate=true;"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7067;http://localhost:5035"
