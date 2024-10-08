@@ -15,7 +15,7 @@ namespace Infrastructure
 {
     public static class InfrastructureServiceRegistration
     {
-        public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
+        public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, bool isDevelopment)
         {
             services.Configure<AuthClientSettings>((s) => s.Uri = Environment.GetEnvironmentVariable("AuthApiUri") ?? throw new ArgumentException("Couldn't get AuthApi Uri"));
             services.AddHttpClient();

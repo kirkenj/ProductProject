@@ -8,7 +8,7 @@ namespace Persistence
 {
     public static class PersistenceServiceRegistration
     {
-        public static IServiceCollection ConfigurePersistenceServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigurePersistenceServices(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();

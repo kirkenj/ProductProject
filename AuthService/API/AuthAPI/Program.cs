@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.ConfigureApiServices(builder.Configuration);
-builder.Services.ConfigurePersistenceServices(builder.Configuration);
+builder.Services.ConfigurePersistenceServices();
 builder.Services.ConfigureInfrastructureServices(builder.Configuration, builder.Environment.IsDevelopment());
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureJwtAuthentication();
