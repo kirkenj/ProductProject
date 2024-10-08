@@ -11,30 +11,21 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AuthService/API/AuthAPI/AuthAPI.csproj", "AuthService/API/AuthAPI/"]
-COPY ["Common/Constants/Constants.csproj", "Common/Constants/"]
-COPY ["Common/Extensions/Extensions.csproj", "Common/Extensions/"]
+COPY ["Gateway/Gateway/CustomGateway.csproj", "Gateway/Gateway/"]
+COPY ["Common/Clients/Clients.csproj", "Common/Clients/"]
 COPY ["Common/HashProvider/HashProvider.csproj", "Common/HashProvider/"]
-COPY ["AuthService/Core/Application/Application.csproj", "AuthService/Core/Application/"]
-COPY ["Common/EmailSender/EmailSender.csproj", "Common/EmailSender/"]
-COPY ["Common/Response/CustomResponse.csproj", "Common/Response/"]
-COPY ["AuthService/Core/Domain/Domain.csproj", "AuthService/Core/Domain/"]
-COPY ["Common/Repository/Repository.csproj", "Common/Repository/"]
-COPY ["Common/Cache/Cache.csproj", "Common/Cache/"]
-COPY ["AuthService/Infrastructure/Infrastructure/Infrastructure.csproj", "AuthService/Infrastructure/Infrastructure/"]
-COPY ["AuthService/Infrastructure/Persistence/Persistence.csproj", "AuthService/Infrastructure/Persistence/"]
-RUN dotnet restore "./AuthService/API/AuthAPI/AuthAPI.csproj"
+RUN dotnet restore "./Gateway/Gateway/CustomGateway.csproj"
 COPY . .
-WORKDIR "/src/AuthService/API/AuthAPI"
-RUN dotnet build "./AuthAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Gateway/Gateway"
+RUN dotnet build "./CustomGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Этот этап используется для публикации проекта службы, который будет скопирован на последний этап
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AuthAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./CustomGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AuthAPI.dll"]
+ENTRYPOINT ["dotnet", "CustomGateway.dll"]
