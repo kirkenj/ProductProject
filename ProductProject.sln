@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailSender", "Common\Email
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{BD710F14-1071-41DD-B8FE-C5130A34CF02}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomGateway", "Gateway\CustomGateway.csproj", "{4657C1CD-3AC6-4385-BE92-7A419862C5E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomGateway", "Gateway\Gateway\CustomGateway.csproj", "{4657C1CD-3AC6-4385-BE92-7A419862C5E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clients", "Common\Clients\Clients.csproj", "{A87FD378-B0B8-4319-A245-57CA72457FAE}"
 EndProject
