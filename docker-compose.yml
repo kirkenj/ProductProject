@@ -1,11 +1,10 @@
-
 services:
   redis:
     image: redis
   sqlServer:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      - MSSQL_SA_PASSWORD=He11oWorld
+      - MSSQL_SA_PASSWORD=${DbSaPassword}
       - ACCEPT_EULA=Y
     volumes:
       - sqlvolume:/var/opt/mssql
@@ -17,11 +16,13 @@ services:
       - AuthDbConnectionString=Server=sqlServer;Database=AuthDb;User Id=SA;Password=${DbSaPassword};TrustServerCertificate=true;
       - JwtSettings=${JwtSettings}
       - EmailSettings=${EmailSettings}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     ports:
       - "5900:80"
     depends_on:
       - sqlServer
       - redis  
+
   productApi:
     image: kirkenj/productapi
     environment:
@@ -29,10 +30,29 @@ services:
       - ProductDbConnectionString=Server=sqlServer;Database=ProductDb;User Id=SA;Password=${DbSaPassword};TrustServerCertificate=true;
       - JwtSettings=${JwtSettings}
       - EmailSettings=${EmailSettings}
+      - AuthApiUri=http://authApi
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     ports:
       - "5901:80"
     depends_on:
       - sqlServer
       - redis  
+      - authApi
+
+  gateway:
+    image: kirkenj/gateway
+    environment:
+      - RedisUri=redis
+      - JwtSettings=${JwtSettings}
+      - AuthApiUri=http://authapi
+      - ProductApiUri=http://productApi
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    ports:
+      - "5902:80"
+    depends_on:
+      - sqlServer
+      - redis  
+      - authApi
+      - productApi
 volumes:
   sqlvolume:
