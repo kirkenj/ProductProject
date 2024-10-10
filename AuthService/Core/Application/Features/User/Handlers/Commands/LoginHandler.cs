@@ -86,6 +86,8 @@ namespace Application.Features.User.Handlers.Commands
             {
                 throw new ApplicationException("Couldn't send email");
             }
+
+            userToHandle.Role = await _roleRepository.GetAsync(userToHandle.RoleID) ?? throw new Exception("Role not found while adding user to context");
         }
     }
 }

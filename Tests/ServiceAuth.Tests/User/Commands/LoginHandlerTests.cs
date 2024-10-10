@@ -288,6 +288,8 @@ namespace ServiceAuth.Tests.User.Commands
                 Assert.That(result.Result.Email, Is.EqualTo(createUserDto.Email));
                 Assert.That(result.Result.Name, Is.EqualTo(createUserDto.Name));
                 Assert.That(result.Result.Address, Is.EqualTo(createUserDto.Address));
+                Assert.That(result.Result.Role, Is.Not.Null);
+                Assert.That(result.Result.Role.Id, Is.EqualTo(CreateUserSettings.DefaultRoleID));
                 Assert.That(result.Success, Is.True);
                 Assert.That(result.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK));
             });

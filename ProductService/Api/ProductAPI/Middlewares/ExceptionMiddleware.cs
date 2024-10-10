@@ -6,9 +6,9 @@ namespace ProductAPI.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IWebHostEnvironment _environment;
-        private readonly ILogger _logger;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment environment, ILogger logger)
+        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment environment, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
             _environment = environment;
