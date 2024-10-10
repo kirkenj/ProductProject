@@ -1,0 +1,38 @@
+
+services:
+  redis:
+    image: redis
+  sqlServer:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - MSSQL_SA_PASSWORD=He11oWorld
+      - ACCEPT_EULA=Y
+    volumes:
+      - sqlvolume:/var/opt/mssql
+
+  authApi:
+    image: kirkenj/authapi
+    environment:
+      - RedisUri=redis
+      - AuthDbConnectionString=Server=sqlServer;Database=AuthDb;User Id=SA;Password=${DbSaPassword};TrustServerCertificate=true;
+      - JwtSettings=${JwtSettings}
+      - EmailSettings=${EmailSettings}
+    ports:
+      - "5900:80"
+    depends_on:
+      - sqlServer
+      - redis  
+  productApi:
+    image: kirkenj/productapi
+    environment:
+      - RedisUri=redis
+      - ProductDbConnectionString=Server=sqlServer;Database=ProductDb;User Id=SA;Password=${DbSaPassword};TrustServerCertificate=true;
+      - JwtSettings=${JwtSettings}
+      - EmailSettings=${EmailSettings}
+    ports:
+      - "5901:80"
+    depends_on:
+      - sqlServer
+      - redis  
+volumes:
+  sqlvolume:

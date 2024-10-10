@@ -4,6 +4,8 @@ using Persistence;
 using ProductAPI.JwtAuthentication;
 using ProductAPI.Middlewares;
 
+Console.WriteLine("Application started");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

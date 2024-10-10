@@ -5,6 +5,8 @@ using Constants;
 using Infrastructure;
 using Persistence;
 
+Console.WriteLine("Application started");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

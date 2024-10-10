@@ -12,7 +12,8 @@ namespace Application.DTOs.Product.Validators
 
             RuleFor(x => x.Id).NotEqual(default(Guid)).MustAsync(async (id, token) =>
             {
-                return null != await productRepository.GetAsync(id);
+                var user = await productRepository.GetAsync(id);
+                return null != user;
             });
 
             RuleFor(x => x).Cascade(CascadeMode.Stop).MustAsync(async (updateProductDto, cancellationToken) =>

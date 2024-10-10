@@ -6,11 +6,13 @@ namespace ProductAPI.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
 
-        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment environment)
+        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment environment, ILogger logger)
         {
             _next = next;
             _environment = environment;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -29,6 +31,7 @@ namespace ProductAPI.Middlewares
             {
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsJsonAsync(_environment.IsDevelopment() ? ex.Message : "Ooopsie", typeof(string));
+                _logger.Log(LogLevel.Critical, ex, message: ex.Message);
             }
         }
     }
