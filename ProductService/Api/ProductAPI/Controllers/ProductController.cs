@@ -46,7 +46,7 @@ namespace ProductAPI.Controllers
         [Authorize]
         public async Task<ActionResult<Guid>> Post([FromBody] CreateProductDto createProductDto)
         {
-            if (User.IsInRole(ApiConstants.ADMIN_ROLE_NAME))
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME))
             {
                 createProductDto.ProducerId = User.GetUserId() ?? throw new ApplicationException("Couldn't get user's id");
             }
