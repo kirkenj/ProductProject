@@ -1,14 +1,16 @@
 services:
   redis:
     image: redis
+    volumes:
+      - redis_volume:/data
   sqlServer:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       - MSSQL_SA_PASSWORD=${DbSaPassword}
       - ACCEPT_EULA=Y
     volumes:
-      - sqlvolume:/var/opt/mssql
-
+      - sql_volume:/var/opt/mssql/
+      
   authApi:
     image: kirkenj/authapi
     environment:
@@ -54,5 +56,9 @@ services:
       - redis  
       - authApi
       - productApi
+
 volumes:
-  sqlvolume:
+  sql_volume:
+    external: true
+  redis_volume:
+    external: true
