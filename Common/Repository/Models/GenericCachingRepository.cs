@@ -75,7 +75,7 @@ namespace Repository.Models
 
             if (result != null)
             {
-                _logger.Log(LogLevel.Information, $"Found in it cache.");
+                _logger.Log(LogLevel.Information, $"Found it in cache.");
                 return result;
             }
 
@@ -110,6 +110,7 @@ namespace Repository.Models
 
             if (cacheResult != null)
             {
+                _logger.Log(LogLevel.Information, $"Key found in cache.");
                 return cacheResult;
             }
 

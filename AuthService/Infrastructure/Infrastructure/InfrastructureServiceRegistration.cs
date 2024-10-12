@@ -40,9 +40,19 @@ namespace Infrastructure
             }
 
 
-            services.Configure<CustomCacheOptions>((a) => { a.ConnectionUri = Environment.GetEnvironmentVariable("RedisUri") ?? throw new ArgumentException("Couldn't get Redis Uri"); });
+            var useDefaultCacheStr = Environment.GetEnvironmentVariable("UseDefaultCache");
 
-            services.AddScoped<ICustomMemoryCache, RedisCustomMemoryCache>();
+            if (useDefaultCacheStr != null && bool.TryParse(useDefaultCacheStr, out bool result) && result)
+            {
+                services.AddMemoryCache();
+                services.AddScoped<ICustomMemoryCache, CustomMemoryCache>();
+            }
+            else
+            {
+                services.Configure<CustomCacheOptions>((a) => { a.ConnectionUri = Environment.GetEnvironmentVariable("RedisUri") ?? throw new ArgumentException("Couldn't get RedisUri"); });
+                services.AddScoped<ICustomMemoryCache, RedisCustomMemoryCache>();
+            }
+
             services.AddTransient<IHashProvider, HashProvider.Models.HashProvider>();
             services.AddTransient<IPasswordGenerator, PasswordGenerator.PasswordGenerator>();
 

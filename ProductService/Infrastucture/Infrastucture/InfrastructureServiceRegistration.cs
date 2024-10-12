@@ -5,7 +5,6 @@ using Clients.AuthApi;
 using EmailSender.Contracts;
 using EmailSender.Models;
 using Infrastucture.AuthClient;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Text.Json;
@@ -46,9 +45,18 @@ namespace Infrastructure
                 services.AddScoped<IEmailSender, EmailSender.Models.EmailSender>();
             }
 
-            services.Configure<CustomCacheOptions>((a) => { a.ConnectionUri = Environment.GetEnvironmentVariable("RedisUri") ?? throw new ArgumentException("Couldn't get RedisUri"); });
+            var useDefaultCacheStr = Environment.GetEnvironmentVariable("UseDefaultCache");
 
-            services.AddScoped<ICustomMemoryCache, RedisCustomMemoryCache>();
+            if (useDefaultCacheStr != null && bool.TryParse(useDefaultCacheStr, out bool result) && result)
+            {
+                services.AddMemoryCache();
+                services.AddScoped<ICustomMemoryCache, CustomMemoryCache>();
+            }
+            else
+            {
+                services.Configure<CustomCacheOptions>((a) => { a.ConnectionUri = Environment.GetEnvironmentVariable("RedisUri") ?? throw new ArgumentException("Couldn't get RedisUri"); });
+                services.AddScoped<ICustomMemoryCache, RedisCustomMemoryCache>();
+            }
 
             return services;
         }
