@@ -1,29 +1,18 @@
-using Cache.Contracts;
 using Cache.Models;
 using Cache.Tests.Models;
-using Microsoft.Extensions.Options;
 
 #pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
 
 namespace Cache.Tests
 {
-    public class SetAsyncTests
+    [TestFixture(typeof(RedisCustomMemoryCache))]
+    [TestFixture(typeof(CustomMemoryCache))]
+    public class SetAsyncTests : TestBase
     {
-        private ICustomMemoryCache _cache;
         private const int _inaccuracyMs = 20;
 
-        [SetUp]
-        public void Setup()
-        {
-            CustomCacheOptions customCacheOptions = new()
-            {
-                ConnectionUri = "localhost:3330"
-            };
-
-            IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
-
-            _cache = new RedisCustomMemoryCache(options);
-        }
+        public SetAsyncTests(Type type) : base(type) { }
+        
 
         [Test]
         public void SetAsync_KeyNullValueNullOffset99ms_ThrowsArgumentNullException()

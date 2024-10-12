@@ -2,28 +2,17 @@ using Cache.Contracts;
 using Cache.Models;
 using Cache.Tests.Models;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
+using Microsoft.Extensions.Caching.Memory;
 
 #pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
 
 namespace Cache.Tests
 {
-    public class GetAsyncTests
+    [TestFixture(typeof(RedisCustomMemoryCache))]
+    [TestFixture(typeof(CustomMemoryCache))]
+    public class GetAsyncTests : TestBase
     {
-        private ICustomMemoryCache _cache;
-
-        [SetUp]
-        public void Setup()
-        {
-            CustomCacheOptions customCacheOptions = new()
-            {
-                ConnectionUri = "localhost:3330"
-            };
-
-            IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
-
-            _cache = new RedisCustomMemoryCache(options);
-        }
+        public GetAsyncTests(Type type) : base(type) { }
 
         [Test]
         public void GetAsync_KeyNull_ThrowsArgumentNullException()
@@ -69,7 +58,7 @@ namespace Cache.Tests
         }
 
         [Test]
-        public async Task GetAsync_KeyValidValueValidOffsetValidReturnTypeInvalid_ThrowsJsonException()
+        public async Task GetAsync_KeyValidValueValidOffsetValidReturnTypeInvalid_ThrowsException()
         {
             //arrange
             var key = Guid.NewGuid().ToString();
@@ -79,19 +68,12 @@ namespace Cache.Tests
             //act
             await _cache.SetAsync(key, value, TimeSpan.FromSeconds(3));
 
-            Exception? thrownException = null;
 
-            try
-            {
-                await _cache.GetAsync<double>(key);
-            }
-            catch (Exception ex)
-            {
-                thrownException = ex;
-            }
+            var func = async () => await _cache.GetAsync<double>(key);
+
 
             //assert
-            Assert.That(thrownException is JsonException);
+            Assert.That(func, Throws.Exception);
         }
 
         [Test]

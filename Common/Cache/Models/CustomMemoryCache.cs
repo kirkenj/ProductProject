@@ -15,13 +15,23 @@ namespace Cache.Models
 
         public Task<T?> GetAsync<T>(string key)
         {
-            var objRes = _implementation.Get(key);
+            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            var objRes = _implementation.Get(key.Trim());
             return Task.FromResult(objRes == null ? default : (T)objRes);
         }
 
         public Task<bool> RefreshKeyAsync(string key, double millisecondsToExpire)
         {
-            var objRes = _implementation.Get(key);
+            if (key == null)
+            {
+                throw new ArgumentException($"{nameof(key)} is null", nameof(key));
+            }
+            
+            var objRes = _implementation.Get(key.Trim());
             if (objRes == null) 
             {
                 return Task.FromResult(false);
@@ -40,13 +50,33 @@ namespace Cache.Models
 
         public Task RemoveAsync(string key)
         {
-            _implementation.Remove(key);
+            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            _implementation.Remove(key.Trim());
             return Task.CompletedTask;
         }
 
         public Task SetAsync<T>(string key, T value, TimeSpan offset)
         {
-            _implementation.Set(key, value, offset);
+
+            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
+
+            var offsetDiff = offset.TotalMilliseconds;
+
+            if (offsetDiff < 100)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), $"Offset has to be at least 100 ms (given offset is {offsetDiff})");
+            }
+
+            _implementation.Set(key.Trim(), value, offset);
             return Task.CompletedTask;
         }
     }
