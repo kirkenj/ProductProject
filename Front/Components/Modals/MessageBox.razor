@@ -1,0 +1,59 @@
+﻿@if (showModal)
+{
+    <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">@HeaderText</h4>
+                    <button type="button" class="close" @onclick="@ModalOk">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div>@Message</div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick=@ModalOk>Ok</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    public string HeaderText { get; set; } = null!;
+
+    public string Message { get; set; } = string.Empty;
+
+    bool showModal = false;
+
+    public delegate void OnCloseCallback();
+
+    public event OnCloseCallback OnClose = () => { };
+
+    public void ModalShow(string header, string? message = null, string? value = null)
+    {
+        HeaderText = header;
+        Message = string.IsNullOrEmpty(message) ? string.Empty : message;
+        showModal = true;
+        StateHasChanged();
+    }
+
+    private void ModalCancel()
+    {
+        showModal = false;
+        OnClose();
+    }
+
+    private void ModalOk()
+    {
+        showModal = false;
+        OnClose();
+    }
+}

@@ -1,0 +1,239 @@
+﻿@using Front.Models
+@using Clients.CustomGateway
+@inherits Front.Components.Common.CustomComponentBase
+@inject Clients.CustomGateway.IGatewayClient gatewayClient
+@inject Front.Services.CustomAuthStateProvider authStateProvider
+@inject NavigationManager navManager
+
+<h3>UserInfo</h3>
+
+@if (userDto != null)
+{
+    <Front.Components.Modals.InputBox @ref=inputBox />
+    <Front.Components.Modals.MessageBox @ref=messageBox />
+    <table>
+        <tr>
+            <td>Id</td>
+            <td align="right">@userDto.Id</td>
+        </tr>
+        @if (!string.IsNullOrEmpty(EmailChangeInputMessage))
+        {
+            <tr>
+                <td colspan="3" style="color:red">
+                    <div>@EmailChangeInputMessage</div>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>Email</td>
+            <td align="right"><Front.Components.Common.TextBox @ref=EmailInputTextBox Type="text" /> </td>
+            @if (IsAdminOrOwner)
+            {
+
+                @if (EmailEditButtonVisible)
+                {
+                    <td align="left" class="btn btn-primary" itemid="OnEditEmailButton" @onclick="OnEditEmailClicked" width="100%">Edit</td>
+                }
+                @if (EmailEditConfirmButtonVisible)
+                {
+                    <td align="left" class="btn btn-primary" itemid="OnEditEmailConfirmButton" @onclick="OnEditEmailConfirmClicked" width="50%">Ok</td>
+                    <td align="left" class="btn alert" itemid="OnEditEmailConfirmButton" @onclick="OnEditEmailCancelClicked" width="50%">Cancel</td>
+                }
+            }
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td align="right">@userDto.Name</td>
+            @if (IsAdminOrOwner)
+            {
+                <td align="left">
+                    <button class="btn btn-primary" @onclick="OnEditNameAndAdressClicked">Edit</button>
+                </td>
+            }
+        </tr>
+        <tr>
+            <td>Address</td>
+            <td align="right">@userDto.Address</td>
+            @if (IsAdminOrOwner)
+            {
+                <td align="left">
+                    <button class="btn btn-primary" @onclick="OnEditRoleClicked">Edit</button>
+                </td>
+            }
+        </tr>
+        <tr>
+            <td>Role</td>
+            <td align="right">@userDto.Role.Name</td>
+            @if (IsAdmin)
+            {
+                <td align="left">
+                    <button class="btn btn-primary" @onclick="OnEditRoleClicked">Edit</button>
+                </td>
+            }
+        </tr>
+    </table>
+}
+else if (thrownException != null)
+{
+    <div>@thrownException.Message</div>
+    <div>@thrownException.HResult</div>
+    <div>@thrownException.StatusCode</div>
+}
+
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    public User? CurrentUser => authStateProvider.CurrentUser;
+
+    private bool IsAdminOrOwner => CurrentUser != null && (CurrentUser.Id == Id || IsAdmin);
+    private bool IsAdmin => CurrentUser != null && CurrentUser.IsAdmin;
+
+    private UserDto? userDto;
+    private Clients.CustomGateway.GatewayException thrownException;
+
+    private bool EmailEditButtonVisible = true;
+    private bool EmailEditConfirmButtonVisible = false;
+
+    private Front.Components.Common.TextBox EmailInputTextBox = new();
+    private Front.Components.Modals.InputBox inputBox = null!;
+    private Front.Components.Modals.MessageBox messageBox = null!;
+
+    private string? EmailChangeInputMessage;
+
+    protected override void OnSecondRender()
+    {
+        EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
+        EmailInputTextBox.Disabled = true;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            userDto = null;
+            thrownException = null;
+            var f = await gatewayClient.RolesAllAsync();
+            userDto = await gatewayClient.AccountGETAsync();
+        }
+        catch (Clients.CustomGateway.GatewayException ex)
+        {
+            thrownException = ex;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnEditEmailClicked(MouseEventArgs e)
+    {
+        EmailEditConfirmButtonVisible = true;
+        EmailEditButtonVisible = false;
+        EmailInputTextBox.Disabled = false;
+        StateHasChanged();
+    }
+
+
+    private async Task OnEditEmailConfirmClicked(MouseEventArgs e)
+    {
+        if (userDto == null)
+        {
+            EmailChangeInputMessage = "User is not authenticated";
+            return;
+        }
+
+        if (userDto.Email != EmailInputTextBox.Value)
+        {
+            if (!System.Net.Mail.MailAddress.TryCreate(EmailInputTextBox.Value, out System.Net.Mail.MailAddress? a))
+            {
+                EmailChangeInputMessage = "That is not a valid email";
+                return;
+            }
+
+            EmailChangeInputMessage = null;
+
+            try
+            {
+                var message = await gatewayClient.EmailPUTAsync(EmailInputTextBox.Value);
+                inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'", message);
+                inputBox.OnClose += OnEmailChangeInputBoxClosed;
+            }
+            catch (Exception ex)
+            {
+                EmailChangeInputMessage = ex.Message;
+                return;
+            }
+        }
+
+        EmailEditConfirmButtonVisible = false;
+        EmailEditButtonVisible = true;
+        EmailInputTextBox.Disabled = true;
+
+        StateHasChanged();
+    }
+
+    private void OnEditRoleClicked(MouseEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void OnEditNameAndAdressClicked(MouseEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void OnEditEmailCancelClicked(MouseEventArgs e)
+    {
+        EmailEditConfirmButtonVisible = false;
+        EmailEditButtonVisible = true;
+        EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
+        EmailInputTextBox.Disabled = true;
+        EmailChangeInputMessage = null;
+        StateHasChanged();
+    }
+
+
+    private async void OnEmailChangeInputBoxClosed(bool cancelled, string? resultString)
+    {
+        if (userDto == null)
+        {
+            Console.WriteLine("User is null");
+            return;
+        }
+
+        if (cancelled)
+        {
+            EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
+            EmailInputTextBox.Disabled = true;
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(resultString))
+            {
+                inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'");
+            }
+
+
+
+            try
+            {
+                await gatewayClient.EmailPOSTAsync(resultString);
+
+                inputBox.OnClose -= OnEmailChangeInputBoxClosed;
+
+                messageBox.ModalShow("Now you have to login with new parameters");
+
+                messageBox.OnClose += () =>
+                {
+                    authStateProvider.Logout();
+                    navManager.NavigateTo("");
+                };
+            }
+            catch (Clients.CustomGateway.GatewayException ex)
+            {
+                inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'", ex.Message);
+            }
+        }
+    }
+}

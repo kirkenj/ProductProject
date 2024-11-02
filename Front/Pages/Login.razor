@@ -1,0 +1,73 @@
+﻿@page "/login"
+@using Front.Models
+@inject Front.Services.CustomAuthStateProvider authStateProvider
+@inject NavigationManager navManager
+
+@if (authStateProvider.CurrentUser == null)
+{
+    <PageTitle>Login</PageTitle>
+
+    <h1>Login</h1>
+
+    <div>
+        Email
+        <input name="email" class="input-group-text" @bind="Email"/>
+    </div>
+    <div>
+        Password
+        <input name="pwd" class="input-group-text" @bind="Password" />
+    </div>
+    <div>
+        @LoginResult
+    </div>
+    <button class="btn btn-primary" @onclick="OnLoginClicked">Log in</button>
+}
+else
+{
+    navManager.NavigateTo("user");
+}
+
+
+
+@code {
+    private string Email = string.Empty;
+    private string Password = string.Empty;
+    private string LoginResult = string.Empty;
+    private User? User => authStateProvider.CurrentUser;
+
+    protected override void OnInitialized()
+    {
+        authStateProvider.AuthenticationStateChanged += AuthStateChanged;
+        base.OnInitialized();
+    }
+
+
+    private void AuthStateChanged(Task<AuthenticationState> authenticationState)
+    {
+        StateHasChanged();
+    }
+
+    private async void OnLoginClicked(MouseEventArgs e)
+    {
+        LoginResult = string.Empty;
+        try
+        {
+            await authStateProvider.LoginAsync(Email, Password);
+            LoginResult = string.Empty;
+            Password = string.Empty;
+            Email = string.Empty;
+            navManager.NavigateTo("");
+        }
+        catch(Exception ex)
+        {
+            LoginResult = ex.Message;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnLogOutClicked(MouseEventArgs e)
+    {
+        authStateProvider.Logout();
+    }
+}

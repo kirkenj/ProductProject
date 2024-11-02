@@ -60,6 +60,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account", Name = "AccountPUT")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> AccountPUT([Microsoft.AspNetCore.Mvc.FromBody] UpdateUserModel? body)
         {
 
@@ -69,6 +70,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account/Password", Name = "Password")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> Password([FromBody] string newPassword)
         {
 
@@ -78,6 +80,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account/UserTag", Name = "UserTag")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> UserTag([Microsoft.AspNetCore.Mvc.FromQuery] string? newLogin)
         {
 
@@ -87,6 +90,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account/Email", Name = "EmailPUT")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> EmailPUT([Microsoft.AspNetCore.Mvc.FromBody] string? body)
         {
 
@@ -96,6 +100,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Account/Email", Name = "EmailPOST")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> EmailPOST([Microsoft.AspNetCore.Mvc.FromBody] string? body)
         {
 
@@ -119,6 +124,7 @@ namespace CustomGateway.Controllers.Auth
 
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Auth/ForgotPassword", Name = "ForgotPassword")]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> ForgotPassword([Microsoft.AspNetCore.Mvc.FromBody] string? body)
         {
             var q = await _implementation.ForgotPasswordAsync(body);
@@ -168,6 +174,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users", Name = "UsersPUT")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> UsersPUT([Microsoft.AspNetCore.Mvc.FromBody] UpdateUserInfoDto? body)
         {
 
@@ -177,6 +184,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users/Email", Name = "EmailPUT2")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> EmailPUT2([Microsoft.AspNetCore.Mvc.FromBody] SendTokenToUpdateUserEmailDto? body)
         {
 
@@ -194,6 +202,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users/UserTag", Name = "UserTag2")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> UserTag2([Microsoft.AspNetCore.Mvc.FromBody] UpdateUserLoginDto? body)
         {
             return await _implementation.UserTag2Async(body);

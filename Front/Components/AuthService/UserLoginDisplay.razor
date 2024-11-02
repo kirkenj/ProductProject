@@ -1,0 +1,18 @@
+﻿@using Front.Models
+@inject Front.Services.CustomAuthStateProvider authStateProvider
+
+@(authStateProvider.CurrentUser?.Name ?? "Unauthorized")
+
+@code {
+    protected override void OnInitialized()
+    {
+        authStateProvider.AuthenticationStateChanged += AuthStateChanged;
+        base.OnInitialized();
+    }
+
+
+    private void AuthStateChanged(Task<AuthenticationState> authenticationState)
+    {
+        StateHasChanged();
+    }
+}

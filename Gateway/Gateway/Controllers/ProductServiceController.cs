@@ -56,6 +56,7 @@ namespace CustomGateway.Controllers.Product
 
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Product", Name = "ProductPUT")]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> ProductPUT([Microsoft.AspNetCore.Mvc.FromBody] UpdateProductDto? body)
         {
 
@@ -72,6 +73,7 @@ namespace CustomGateway.Controllers.Product
 
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpDelete, Microsoft.AspNetCore.Mvc.Route("api/Product/{id}", Name = "ProductDELETE")]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> ProductDELETE(System.Guid id)
         {
 
