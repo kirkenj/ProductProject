@@ -6,6 +6,7 @@ using AuthAPI.Contracts;
 using AuthAPI.FIlters;
 using Constants;
 using CustomResponse;
+using Extensions.ClaimsPrincipalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,10 +51,15 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut]
-        [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
+        [Authorize]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateUser(UpdateUserInfoDto request)
         {
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && request.Id != User.GetUserId())
+            {
+                return Forbid();
+            }
+
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
                 UpdateUserInfoDto = request
@@ -67,6 +73,11 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateEmail([FromBody] UpdateUserEmailDto request)
         {
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && request.Id != User.GetUserId())
+            {
+                return Forbid();
+            }
+
             Response<string> result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {
                 UpdateUserEmailDto = request
@@ -76,10 +87,15 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPost("Email")]
-        [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
+        [Authorize]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> ConfirmEmailUpdate(ConfirmEmailChangeDto request)
         {
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && request.Id != User.GetUserId())
+            {
+                return Forbid();
+            }
+
             Response<string> result = await _mediator.Send(new ConfirmEmailChangeComand
             {
                 ConfirmEmailChangeDto = request
@@ -94,10 +110,15 @@ namespace AuthAPI.Controllers
         }
 
         [HttpPut("UserTag")]
-        [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
+        [Authorize]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateLogin(UpdateUserLoginDto request)
         {
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && request.Id != User.GetUserId())
+            {
+                return Forbid();
+            }
+
             Response<string> result = await _mediator.Send(new UpdateUserLoginComand
             {
                 UpdateUserLoginDto = request
