@@ -218,7 +218,7 @@ else if (thrownException != null)
 
             try
             {
-                await gatewayClient.EmailPOSTAsync(resultString);
+                await gatewayClient.EmailPOST2Async(new() { Token = resultString, Id = userDto.Id });
 
                 inputBox.OnClose -= OnEmailChangeInputBoxClosed;
 

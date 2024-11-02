@@ -257,10 +257,9 @@ namespace Clients.CustomGateway
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
         private ITokenGetter<IGatewayClient> _tokenGetter;
 
-
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public GatewayClient(IOptions<GatewayClientSettings> clientSettings, System.Net.Http.HttpClient httpClient, ITokenGetter<IGatewayClient> tokenGetter)
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = clientSettings.Value.Uri;
             _httpClient = httpClient;
@@ -273,6 +272,13 @@ namespace Clients.CustomGateway
             Initialize();
         }
 
+        private static System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
+        {
+            var settings = new System.Text.Json.JsonSerializerOptions();
+            UpdateJsonSerializerSettings(settings);
+            return settings;
+        }
+
         private Task PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url)
         {
             return Task.CompletedTask;
@@ -283,13 +289,6 @@ namespace Clients.CustomGateway
             var result = await _tokenGetter.GetToken();
             if (result == null) return;
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", result);
-        }
-
-        private static System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
-        {
-            var settings = new System.Text.Json.JsonSerializerOptions();
-            UpdateJsonSerializerSettings(settings);
-            return settings;
         }
 
         public string BaseUrl
@@ -1754,12 +1753,9 @@ namespace Clients.CustomGateway
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new GatewayException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {

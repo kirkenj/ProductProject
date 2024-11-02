@@ -194,6 +194,7 @@ namespace CustomGateway.Controllers.Auth
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Users/Email", Name = "EmailPOST2")]
         [Authorize]
+        [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> EmailPOST2([Microsoft.AspNetCore.Mvc.FromBody] ConfirmEmailChangeDto? body)
         {
             return await _implementation.EmailPOST2Async(body);
