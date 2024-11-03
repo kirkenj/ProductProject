@@ -36,9 +36,20 @@
                 }
                 @if (EmailEditConfirmButtonVisible)
                 {
-                    <td align="left" class="btn btn-primary" itemid="OnEditEmailConfirmButton" @onclick="OnEditEmailConfirmClicked" width="50%">Ok</td>
-                    <td align="left" class="btn alert" itemid="OnEditEmailConfirmButton" @onclick="OnEditEmailCancelClicked" width="50%">Cancel</td>
+                    <td align="left" class="btn btn-primary" @onclick="OnEditEmailConfirmClicked">Ok</td>
+                    <td align="left" class="btn btn-danger" @onclick="OnEditEmailCancelClicked">Cancel</td>
+                    <td align="left" class="nav-link" @onclick="OnIHaveTokenClicked">I have token</td>
                 }
+            }
+        </tr>
+        <tr>
+            <td>Role</td>
+            <td align="right">@userDto.Role.Name</td>
+            @if (IsAdmin)
+            {
+                <td align="left">
+                    <button class="btn btn-primary" @onclick="OnEditRoleClicked">Edit</button>
+                </td>
             }
         </tr>
         <tr>
@@ -52,24 +63,8 @@
             }
         </tr>
         <tr>
-            <td>Address</td>
+            <td> Address</td>
             <td align="right">@userDto.Address</td>
-            @if (IsAdminOrOwner)
-            {
-                <td align="left">
-                    <button class="btn btn-primary" @onclick="OnEditRoleClicked">Edit</button>
-                </td>
-            }
-        </tr>
-        <tr>
-            <td>Role</td>
-            <td align="right">@userDto.Role.Name</td>
-            @if (IsAdmin)
-            {
-                <td align="left">
-                    <button class="btn btn-primary" @onclick="OnEditRoleClicked">Edit</button>
-                </td>
-            }
         </tr>
     </table>
 }
@@ -77,7 +72,7 @@ else if (thrownException != null)
 {
     <div>@thrownException.Message</div>
     <div>@thrownException.HResult</div>
-    <div>@thrownException.StatusCode</div>
+    <div>@thrownException.Response</div>
 }
 
 
@@ -91,7 +86,7 @@ else if (thrownException != null)
     private bool IsAdmin => CurrentUser != null && CurrentUser.IsAdmin;
 
     private UserDto? userDto;
-    private Clients.CustomGateway.GatewayException thrownException;
+    private Clients.CustomGateway.GatewayException? thrownException;
 
     private bool EmailEditButtonVisible = true;
     private bool EmailEditConfirmButtonVisible = false;
@@ -126,6 +121,29 @@ else if (thrownException != null)
         StateHasChanged();
     }
 
+
+    private void OnEditRoleClicked(MouseEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void OnEditNameAndAdressClicked(MouseEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    #region Email
+
+    private void OnEditEmailCancelClicked(MouseEventArgs e)
+    {
+        EmailEditConfirmButtonVisible = false;
+        EmailEditButtonVisible = true;
+        EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
+        EmailInputTextBox.Disabled = true;
+        EmailChangeInputMessage = null;
+        StateHasChanged();
+    }
+
     private void OnEditEmailClicked(MouseEventArgs e)
     {
         EmailEditConfirmButtonVisible = true;
@@ -133,7 +151,6 @@ else if (thrownException != null)
         EmailInputTextBox.Disabled = false;
         StateHasChanged();
     }
-
 
     private async Task OnEditEmailConfirmClicked(MouseEventArgs e)
     {
@@ -156,8 +173,7 @@ else if (thrownException != null)
             try
             {
                 var message = await gatewayClient.EmailPUTAsync(EmailInputTextBox.Value);
-                inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'", message);
-                inputBox.OnClose += OnEmailChangeInputBoxClosed;
+                ShowEmailChangeConfirmInputBox();
             }
             catch (Exception ex)
             {
@@ -165,75 +181,64 @@ else if (thrownException != null)
                 return;
             }
         }
-
-        EmailEditConfirmButtonVisible = false;
-        EmailEditButtonVisible = true;
-        EmailInputTextBox.Disabled = true;
-
-        StateHasChanged();
+        else
+        {
+            OnEditEmailCancelClicked(e);
+        }
     }
 
-    private void OnEditRoleClicked(MouseEventArgs e)
+    private void ShowEmailChangeConfirmInputBox(string? message = null)
     {
-        throw new NotImplementedException();
+        inputBox.ModalShow($"Input token sent on email", message);
+        inputBox.OnClose += OnEmailChangeInputBoxClosed;
     }
 
-    private void OnEditNameAndAdressClicked(MouseEventArgs e)
+    private void OnIHaveTokenClicked(MouseEventArgs e)
     {
-        throw new NotImplementedException();
+        ShowEmailChangeConfirmInputBox();
     }
-
-    private void OnEditEmailCancelClicked(MouseEventArgs e)
-    {
-        EmailEditConfirmButtonVisible = false;
-        EmailEditButtonVisible = true;
-        EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
-        EmailInputTextBox.Disabled = true;
-        EmailChangeInputMessage = null;
-        StateHasChanged();
-    }
-
 
     private async void OnEmailChangeInputBoxClosed(bool cancelled, string? resultString)
     {
+        resultString = resultString?.Trim() ?? string.Empty;
+
         if (userDto == null)
         {
             Console.WriteLine("User is null");
             return;
         }
 
-        if (cancelled)
+        if (cancelled) return;
+
+        if (string.IsNullOrEmpty(resultString))
         {
-            EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
-            EmailInputTextBox.Disabled = true;
+            inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'");
+            return;
         }
-        else
+
+        try
         {
-            if (string.IsNullOrEmpty(resultString))
+            await gatewayClient.EmailPOST2Async(new() { Token = resultString, Id = userDto.Id });
+
+            Modals.MessageBox.OnCloseCallback onCloseDelegate = () =>
             {
-                inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'");
-            }
+                authStateProvider.Logout();
 
+                navManager.NavigateTo("");
+            };
 
+            messageBox.OnClose += onCloseDelegate;
+            messageBox.OnClose += () => messageBox.OnClose -= onCloseDelegate;
 
-            try
-            {
-                await gatewayClient.EmailPOST2Async(new() { Token = resultString, Id = userDto.Id });
+            messageBox.ModalShow("Now you have to login with new parameters");
 
-                inputBox.OnClose -= OnEmailChangeInputBoxClosed;
-
-                messageBox.ModalShow("Now you have to login with new parameters");
-
-                messageBox.OnClose += () =>
-                {
-                    authStateProvider.Logout();
-                    navManager.NavigateTo("");
-                };
-            }
-            catch (Clients.CustomGateway.GatewayException ex)
-            {
-                inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'", ex.Message);
-            }
+            inputBox.OnClose -= OnEmailChangeInputBoxClosed;
+        }
+        catch (Clients.CustomGateway.GatewayException ex)
+        {
+            inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'", ex.Message);
         }
     }
+
+    #endregion
 }
