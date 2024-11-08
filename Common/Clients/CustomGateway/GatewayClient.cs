@@ -173,12 +173,12 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body);
+        System.Threading.Tasks.Task<string> EmailPUT2Async(UpdateUserEmailDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<string> EmailPUT2Async(UpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
@@ -197,6 +197,15 @@ namespace Clients.CustomGateway
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<string> UserTag2Async(UpdateUserLoginDto body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="GatewayException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<string> RoleAsync(UpdateUserRoleDTO body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="GatewayException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<string> RoleAsync(UpdateUserRoleDTO body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
@@ -259,7 +268,7 @@ namespace Clients.CustomGateway
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public GatewayClient(IOptions<GatewayClientSettings> clientSettings, System.Net.Http.HttpClient httpClient, ITokenGetter<IGatewayClient> tokenGetter)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = clientSettings.Value.Uri;
             _httpClient = httpClient;
@@ -272,13 +281,6 @@ namespace Clients.CustomGateway
             Initialize();
         }
 
-        private static System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
-        {
-            var settings = new System.Text.Json.JsonSerializerOptions();
-            UpdateJsonSerializerSettings(settings);
-            return settings;
-        }
-
         private Task PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url)
         {
             return Task.CompletedTask;
@@ -289,6 +291,13 @@ namespace Clients.CustomGateway
             var result = await _tokenGetter.GetToken();
             if (result == null) return;
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", result);
+        }
+
+        private static System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
+        {
+            var settings = new System.Text.Json.JsonSerializerOptions();
+            UpdateJsonSerializerSettings(settings);
+            return settings;
         }
 
         public string BaseUrl
@@ -308,6 +317,8 @@ namespace Clients.CustomGateway
 
         partial void Initialize();
 
+        //partial Task await PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        //partial void await PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
         /// <returns>Success</returns>
@@ -1621,7 +1632,7 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body)
+        public virtual System.Threading.Tasks.Task<string> EmailPUT2Async(UpdateUserEmailDto body)
         {
             return EmailPUT2Async(body, System.Threading.CancellationToken.None);
         }
@@ -1629,7 +1640,7 @@ namespace Clients.CustomGateway
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<string> EmailPUT2Async(UpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1806,6 +1817,85 @@ namespace Clients.CustomGateway
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "api/Users/UserTag"
                     urlBuilder_.Append("api/Users/UserTag");
+
+                    await PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    await PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new GatewayException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="GatewayException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<string> RoleAsync(UpdateUserRoleDTO body)
+        {
+            return RoleAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="GatewayException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<string> RoleAsync(UpdateUserRoleDTO body, System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/Users/Role"
+                    urlBuilder_.Append("api/Users/Role");
 
                     await PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2498,18 +2588,6 @@ namespace Clients.CustomGateway
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SendTokenToUpdateUserEmailDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("email")]
-        public string Email { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class StringStringKeyValuePair
     {
 
@@ -2549,6 +2627,18 @@ namespace Clients.CustomGateway
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateUserEmailDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class UpdateUserInfoDto
     {
 
@@ -2584,6 +2674,18 @@ namespace Clients.CustomGateway
 
         [System.Text.Json.Serialization.JsonPropertyName("address")]
         public string Address { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateUserRoleDTO
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("roleID")]
+        public int RoleID { get; set; }
 
     }
 

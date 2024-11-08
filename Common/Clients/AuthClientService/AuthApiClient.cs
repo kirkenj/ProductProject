@@ -191,12 +191,12 @@ namespace Clients.AuthApi
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body);
+        System.Threading.Tasks.Task<string> EmailPUT2Async(UpdateUserEmailDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<string> EmailPUT2Async(UpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
@@ -238,9 +238,9 @@ namespace Clients.AuthApi
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public AuthApiClient(IOptions<AuthClientSettings> baseUrl, HttpClient httpClient, IHttpContextAccessor contextAccessor)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = baseUrl.Value.Uri;
             _httpClient = httpClient;
@@ -1760,7 +1760,7 @@ namespace Clients.AuthApi
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body)
+        public virtual System.Threading.Tasks.Task<string> EmailPUT2Async(UpdateUserEmailDto body)
         {
             return EmailPUT2Async(body, System.Threading.CancellationToken.None);
         }
@@ -1768,7 +1768,7 @@ namespace Clients.AuthApi
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<string> EmailPUT2Async(UpdateUserEmailDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2259,18 +2259,6 @@ namespace Clients.AuthApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SendTokenToUpdateUserEmailDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("email")]
-        public string Email { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class StringStringKeyValuePair
     {
 
@@ -2279,6 +2267,18 @@ namespace Clients.AuthApi
 
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         public string Value { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateUserEmailDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
 
     }
 

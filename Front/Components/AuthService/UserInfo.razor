@@ -42,16 +42,24 @@
                 }
             }
         </tr>
-        <tr>
-            <td>Role</td>
-            <td align="right">@userDto.Role.Name</td>
-            @if (IsAdmin)
-            {
-                <td align="left">
-                    <button class="btn btn-primary" @onclick="OnEditRoleClicked">Edit</button>
-                </td>
-            }
-        </tr>
+        @if (IsAdmin)
+        {
+            <tr>
+                <td>Role</td>
+                <td align="right"><Front.Components.Common.ListBox @ref=RoleListBox keyValuePairs="@Roles.Select(r => new KeyValuePair<int, string>(r.Id, r.Name))" ParseDelegate="int.Parse" /></td>
+
+
+                @if (EditRoleButtonVisible)
+                {
+                    <td class="btn btn-primary" @onclick="OnEditRoleClicked">Edit</td>
+                }
+                @if (EditRoleConfirmButtonVisible)
+                {
+                    <td align="left" class="btn btn-primary" @onclick="OnEditRoleConfirmClicked">Ok</td>
+                    <td align="left" class="btn btn-danger" @onclick="OnEditRoleCancelClicked">Cancel</td>
+                }
+            </tr>
+        }
         <tr>
             <td>Name</td>
             <td align="right">@userDto.Name</td>
@@ -91,16 +99,25 @@ else if (thrownException != null)
     private bool EmailEditButtonVisible = true;
     private bool EmailEditConfirmButtonVisible = false;
 
+    private bool EditRoleButtonVisible = true;
+    private bool EditRoleConfirmButtonVisible = false;
+
     private Front.Components.Common.TextBox EmailInputTextBox = new();
+    private Front.Components.Common.ListBox<int> RoleListBox = new();
     private Front.Components.Modals.InputBox inputBox = null!;
     private Front.Components.Modals.MessageBox messageBox = null!;
 
     private string? EmailChangeInputMessage;
 
+    private static IEnumerable<RoleDto> Roles = null!;
+
     protected override void OnSecondRender()
     {
         EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
         EmailInputTextBox.Disabled = true;
+
+        RoleListBox.Value = userDto?.Role.Id ?? 1;
+        RoleListBox.Disabled = true;
     }
 
 
@@ -110,8 +127,11 @@ else if (thrownException != null)
         {
             userDto = null;
             thrownException = null;
-            var f = await gatewayClient.RolesAllAsync();
+            Roles = await gatewayClient.RolesAllAsync();
             userDto = await gatewayClient.AccountGETAsync();
+
+            EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
+            EmailInputTextBox.Disabled = true;
         }
         catch (Clients.CustomGateway.GatewayException ex)
         {
@@ -119,12 +139,6 @@ else if (thrownException != null)
         }
 
         StateHasChanged();
-    }
-
-
-    private void OnEditRoleClicked(MouseEventArgs e)
-    {
-        throw new NotImplementedException();
     }
 
     private void OnEditNameAndAdressClicked(MouseEventArgs e)
@@ -220,17 +234,24 @@ else if (thrownException != null)
         {
             await gatewayClient.EmailPOST2Async(new() { Token = resultString, Id = userDto.Id });
 
-            Modals.MessageBox.OnCloseCallback onCloseDelegate = () =>
+            if ((authStateProvider.CurrentUser?.Id ?? Guid.Empty) == userDto.Id)//check if the method is wotking with authenticated user. If so user will have to relogin
             {
-                authStateProvider.Logout();
 
-                navManager.NavigateTo("");
-            };
+                Modals.MessageBox.OnCloseCallback onCloseDelegate = () =>
+                {
+                    authStateProvider.Logout();
 
-            messageBox.OnClose += onCloseDelegate;
-            messageBox.OnClose += () => messageBox.OnClose -= onCloseDelegate;
+                    navManager.NavigateTo("");
+                };
 
-            messageBox.ModalShow("Now you have to login with new parameters");
+                messageBox.OnClose += onCloseDelegate;
+                messageBox.OnClose += () => messageBox.OnClose -= onCloseDelegate;
+                messageBox.ModalShow("Now you have to login with new parameters");
+            }
+            else
+            {
+                messageBox.ModalShow("All current sessions of this user will be closed");
+            }
 
             inputBox.OnClose -= OnEmailChangeInputBoxClosed;
         }
@@ -241,4 +262,48 @@ else if (thrownException != null)
     }
 
     #endregion
+
+    #region Role
+    private void OnEditRoleClicked(MouseEventArgs e)
+    {
+        RoleListBox.Disabled = false;
+        EditRoleButtonVisible = false;
+        EditRoleConfirmButtonVisible = true;
+    }
+
+    private void OnEditRoleConfirmClicked(MouseEventArgs e)
+    {
+        if (RoleListBox.Value == (userDto?.Role.Id ?? RoleListBox.Value))
+        {
+            OnEditRoleCancelClicked(e);
+            return;
+        }
+
+        //gatewayClient.UsersPUTAsync()
+    }
+
+    private void OnEditRoleCancelClicked(MouseEventArgs e)
+    {
+        RoleListBox.Disabled = true;
+        EditRoleButtonVisible = true;
+        EditRoleConfirmButtonVisible = false;
+    }
+    #endregion
 }
+
+<style>
+    select {
+        border: 0;
+        width: 100%;
+        height:100%;
+    }
+
+    input{
+        width: 100%;
+    }
+
+    input:disabled {
+        border:0;
+        background-color: rgba(255, 255, 255, .0);
+    }    
+</style>

@@ -2,11 +2,11 @@
 
 @if (Disabled)
 {
-    <input type="@Type" @bind-value=_value disabled/>
+    <input type="@Type" @bind-value=Value class="@Class" disabled/>
 }
 else
 {
-    <input type="@Type" @bind-value=_value />
+    <input type="@Type" @bind-value=Value class="@Class" />
 }
 
 @code {
@@ -42,6 +42,9 @@ else
 
     [Parameter]
     public string Type { get; set; } = null!;
+
+    [Parameter]
+    public string? Class { get; set; }
 
     protected override void OnFirstRender()
     {

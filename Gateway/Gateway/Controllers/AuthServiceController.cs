@@ -185,7 +185,7 @@ namespace CustomGateway.Controllers.Auth
         [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users/Email", Name = "EmailPUT2")]
         [Authorize]
         [Produces("text/plain")]
-        public async System.Threading.Tasks.Task<string> EmailPUT2([Microsoft.AspNetCore.Mvc.FromBody] SendTokenToUpdateUserEmailDto? body)
+        public async System.Threading.Tasks.Task<string> EmailPUT2([Microsoft.AspNetCore.Mvc.FromBody] UpdateUserEmailDto? body)
         {
 
             return await _implementation.EmailPUT2Async(body);
@@ -209,6 +209,14 @@ namespace CustomGateway.Controllers.Auth
             return await _implementation.UserTag2Async(body);
         }
 
+        /// <returns>Success</returns>
+        [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users/Role", Name = "Role")]
+        [Authorize]
+        [Produces("text/plain")]
+        public async System.Threading.Tasks.Task<string> Role([Microsoft.AspNetCore.Mvc.FromBody] UpdateUserRoleDTO? body)
+        {
+            return await _implementation.RoleAsync(body);
+        }
     }
 }
 
