@@ -2,50 +2,22 @@
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.  
+Welcome to your new app.
 
-<Front.Components.Common.ListBox @ref="listBox" keyValuePairs=@keyValuePairs ParseDelegate="(str) => int.Parse(str)" />
-
-<Front.Components.Common.TextBox Class="input-group-text" />
-<Front.Components.Common.TextBox Class="input-group-text" @ref="lala"/>
-<Front.Components.Common.TextBox />
+<Front.Components.Modals.MessageBox @ref=messageBox />
 
 
-<input type="number" @bind-value="theNum" @onblur="onblur"/>
 
-<button @onclick="onDiasbleClick">@(listBox.Disabled ? "Enable":"Disable")</button>
+<button @onclick="onDiasbleClick">awfawf</button>
 
 @code{
-    Front.Components.Common.ListBox<int> listBox = new();
-    Front.Components.Common.TextBox lala = new();
+    private Front.Components.Modals.MessageBox messageBox = null!;
 
-    private int theNum;
-
-    private IEnumerable<KeyValuePair<int, string>> keyValuePairs = new List<KeyValuePair<int, string>>()
-    {
-        new(1, "lalalal"),
-        new(2, "vaebaw"),
-        new(3, "fawgak"),
-    };
 
     private void onDiasbleClick(MouseEventArgs e)
     {
-        listBox.Disabled = !listBox.Disabled;
-        lala.Disabled = !lala.Disabled;
+        messageBox.ModalShow("wfawf");
     }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            listBox.Value = 3;
-        }
 
-        base.OnAfterRender(firstRender);
-    }
-
-    private void onblur(FocusEventArgs e)
-    {
-        listBox.Value = theNum;
-    }
 }

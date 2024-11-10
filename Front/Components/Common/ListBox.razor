@@ -3,7 +3,7 @@
 
 @if (Disabled)
 {
-    <select disabled @onchange="@OnChange">
+    <select disabled @onchange="@OnChange" class="@Class">
 
         @foreach (var p in keyValuePairs)
         {
@@ -24,7 +24,7 @@
 }
 else
 {
-    <select @onchange="@OnChange">
+    <select @onchange="@OnChange" class="@Class">
         @foreach (var p in keyValuePairs)
         {
 
@@ -55,6 +55,9 @@ else
 
     [Parameter]
     public Func<string, TKey> ParseDelegate { get; set; } = null!;
+
+    [Parameter]
+    public string? Class { get; set; }
 
     public bool Disabled
     {

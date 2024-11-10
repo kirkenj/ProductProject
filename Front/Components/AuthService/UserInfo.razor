@@ -26,13 +26,13 @@
         }
         <tr>
             <td>Email</td>
-            <td align="right"><Front.Components.Common.TextBox @ref=EmailInputTextBox Type="text" /> </td>
+            <td align="right"><Front.Components.Common.TextBox @ref=EmailInputTextBox Type="text" Class="input-group-text text-lg-end" /> </td>
             @if (IsAdminOrOwner)
             {
 
                 @if (EmailEditButtonVisible)
                 {
-                    <td align="left" class="btn btn-primary" itemid="OnEditEmailButton" @onclick="OnEditEmailClicked" width="100%">Edit</td>
+                    <td align="left" class="btn btn-primary" itemid="OnEditEmailButton" @onclick="OnEditEmailClicked">Edit</td>
                 }
                 @if (EmailEditConfirmButtonVisible)
                 {
@@ -46,7 +46,7 @@
         {
             <tr>
                 <td>Role</td>
-                <td align="right"><Front.Components.Common.ListBox @ref=RoleListBox keyValuePairs="@Roles.Select(r => new KeyValuePair<int, string>(r.Id, r.Name))" ParseDelegate="int.Parse" /></td>
+                <td align="right"><Front.Components.Common.ListBox @ref=RoleListBox keyValuePairs="@Roles.Select(r => new KeyValuePair<int, string>(r.Id, r.Name))" ParseDelegate="int.Parse" Class="text-lg-end"/></td>
 
 
                 @if (EditRoleButtonVisible)
@@ -60,21 +60,41 @@
                 }
             </tr>
         }
+        else
+        {
+            RoleListBox = null;
+        }
         <tr>
             <td>Name</td>
-            <td align="right">@userDto.Name</td>
+            <td align="right"><Front.Components.Common.TextBox @ref=NameInputTextBox Type="text" Class="input-group-text text-lg-end"/> </td>
+
             @if (IsAdminOrOwner)
             {
-                <td align="left">
-                    <button class="btn btn-primary" @onclick="OnEditNameAndAdressClicked">Edit</button>
-                </td>
+                @if(EditInfoButtonVisible)
+                {
+                    <td class="btn btn-primary" @onclick="OnEditNameAndAdressClicked">Edit</td>
+                }
+                @if (EditInfoConfirmButtonVisible)
+                {
+                    <td align="left" class="btn btn-primary" @onclick="OnEditNameAndAdressConfirmClicked">Ok</td>
+                    <td align="left" class="btn btn-danger" @onclick="OnEditNameAndAdressCancelClicked">Cancel</td>
+                }
             }
         </tr>
         <tr>
             <td> Address</td>
-            <td align="right">@userDto.Address</td>
+            <td align="right"><Front.Components.Common.TextBox @ref=AddressInputTextBox Type="text" Class="input-group-text text-lg-end"/> </td>
         </tr>
+        @if (IsAdmin)
+        {
+            <tr>
+                <td></td>
+                <td></td>
+                <td><button class="btn btn-danger" @onclick="OnTerminateSessionsClicked">Terminate sessions</button></td>
+            </tr>
+        }
     </table>
+
 }
 else if (thrownException != null)
 {
@@ -102,8 +122,13 @@ else if (thrownException != null)
     private bool EditRoleButtonVisible = true;
     private bool EditRoleConfirmButtonVisible = false;
 
+    private bool EditInfoButtonVisible = true;
+    private bool EditInfoConfirmButtonVisible = false;
+
     private Front.Components.Common.TextBox EmailInputTextBox = new();
-    private Front.Components.Common.ListBox<int> RoleListBox = new();
+    private Front.Components.Common.TextBox NameInputTextBox = new();
+    private Front.Components.Common.TextBox AddressInputTextBox = new();
+    private Front.Components.Common.ListBox<int>? RoleListBox = new();
     private Front.Components.Modals.InputBox inputBox = null!;
     private Front.Components.Modals.MessageBox messageBox = null!;
 
@@ -116,8 +141,17 @@ else if (thrownException != null)
         EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
         EmailInputTextBox.Disabled = true;
 
-        RoleListBox.Value = userDto?.Role.Id ?? 1;
-        RoleListBox.Disabled = true;
+        NameInputTextBox.Value = userDto?.Name ?? string.Empty;
+        NameInputTextBox.Disabled = true;
+
+        AddressInputTextBox.Value = userDto?.Address ?? string.Empty;
+        AddressInputTextBox.Disabled = true;
+
+        if (RoleListBox != null)
+        {
+            RoleListBox.Value = userDto?.Role.Id ?? 1;
+            RoleListBox.Disabled = true;
+        }
     }
 
 
@@ -141,10 +175,7 @@ else if (thrownException != null)
         StateHasChanged();
     }
 
-    private void OnEditNameAndAdressClicked(MouseEventArgs e)
-    {
-        throw new NotImplementedException();
-    }
+
 
     #region Email
 
@@ -187,7 +218,7 @@ else if (thrownException != null)
             try
             {
                 var message = await gatewayClient.EmailPUTAsync(EmailInputTextBox.Value);
-                ShowEmailChangeConfirmInputBox();
+                ShowEmailChangeConfirmInputBox(message);
             }
             catch (Exception ex)
             {
@@ -236,21 +267,12 @@ else if (thrownException != null)
 
             if ((authStateProvider.CurrentUser?.Id ?? Guid.Empty) == userDto.Id)//check if the method is wotking with authenticated user. If so user will have to relogin
             {
-
-                Modals.MessageBox.OnCloseCallback onCloseDelegate = () =>
-                {
-                    authStateProvider.Logout();
-
-                    navManager.NavigateTo("");
-                };
-
-                messageBox.OnClose += onCloseDelegate;
-                messageBox.OnClose += () => messageBox.OnClose -= onCloseDelegate;
-                messageBox.ModalShow("Now you have to login with new parameters");
+                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
+                messageBox.ModalShow("Success","Now you have to login with new parameters");
             }
             else
             {
-                messageBox.ModalShow("All current sessions of this user will be closed");
+                messageBox.ModalShow("Info", "All current sessions of this user are closed");
             }
 
             inputBox.OnClose -= OnEmailChangeInputBoxClosed;
@@ -266,29 +288,140 @@ else if (thrownException != null)
     #region Role
     private void OnEditRoleClicked(MouseEventArgs e)
     {
-        RoleListBox.Disabled = false;
+        if (RoleListBox == null)
+        {
+            return;    
+        }
+
         EditRoleButtonVisible = false;
+        RoleListBox.Disabled = false;
         EditRoleConfirmButtonVisible = true;
     }
 
-    private void OnEditRoleConfirmClicked(MouseEventArgs e)
+    private async Task OnEditRoleConfirmClicked(MouseEventArgs e)
     {
+        if (RoleListBox == null)
+        {
+            return;
+        }
+
         if (RoleListBox.Value == (userDto?.Role.Id ?? RoleListBox.Value))
         {
             OnEditRoleCancelClicked(e);
             return;
         }
 
-        //gatewayClient.UsersPUTAsync()
+        if (userDto == null)
+        {
+            messageBox.ModalShow("Error", "Editing object is not set");
+            return;
+        }
+
+        if (authStateProvider.CurrentUser == null || CurrentUser == null)
+        {
+            messageBox.ModalShow("No access", "User is not authorized");
+            OnEditRoleCancelClicked(new());
+            return;
+        }
+
+        try
+        {
+            var msg = await gatewayClient.RoleAsync(new() { Id = authStateProvider.CurrentUser.Id, RoleID = RoleListBox.Value });
+
+            if (CurrentUser.Id == userDto.Id)
+            {
+                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
+                messageBox.ModalShow("Success", "Relogin needed");
+            }
+            else
+            {
+                messageBox.ModalShow("Success", msg);
+            }
+        }
+        catch (GatewayException ex)
+        {
+            messageBox.ModalShow(nameof(GatewayException), ex.Response);
+        }
     }
 
     private void OnEditRoleCancelClicked(MouseEventArgs e)
     {
+        if (RoleListBox == null)
+        {
+            return;
+        }
+
         RoleListBox.Disabled = true;
         EditRoleButtonVisible = true;
         EditRoleConfirmButtonVisible = false;
     }
     #endregion
+
+    #region Info
+    private void OnEditNameAndAdressClicked(MouseEventArgs e)
+    {
+        NameInputTextBox.Disabled = false;
+        AddressInputTextBox.Disabled = false;
+        EditInfoButtonVisible = false;
+        EditInfoConfirmButtonVisible = true;
+
+    }
+
+    private void OnEditNameAndAdressCancelClicked(MouseEventArgs e)
+    {
+
+        NameInputTextBox.Disabled = true;
+        AddressInputTextBox.Disabled = true;
+        EditInfoButtonVisible = true;
+        EditInfoConfirmButtonVisible = false;
+    }
+
+    private async void OnEditNameAndAdressConfirmClicked(MouseEventArgs e)
+    {
+        if (userDto == null || (userDto.Address == AddressInputTextBox.Value && userDto.Name == NameInputTextBox.Value))
+        {
+            OnEditNameAndAdressCancelClicked(new());
+            return;
+        }
+
+        try
+        {
+            var msg = await gatewayClient.UsersPUTAsync(new() { Id = userDto.Id, Address = AddressInputTextBox.Value, Name = NameInputTextBox.Value });
+            var uri = navManager.Uri;
+            navManager.NavigateTo("");
+            navManager.NavigateTo(uri);
+        }
+        catch (GatewayException ex) when (ex.HResult == 400)
+        {
+            messageBox.ModalShow(nameof(GatewayException), ex.Response);
+        }
+    }
+    #endregion
+    private async Task OnTerminateSessionsClicked(MouseEventArgs e)
+    {
+        if (!IsAdmin || userDto == null)
+        {
+            return;
+        }
+
+        try
+        {
+            await gatewayClient.InvalidateUsersTokenAsync(userDto.Id);
+            if (userDto.Id == authStateProvider.CurrentUser?.Id)
+            {
+                messageBox.ModalShow("Attention", "Relogin needed"); 
+                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
+            }
+            else
+            {
+                messageBox.ModalShow("All user's current sessions have been terminated");
+            }
+        }
+        catch (GatewayException ex)
+        {
+            messageBox.ModalShow(nameof(GatewayException), ex.Response);
+        }
+    }
 }
 
 <style>
