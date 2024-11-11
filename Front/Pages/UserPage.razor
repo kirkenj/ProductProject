@@ -9,10 +9,19 @@
 {
     <Front.Components.AuthService.UserInfo Id="@stateProvider.CurrentUser.Id"/>
 
-    <button class="btn btn-primary" @onclick="OnLogOutClicked">Log out</button>
+    if (LoadingClientsPage)
+    {
+        <button class="btn btn-primary" @onclick="OnLogOutClicked">Log out</button>
+    }
 }
 
 @code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    public bool LoadingClientsPage => Id == null || (stateProvider.CurrentUser?.Id ?? Guid.Empty) == Id;
+
+
     private void OnLogOutClicked(MouseEventArgs e)
     {
         stateProvider.Logout();

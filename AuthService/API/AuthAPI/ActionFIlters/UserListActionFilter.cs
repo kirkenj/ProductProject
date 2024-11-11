@@ -26,7 +26,7 @@ namespace AuthAPI.FIlters
                 return;
             }
 
-            if (objectResult.Value is IReadOnlyCollection<UserListDto> userList)
+            if (objectResult.Value is IReadOnlyCollection<UserDto> userList)
             {
                 HadnleUserListDtoCollection(userList);
             }
@@ -45,7 +45,7 @@ namespace AuthAPI.FIlters
             SetDefaultValues(userDto);
         }
 
-        private static void HadnleUserListDtoCollection(IReadOnlyCollection<UserListDto> userList)
+        private static void HadnleUserListDtoCollection(IReadOnlyCollection<UserDto> userList)
         {
             foreach (var item in userList)
             {
@@ -60,12 +60,6 @@ namespace AuthAPI.FIlters
         {
             user.Role = DefaultRole;
             user.Address = ADDRESS_PLACEHOLDER;
-            return user;
-        }
-
-        private static UserListDto SetDefaultValues(UserListDto user)
-        {
-            user.Role = DefaultRole;
             return user;
         }
     }

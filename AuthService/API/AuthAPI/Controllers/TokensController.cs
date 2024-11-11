@@ -14,11 +14,9 @@ namespace AuthAPI.Controllers
     public class TokensController : ControllerBase
     {
         private readonly ITokenTracker<Guid> _tokenTracker;
-        private readonly IHashProvider _hashProvider;
 
-        public TokensController(ITokenTracker<Guid> tokenTracker, IHashProvider hashProvider)
+        public TokensController(ITokenTracker<Guid> tokenTracker)
         {
-            _hashProvider = hashProvider;
             _tokenTracker = tokenTracker;
         }
 

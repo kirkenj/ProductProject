@@ -10,7 +10,6 @@ namespace Application.Profiles
         public MappingProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<User, UserListDto>();
             CreateMap<User, CreateUserDto>().ReverseMap();
             CreateMap<User, UpdateUserInfoDto>().ReverseMap();
             CreateMap<Role, RoleDto>().ReverseMap();

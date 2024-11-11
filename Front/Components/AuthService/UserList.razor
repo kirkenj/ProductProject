@@ -1,0 +1,42 @@
+﻿@using Clients.CustomGateway
+@inject IGatewayClient gatewayClient
+
+@if (Users != null && Users.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Login</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Name</th>
+                <th>Role name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in Users)
+            {
+                <tr>
+                    <td>@forecast.Login</td>
+                    <td>@forecast.Email</td>
+                    <td>@forecast.Address</td>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.Role.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div>Error or user list is empy</div>
+}
+
+@code {
+    private IEnumerable<UserDto> Users { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await gatewayClient.ListAsync(null, null, null, null, null, null, null, null);
+    }
+}

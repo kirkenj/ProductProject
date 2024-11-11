@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Features.User.Requests.Queries
 {
-    public class GetUserListRequest : IRequest<Response<List<UserListDto>>>
+    public class GetUserListRequest : IRequest<Response<List<UserDto>>>
     {
         public UserFilter UserFilter { get; set; } = null!;
         public int? PageSize { get; set; }

@@ -1,5 +1,4 @@
-﻿
-using Front.Models;
+﻿using Front.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Clients.CustomGateway;

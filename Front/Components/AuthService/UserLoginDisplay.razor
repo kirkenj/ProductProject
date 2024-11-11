@@ -1,18 +1,34 @@
 ﻿@using Front.Models
-@inject Front.Services.CustomAuthStateProvider authStateProvider
+@using Front.Services
+@inject CustomAuthStateProvider authStateProvider
 
-@(authStateProvider.CurrentUser?.Name ?? "Unauthorized")
+@(DisplayName ?? "Unauthorized")
 
 @code {
-    protected override void OnInitialized()
+    private string? DisplayName { get; set; }
+
+    protected override async void OnInitialized()
     {
         authStateProvider.AuthenticationStateChanged += AuthStateChanged;
         base.OnInitialized();
+        DisplayName = authStateProvider.CurrentUser?.Name;
     }
 
 
-    private void AuthStateChanged(Task<AuthenticationState> authenticationState)
+    private async void AuthStateChanged(Task<AuthenticationState> authenticationState)
     {
+        var res = await authenticationState;
+        
+        try
+        {
+            var user = User.FromClaimsPrincipal(res.User);
+            DisplayName = user.Name;
+        }
+        catch
+        {
+            DisplayName = null;
+        }
+
         StateHasChanged();
     }
 }

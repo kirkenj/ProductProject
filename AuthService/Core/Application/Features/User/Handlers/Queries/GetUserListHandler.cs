@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Application.Features.User.Handlers.Queries
 {
-    public class GetUserListHandler : IRequestHandler<GetUserListRequest, Response<List<UserListDto>>>
+    public class GetUserListHandler : IRequestHandler<GetUserListRequest, Response<List<UserDto>>>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -18,10 +18,10 @@ namespace Application.Features.User.Handlers.Queries
             _mapper = mapper;
         }
 
-        public async Task<Response<List<UserListDto>>> Handle(GetUserListRequest request, CancellationToken cancellationToken)
+        public async Task<Response<List<UserDto>>> Handle(GetUserListRequest request, CancellationToken cancellationToken)
         {
             IReadOnlyCollection<Domain.Models.User> users = await _userRepository.GetPageContent(request.UserFilter, request.Page, request.PageSize);
-            return Response<List<UserListDto>>.OkResponse(_mapper.Map<List<UserListDto>>(users), "Success");
+            return Response<List<UserDto>>.OkResponse(_mapper.Map<List<UserDto>>(users), "Success");
         }
     }
 }

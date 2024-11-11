@@ -31,14 +31,14 @@ namespace AuthAPI.Controllers
 
         [HttpGet("list")]
         [GetUserActionFilter]
-        public async Task<ActionResult<IEnumerable<UserListDto>>> Get([FromQuery] UserFilter filter, int? page, int? pageSize)
+        public async Task<ActionResult<IEnumerable<UserDto>>> Get([FromQuery] UserFilter filter, int? page, int? pageSize)
         {
             if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME))
             {
                 filter.RoleIds = null;
             }
 
-            Response<List<UserListDto>> result = await _mediator.Send(new GetUserListRequest() { UserFilter = filter, Page = page, PageSize = pageSize });
+            Response<List<UserDto>> result = await _mediator.Send(new GetUserListRequest() { UserFilter = filter, Page = page, PageSize = pageSize });
             return result.GetActionResult();
         }
 
