@@ -14,7 +14,7 @@ namespace Application.DTOs.User.Validators.Shared
             RuleFor(p => p.Email)
                 .MustAsync(async (Email, cancellationToken) =>
                 {
-                    var resultUser = await userRepository.GetAsync(new UserFilter { Email = Email });
+                    var resultUser = await userRepository.GetAsync(new UserFilter { AccurateEmail = Email });
                     if (resultUser == null)
                     {
                         return true;

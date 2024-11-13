@@ -36,6 +36,7 @@ namespace AuthAPI.Controllers
             if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME))
             {
                 filter.RoleIds = null;
+                filter.Address = null;
             }
 
             Response<List<UserDto>> result = await _mediator.Send(new GetUserListRequest() { UserFilter = filter, Page = page, PageSize = pageSize });

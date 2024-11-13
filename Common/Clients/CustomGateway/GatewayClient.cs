@@ -20,7 +20,6 @@
 
 namespace Clients.CustomGateway
 {
-    using Clients.Contracts;
     using Microsoft.Extensions.Options;
     using System = global::System;
 
@@ -146,12 +145,12 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
@@ -264,12 +263,11 @@ namespace Clients.CustomGateway
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
-        
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public GatewayClient(IOptions<GatewayClientSettings> clientSettings, System.Net.Http.IHttpClientFactory httpClient)
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-
             BaseUrl = clientSettings.Value.Uri;
             _httpClient = httpClient.CreateClient(nameof(IGatewayClient));
             Initialize();
@@ -1341,15 +1339,15 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize)
         {
-            return ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize, System.Threading.CancellationToken.None);
+            return ListAsync(ids, accurateLogin, loginPart, accurateEmail, emailPart, address, name, roleIds, page, pageSize, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1377,13 +1375,21 @@ namespace Clients.CustomGateway
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("loginPart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(loginPart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (email != null)
+                    if (accurateEmail != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("email")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(email, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("accurateEmail")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(accurateEmail, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (emailPart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("emailPart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(emailPart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     if (address != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("address")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(address, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (name != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     if (roleIds != null)
                     {
@@ -2694,6 +2700,8 @@ namespace Clients.CustomGateway
         public RoleDto Role { get; set; }
 
     }
+
+
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class GatewayException : System.Exception

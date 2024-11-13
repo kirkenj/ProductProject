@@ -11,9 +11,13 @@ namespace Application.Models.User
         [AllowNull]
         public string? LoginPart { get; set; }
         [AllowNull]
-        public string? Email { get; set; }
+        public string? AccurateEmail { get; set; }
+        [AllowNull]
+        public string? EmailPart { get; set; }
         [AllowNull]
         public string? Address { get; set; }
+        [AllowNull]
+        public string? Name { get; set; }
         [AllowNull]
         public IEnumerable<int>? RoleIds { get; set; }
     }

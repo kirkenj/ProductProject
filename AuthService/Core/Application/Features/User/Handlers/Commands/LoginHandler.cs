@@ -46,7 +46,7 @@ namespace Application.Features.User.Handlers.Commands
 
             var userToHandle = isRegistration ?
                 cachedUserValue
-                : await _userRepository.GetAsync(new UserFilter { Email = loginEmail });
+                : await _userRepository.GetAsync(new UserFilter { AccurateEmail = loginEmail });
 
             if (userToHandle == null) return Response<UserDto>.BadRequestResponse("Wrong password or email");
 

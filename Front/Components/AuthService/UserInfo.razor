@@ -436,7 +436,7 @@ else
 
         try
         {
-            var msg = await gatewayClient.RoleAsync(new() { Id = User.Id, RoleID = RoleListBox.Value });
+            var msg = await gatewayClient.RoleAsync(new() { Id = userDto.Id, RoleID = RoleListBox.Value });
 
             if (User.Id == userDto.Id)
             {

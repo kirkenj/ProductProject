@@ -24,11 +24,11 @@ namespace Infrastucture.AuthClient
             _logger = logger;
         }
 
-        public async Task<ClientResponse<ICollection<AuthClientUser>>?> ListAsync(IEnumerable<Guid>? ids = null, string? accurateLogin = null, string? loginPart = null, string? email = null, string? address = null, IEnumerable<int>? roleIds = null, int? page = null, int? pageSize = null)
+        public async Task<ClientResponse<ICollection<AuthClientUser>>?> ListAsync(IEnumerable<Guid>? ids = null, string? accurateLogin = null, string? loginPart = null, string? accurateEmail = null, string? emailPart = null, string? address = null, string? name = null, IEnumerable<int>? roleIds = null, int? page = null, int? pageSize = null)
         {
             try
             {
-                var parametersAsString = StringifyParameters(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
+                var parametersAsString = StringifyParameters(ids, accurateLogin, loginPart, accurateEmail, address, roleIds, page, pageSize);
 
                 var cacheKey = cacheKeyPrefix + parametersAsString;
 
@@ -46,7 +46,7 @@ namespace Infrastucture.AuthClient
 
                 _logger.LogInformation($"Sending request to {nameof(AuthClientService)}");
 
-                var qResult = await _authClient.ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
+                var qResult = await _authClient.ListAsync(ids, accurateLogin, loginPart, accurateEmail, emailPart, address, name, roleIds, page, pageSize);
 
                 result = _mapper.Map<List<AuthClientUser>>(qResult);
 

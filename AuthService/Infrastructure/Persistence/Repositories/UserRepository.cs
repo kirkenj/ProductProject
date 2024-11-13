@@ -34,9 +34,19 @@ namespace Persistence.Repositories
                 set = set.Where(obj => obj.Address.Contains(filter.Address));
             }
 
-            if (!string.IsNullOrEmpty(filter.Email))
+            if (!string.IsNullOrEmpty(filter.Name))
             {
-                set = set.Where(obj => obj.Email != null && obj.Email == filter.Email);
+                set = set.Where(obj => obj.Name.Contains(filter.Name));
+            }
+
+            if (!string.IsNullOrEmpty(filter.AccurateEmail))
+            {
+                set = set.Where(obj => obj.Email != null && obj.Email == filter.AccurateEmail);
+            }
+
+            if (!string.IsNullOrEmpty(filter.EmailPart))
+            {
+                set = set.Where(obj => obj.Email != null && obj.Email.Contains(filter.EmailPart));
             }
 
             if (!string.IsNullOrEmpty(filter.LoginPart))

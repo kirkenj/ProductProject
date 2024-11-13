@@ -35,7 +35,7 @@ namespace Application.Features.User.Handlers.Commands
         {
             string emailAddress = request.ForgotPasswordDto.Email;
 
-            Domain.Models.User? user = await _userRepository.GetAsync(new UserFilter { Email = emailAddress });
+            Domain.Models.User? user = await _userRepository.GetAsync(new UserFilter { AccurateEmail = emailAddress });
 
             var response = Response<string>.OkResponse("New password was sent on your email", "Success");
 

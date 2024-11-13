@@ -158,9 +158,9 @@ namespace CustomGateway.Controllers.Auth
 
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Users/list", Name = "list")]
-        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> List([Microsoft.AspNetCore.Mvc.FromQuery] System.Collections.Generic.IEnumerable<System.Guid>? ids, [Microsoft.AspNetCore.Mvc.FromQuery] string? accurateLogin, [Microsoft.AspNetCore.Mvc.FromQuery] string? loginPart, [Microsoft.AspNetCore.Mvc.FromQuery] string? email, [Microsoft.AspNetCore.Mvc.FromQuery] string? address, [Microsoft.AspNetCore.Mvc.FromQuery] System.Collections.Generic.IEnumerable<int>? roleIds, [Microsoft.AspNetCore.Mvc.FromQuery] int? page, [Microsoft.AspNetCore.Mvc.FromQuery] int? pageSize)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> List([Microsoft.AspNetCore.Mvc.FromQuery] System.Collections.Generic.IEnumerable<System.Guid>? ids, [Microsoft.AspNetCore.Mvc.FromQuery] string? accurateLogin, [Microsoft.AspNetCore.Mvc.FromQuery] string? loginPart, [Microsoft.AspNetCore.Mvc.FromQuery] string? accurateEmail, [Microsoft.AspNetCore.Mvc.FromQuery] string? emailPart, [Microsoft.AspNetCore.Mvc.FromQuery] string? address, [Microsoft.AspNetCore.Mvc.FromQuery] string? name, [Microsoft.AspNetCore.Mvc.FromQuery] System.Collections.Generic.IEnumerable<int>? roleIds, [Microsoft.AspNetCore.Mvc.FromQuery] int? page, [Microsoft.AspNetCore.Mvc.FromQuery] int? pageSize)
         {
-            return await _implementation.ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
+            return await _implementation.ListAsync(ids, accurateLogin, loginPart, accurateEmail, emailPart, address, name, roleIds, page, pageSize);
         }
 
         /// <returns>Success</returns>

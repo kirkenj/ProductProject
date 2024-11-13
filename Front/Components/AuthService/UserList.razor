@@ -1,44 +1,141 @@
 ﻿@using Clients.CustomGateway
+@using Front.Services
+@inject CustomAuthStateProvider authStateProvider
 @inject IGatewayClient gatewayClient
 
-@if (Users != null && Users.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Login</th>
-                <th>Email</th>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Login</th>
+            <th>Email</th>
+            @if (IsAdminView)
+            {
                 <th>Address</th>
-                <th>Name</th>
-                <th>Role name</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in Users)
+            }
+            <th>Name</th>
+            @if (IsAdminView)
+            {
+                <th>Role</th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+
+    <thead>
+        <tr>
+            <th><input class="input-group-text" @bind-value=LoginFilter /></th>
+            <th><input class="input-group-text" @bind-value=EmailFilter /></th>
+            @if (IsAdminView)
+            {
+                <th>
+                    <input class="input-group-text" @bind-value=AddressFilter />
+                </th>
+            }
+            <th><input class="input-group-text" @bind-value=NameFilter /></th>
+            @if (IsAdminView)
+            {
+                <th>
+                    <select @bind=RoleFilter>
+                        <option value="@DEFAULT_ROLE_FILTER_VALUE">Any</option>
+                        <option value="1">Admin</option>
+                        <option value="2">Regular</option>
+                    </select>
+                </th>
+            }
+            <th style='white-space: nowrap'>
+                <button class="btn btn-primary" @onclick="OnFilterClicked">Filter</button>
+                <button class="btn btn-danger" @onclick="OnClearFilterClicked">Clear</button>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Users != null)
+        {
+            @foreach (var user in Users)
             {
                 <tr>
-                    <td>@forecast.Login</td>
-                    <td>@forecast.Email</td>
-                    <td>@forecast.Address</td>
-                    <td>@forecast.Name</td>
-                    <td>@forecast.Role.Name</td>
-                    <td><NavLink class="nav-link" href=@($"user/{forecast.Id}")>View</NavLink>  </td>
+                    <td>@user.Login</td>
+                    <td>@user.Email</td>
+                    @if (IsAdminView)
+                    {
+                        <td>@user.Address</td>
+                    }
+                    <td>@user.Name</td>
+                    @if (IsAdminView)
+                    {
+                        <td>@user.Role.Name</td>
+                    }
+                    <td><NavLink class="nav-link" href=@($"user/{user.Id}")>View</NavLink>  </td>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <div>Error or user list is empy</div>
-}
+            }  
+        }
+    </tbody>
+</table>
+
 
 @code {
     private IEnumerable<UserDto> Users { get; set; } = null!;
 
+    private const int DEFAULT_ROLE_FILTER_VALUE = -1;
+
+    private string? LoginFilter;
+    private string? EmailFilter;
+    private string? NameFilter;
+    private string? AddressFilter;
+    private string? RoleFilter;
+
+    private Front.Models.User? authenticatedUser;
+    private bool IsAdminView => authenticatedUser?.IsAdmin ?? false;
+
     protected override async Task OnInitializedAsync()
     {
-        Users = await gatewayClient.ListAsync(null, null, null, null, null, null, null, null);
+        Users = await gatewayClient.ListAsync(null, null, null, null, null, null, null,null, null, null);
+        authenticatedUser = authStateProvider.CurrentUser;
+    }
+
+
+    private async Task OnFilterClicked(MouseEventArgs e)
+    {
+        IEnumerable<int> roleFilter = Enumerable.Empty<int>();
+        if (IsAdminView)
+        {
+            if (!string.IsNullOrEmpty(RoleFilter))
+            {
+                if (!int.TryParse(RoleFilter, out int role))
+                {
+                    Console.WriteLine("Couldn't parse role filter");
+                    return;
+                }
+
+                if (role != DEFAULT_ROLE_FILTER_VALUE)
+                {
+                    roleFilter = [role];
+                }
+            }
+        }
+        else
+        {
+            AddressFilter = null;
+        }
+
+        Console.WriteLine($"Login:{LoginFilter}; Email:{EmailFilter}; Name:{NameFilter}; Address:{AddressFilter}; Role:{RoleFilter}");
+        Users = await gatewayClient.ListAsync(null, null, LoginFilter, null, EmailFilter, AddressFilter, NameFilter, roleFilter, null, null);
+    }
+
+    private void AuthStateChanged(Task<AuthenticationState> authenticationState)
+    {
+        authenticatedUser = authStateProvider.CurrentUser;
+        StateHasChanged();
+    }
+    private async Task OnClearFilterClicked(MouseEventArgs e)
+    {
+        LoginFilter = null;
+        EmailFilter = null;
+        NameFilter = null;
+        AddressFilter = null;
+        RoleFilter = DEFAULT_ROLE_FILTER_VALUE.ToString();
+        await OnFilterClicked(e);
     }
 }

@@ -164,12 +164,12 @@ namespace Clients.AuthApi
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
@@ -1487,15 +1487,15 @@ namespace Clients.AuthApi
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize)
         {
-            return ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize, System.Threading.CancellationToken.None);
+            return ListAsync(ids, accurateLogin, loginPart, accurateEmail, emailPart, address, name, roleIds, page, pageSize, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string email, string address, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1523,13 +1523,21 @@ namespace Clients.AuthApi
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("LoginPart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(loginPart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (email != null)
+                    if (accurateEmail != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("Email")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(email, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("AccurateEmail")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(accurateEmail, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (emailPart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("EmailPart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(emailPart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     if (address != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("Address")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(address, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (name != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     if (roleIds != null)
                     {
@@ -2356,6 +2364,7 @@ namespace Clients.AuthApi
         public RoleDto Role { get; set; }
 
     }
+
 
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
