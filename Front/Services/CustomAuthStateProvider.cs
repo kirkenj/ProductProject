@@ -8,44 +8,57 @@ namespace Front.Services
     AuthenticationStateProvider, IDisposable
     {
         private readonly UserService _blazorSchoolUserService;
+        private readonly Guid _Id;
 
-        public CustomAuthStateProvider(UserService blazorSchoolUserService)
+        public CustomAuthStateProvider(UserService blazorSchoolUserService, ILogger<CustomAuthStateProvider> logger)
         {
+            _Id = Guid.NewGuid();
             _blazorSchoolUserService = blazorSchoolUserService;
             AuthenticationStateChanged += OnAuthenticationStateChangedAsync;
+            logger.LogWarning($"Created {nameof(CustomAuthStateProvider)} with id {_Id}");
         }
 
         public User? CurrentUser { get; private set; }
 
         public async Task LoginAsync(string email, string password)
         {
+            Console.WriteLine($"{nameof(CustomAuthStateProvider)} {_Id} {nameof(LoginAsync)}");
             var user = await _blazorSchoolUserService.SendAuthenticateRequestAsync(email, password);
 
             var principal = user.ToClaimsPrincipal();
-            CurrentUser = user;
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(principal)));
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
+
             var principal = new ClaimsPrincipal();
             var user = await _blazorSchoolUserService.FetchUserFromBrowser();
+            bool notifyAuthStateChanged = false;
 
-            if (user is not null)
+            if (user != null)
             {
                 principal = user.ToClaimsPrincipal();
-                CurrentUser = user;
+                notifyAuthStateChanged = !user.Equals(CurrentUser);
             }
 
+            AuthenticationState authState = new(principal);
 
-            return new(principal);
+            Console.WriteLine($"{nameof(CustomAuthStateProvider)} {_Id} {nameof(GetAuthenticationStateAsync)} notifyStateChanged {notifyAuthStateChanged}");
+
+            if (notifyAuthStateChanged)
+            {
+                NotifyAuthenticationStateChanged(Task.FromResult(authState));
+            }
+
+            return authState;
         }
 
 
         public async void Logout()
         {
-            CurrentUser = null;
+            Console.WriteLine($"{nameof(CustomAuthStateProvider)} {_Id} {nameof(Logout)}");
             await _blazorSchoolUserService.ClearBrowserUserData();
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new())));
         }
@@ -53,6 +66,7 @@ namespace Front.Services
         private async void OnAuthenticationStateChangedAsync(Task<AuthenticationState> task)
         {
             var authenticationState = await task;
+            Console.WriteLine("Auth state changed");
 
             if (authenticationState is not null)
             {
@@ -69,6 +83,7 @@ namespace Front.Services
 
         public void Dispose()
         {
+            Console.WriteLine($"{nameof(CustomAuthStateProvider)} {_Id} {nameof(Dispose)}");
             AuthenticationStateChanged -= OnAuthenticationStateChangedAsync;
             GC.SuppressFinalize(this);
         }

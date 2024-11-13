@@ -7,28 +7,18 @@
 @code {
     private string? DisplayName { get; set; }
 
-    protected override async void OnInitialized()
+    protected override void OnInitialized()
     {
         authStateProvider.AuthenticationStateChanged += AuthStateChanged;
         base.OnInitialized();
+
         DisplayName = authStateProvider.CurrentUser?.Name;
     }
 
 
-    private async void AuthStateChanged(Task<AuthenticationState> authenticationState)
+    private void AuthStateChanged(Task<AuthenticationState> authenticationState)
     {
-        var res = await authenticationState;
-        
-        try
-        {
-            var user = User.FromClaimsPrincipal(res.User);
-            DisplayName = user.Name;
-        }
-        catch
-        {
-            DisplayName = null;
-        }
-
+        DisplayName = authStateProvider.CurrentUser?.Name;
         StateHasChanged();
     }
 }

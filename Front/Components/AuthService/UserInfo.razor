@@ -6,7 +6,6 @@
 @inject Front.Services.CustomAuthStateProvider authStateProvider
 @inject NavigationManager navManager
 
-<h3>UserInfo</h3>
 
 @if (userDto != null)
 {
@@ -103,16 +102,20 @@ else if (thrownException != null)
     <div>@thrownException.HResult</div>
     <div>@thrownException.Response</div>
 }
+else
+{
+    <div>Nothing here...</div>
+}
 
 
 @code {
     [Parameter]
     public Guid Id { get; set; }
 
-    public User? CurrentUser => authStateProvider.CurrentUser;
+    private User? User { get; set; }
 
-    private bool IsAdminOrOwner => CurrentUser != null && (CurrentUser.Id == Id || IsAdmin);
-    private bool IsAdmin => CurrentUser != null && CurrentUser.IsAdmin;
+    private bool IsAdminOrOwner => User != null && (User.Id == Id || IsAdmin);
+    private bool IsAdmin => User != null && User.IsAdmin;
 
     private UserDto? userDto;
     private Clients.CustomGateway.GatewayException? thrownException;
@@ -163,10 +166,13 @@ else if (thrownException != null)
             userDto = null;
             thrownException = null;
             Roles = await gatewayClient.RolesAllAsync();
-            userDto = await gatewayClient.AccountGETAsync();
+            userDto = await gatewayClient.UsersGETAsync(Id);
 
             EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
             EmailInputTextBox.Disabled = true;
+
+            User = authStateProvider.CurrentUser;
+            authStateProvider.AuthenticationStateChanged += AuthStateChanged;
         }
         catch (Clients.CustomGateway.GatewayException ex)
         {
@@ -176,7 +182,11 @@ else if (thrownException != null)
         StateHasChanged();
     }
 
-
+    private void AuthStateChanged(Task<AuthenticationState> authenticationState)
+    {
+        User = authStateProvider.CurrentUser;
+        StateHasChanged();
+    }
 
     #region Email
 
@@ -266,7 +276,7 @@ else if (thrownException != null)
         {
             await gatewayClient.EmailPOST2Async(new() { Token = resultString, Id = userDto.Id });
 
-            if ((authStateProvider.CurrentUser?.Id ?? Guid.Empty) == userDto.Id)//check if the method is wotking with authenticated user. If so user will have to relogin
+            if ((User?.Id ?? Guid.Empty) == userDto.Id)//check if the method is wotking with authenticated user. If so user will have to relogin
             {
                 messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
                 messageBox.ModalShow("Success","Now you have to login with new parameters");
@@ -318,7 +328,7 @@ else if (thrownException != null)
             return;
         }
 
-        if (authStateProvider.CurrentUser == null || CurrentUser == null)
+        if (User == null)
         {
             messageBox.ModalShow("No access", "User is not authorized");
             OnEditRoleCancelClicked(new());
@@ -327,9 +337,9 @@ else if (thrownException != null)
 
         try
         {
-            var msg = await gatewayClient.RoleAsync(new() { Id = authStateProvider.CurrentUser.Id, RoleID = RoleListBox.Value });
+            var msg = await gatewayClient.RoleAsync(new() { Id = User.Id, RoleID = RoleListBox.Value });
 
-            if (CurrentUser.Id == userDto.Id)
+            if (User.Id == userDto.Id)
             {
                 messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
                 messageBox.ModalShow("Success", "Relogin needed");
@@ -398,6 +408,7 @@ else if (thrownException != null)
         }
     }
     #endregion
+  
     private async Task OnTerminateSessionsClicked(MouseEventArgs e)
     {
         if (!IsAdmin || userDto == null)
@@ -408,7 +419,7 @@ else if (thrownException != null)
         try
         {
             await gatewayClient.InvalidateUsersTokenAsync(userDto.Id);
-            if (userDto.Id == authStateProvider.CurrentUser?.Id)
+            if (userDto.Id == User?.Id)
             {
                 messageBox.ModalShow("Attention", "Relogin needed"); 
                 messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };

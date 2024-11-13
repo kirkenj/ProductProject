@@ -11,6 +11,7 @@
                 <th>Address</th>
                 <th>Name</th>
                 <th>Role name</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -22,6 +23,7 @@
                     <td>@forecast.Address</td>
                     <td>@forecast.Name</td>
                     <td>@forecast.Role.Name</td>
+                    <td><NavLink class="nav-link" href=@($"user/{forecast.Id}")>View</NavLink>  </td>
                 </tr>
             }
         </tbody>

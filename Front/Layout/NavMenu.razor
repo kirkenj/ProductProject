@@ -1,4 +1,4 @@
-﻿@using Front.Services
+﻿@inject Front.Services.CustomAuthStateProvider authStateProvider
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -27,9 +27,18 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="user">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> User
-            </NavLink>
+            @if (authStateProvider.CurrentUser == null)
+            {
+                <NavLink class="nav-link" href="login">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
+                </NavLink>
+            }
+            else
+            {
+                <NavLink class="nav-link" href=@($"user/{authStateProvider.CurrentUser.Id}")>
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> User
+                </NavLink>
+            }
         </div>
     </nav>
 </div>
@@ -42,5 +51,16 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        authStateProvider.AuthenticationStateChanged += AuthStateChanged;
+        base.OnInitialized();
+    }
+
+    private void AuthStateChanged(Task<AuthenticationState> authenticationState)
+    {
+        StateHasChanged();
     }
 }

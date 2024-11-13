@@ -17,6 +17,12 @@ namespace Front.Services
         {
             Console.WriteLine("Access token. Trying to get the token");
             var aToken = new AccessToken();
+
+            if (_stateProvider.CurrentUser == null)
+            {
+                await _stateProvider.GetAuthenticationStateAsync();
+            }
+
             var getResult = _stateProvider.CurrentUser == null ? null : await _userService.GetAuthTokenAsync();
             aToken.Value = getResult ?? string.Empty;
             var status = string.IsNullOrEmpty(getResult) ? AccessTokenResultStatus.RequiresRedirect : AccessTokenResultStatus.Success;

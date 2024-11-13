@@ -264,37 +264,15 @@ namespace Clients.CustomGateway
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
-        private ITokenGetter<IGatewayClient> _tokenGetter;
-
+        
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public GatewayClient(IOptions<GatewayClientSettings> clientSettings, System.Net.Http.HttpClient httpClient, ITokenGetter<IGatewayClient> tokenGetter)
+        public GatewayClient(IOptions<GatewayClientSettings> clientSettings, System.Net.Http.IHttpClientFactory httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
 
             BaseUrl = clientSettings.Value.Uri;
-            _httpClient = httpClient;
-
-            _httpClient.DefaultRequestHeaders.Append(new KeyValuePair<string, IEnumerable<string>>("Access-Control-Allow-Origin", new[] { "*" }));
-            _httpClient.DefaultRequestHeaders.Append(new KeyValuePair<string, IEnumerable<string>>("Access-Control-Allow-Credentials", new[] { "true" }));
-            _httpClient.DefaultRequestHeaders.Append(new KeyValuePair<string, IEnumerable<string>>("Access-Control-Allow-Headers", new[] { "Content-Type" }));
-
-            _tokenGetter = tokenGetter;
+            _httpClient = httpClient.CreateClient(nameof(IGatewayClient));
             Initialize();
-        }
-
-        private Task PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url)
-        {
-            return Task.CompletedTask;
-        }
-
-        private async Task PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder)
-        {
-            request.Headers.Add("Access-Control-Allow-Origin", "*");
-            request.Headers.Add("Access-Control-Allow-Credentials", "true");
-            request.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
-            var result = await _tokenGetter.GetToken();
-            if (result == null) return;
-            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", result);
         }
 
         private static System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
@@ -321,8 +299,8 @@ namespace Clients.CustomGateway
 
         partial void Initialize();
 
-        //partial Task await PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
-        //partial void await PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
         /// <returns>Success</returns>
@@ -351,12 +329,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Account/TokenClaims"
                     urlBuilder_.Append("api/Account/TokenClaims");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -429,12 +407,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Account"
                     urlBuilder_.Append("api/Account");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -511,12 +489,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Account"
                     urlBuilder_.Append("api/Account");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -590,12 +568,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Account/Password"
                     urlBuilder_.Append("api/Account/Password");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -672,12 +650,12 @@ namespace Clients.CustomGateway
                     }
                     urlBuilder_.Length--;
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -751,12 +729,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Account/Email"
                     urlBuilder_.Append("api/Account/Email");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -830,12 +808,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Account/Email"
                     urlBuilder_.Append("api/Account/Email");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -909,12 +887,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Auth/Register"
                     urlBuilder_.Append("api/Auth/Register");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -991,12 +969,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Auth/Login"
                     urlBuilder_.Append("api/Auth/Login");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1073,12 +1051,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Auth/ForgotPassword"
                     urlBuilder_.Append("api/Auth/ForgotPassword");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1148,12 +1126,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Roles/Roles"
                     urlBuilder_.Append("api/Roles/Roles");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1230,12 +1208,12 @@ namespace Clients.CustomGateway
                     urlBuilder_.Append("api/Roles/Roles/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1314,12 +1292,12 @@ namespace Clients.CustomGateway
                     }
                     urlBuilder_.Length--;
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1421,12 +1399,12 @@ namespace Clients.CustomGateway
                     }
                     urlBuilder_.Length--;
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1503,12 +1481,12 @@ namespace Clients.CustomGateway
                     urlBuilder_.Append("api/Users/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1585,12 +1563,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Users"
                     urlBuilder_.Append("api/Users");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1664,12 +1642,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Users/Email"
                     urlBuilder_.Append("api/Users/Email");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1743,12 +1721,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Users/Email"
                     urlBuilder_.Append("api/Users/Email");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1822,12 +1800,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Users/UserTag"
                     urlBuilder_.Append("api/Users/UserTag");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1901,12 +1879,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Users/Role"
                     urlBuilder_.Append("api/Users/Role");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -1976,12 +1954,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Product"
                     urlBuilder_.Append("api/Product");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -2058,12 +2036,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Product"
                     urlBuilder_.Append("api/Product");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -2140,12 +2118,12 @@ namespace Clients.CustomGateway
                     // Operation Path: "api/Product"
                     urlBuilder_.Append("api/Product");
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -2219,12 +2197,12 @@ namespace Clients.CustomGateway
                     urlBuilder_.Append("api/Product/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
@@ -2301,12 +2279,12 @@ namespace Clients.CustomGateway
                     urlBuilder_.Append("api/Product/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
-                    await PrepareRequest(client_, request_, urlBuilder_);
+                    PrepareRequest(client_, request_, urlBuilder_);
 
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
 
-                    await PrepareRequest(client_, request_, url_);
+                    PrepareRequest(client_, request_, url_);
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;

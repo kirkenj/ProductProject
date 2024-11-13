@@ -1,29 +1,43 @@
-﻿@using Front.Services
-
-@page "/user"
-@inject CustomAuthStateProvider stateProvider
+﻿@using Front.Models
+@using Front.Services
+@inject CustomAuthStateProvider uService
+@inject NavigationManager navManager
+@page "/user/{UserId:guid}"
 
 <PageTitle>User</PageTitle>
 
-@if (stateProvider.CurrentUser != null)
-{
-    <Front.Components.AuthService.UserInfo Id="@stateProvider.CurrentUser.Id"/>
+<Front.Components.AuthService.UserInfo Id="@(LoadingClientsPage ? (User?.Id ?? throw new ArgumentException()) : UserId)" />
 
-    if (LoadingClientsPage)
-    {
-        <button class="btn btn-primary" @onclick="OnLogOutClicked">Log out</button>
-    }
+@if (LoadingClientsPage)
+{
+    <button class="btn btn-primary" @onclick="OnLogOutClickedAsync">Log out</button>
 }
 
 @code {
-    [Parameter]
-    public Guid? Id { get; set; }
-
-    public bool LoadingClientsPage => Id == null || (stateProvider.CurrentUser?.Id ?? Guid.Empty) == Id;
-
-
-    private void OnLogOutClicked(MouseEventArgs e)
+    protected override Task OnInitializedAsync()
     {
-        stateProvider.Logout();
+        uService.AuthenticationStateChanged += AuthStateChanged;
+        User = uService.CurrentUser;
+        return base.OnInitializedAsync();
+    }
+
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    private User? User { get; set; }
+
+    public bool LoadingClientsPage => (User != null && User.Id == UserId || UserId == default);
+
+    private Task OnLogOutClickedAsync(MouseEventArgs e)
+    {
+        uService.Logout();
+        navManager.NavigateTo("");
+        return Task.CompletedTask;
+    }
+
+    private void AuthStateChanged(Task<AuthenticationState> authenticationState)
+    {
+        User = uService.CurrentUser;
+        StateHasChanged();
     }
 }

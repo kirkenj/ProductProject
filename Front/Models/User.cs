@@ -31,5 +31,20 @@ namespace Front.Models
                 Id = Guid.TryParse(guidStr, out Guid value) ? value : Guid.Empty
             }; 
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is User uObj)
+            {
+                return uObj.Email == Email && uObj.Id == Id && uObj.Role == Role;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Role, Id);
+        }
     }
 }

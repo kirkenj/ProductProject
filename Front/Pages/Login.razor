@@ -3,7 +3,8 @@
 @inject Front.Services.CustomAuthStateProvider authStateProvider
 @inject NavigationManager navManager
 
-@if (authStateProvider.CurrentUser == null)
+
+@if (User == null)
 {
     <PageTitle>Login</PageTitle>
 
@@ -24,7 +25,11 @@
 }
 else
 {
-    navManager.NavigateTo("user");
+    <div>
+        Redirecting to user page
+    </div>
+
+    navManager.NavigateTo($"user/{User.Id}");
 }
 
 
@@ -33,17 +38,18 @@ else
     private string Email = string.Empty;
     private string Password = string.Empty;
     private string LoginResult = string.Empty;
-    private User? User => authStateProvider.CurrentUser;
+    private User? User { get; set; }
 
     protected override void OnInitialized()
     {
         authStateProvider.AuthenticationStateChanged += AuthStateChanged;
+        User = authStateProvider.CurrentUser;
         base.OnInitialized();
     }
 
-
     private void AuthStateChanged(Task<AuthenticationState> authenticationState)
     {
+        User = authStateProvider.CurrentUser;
         StateHasChanged();
     }
 

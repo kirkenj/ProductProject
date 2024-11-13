@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using static System.Net.WebRequestMethods;
+
 
 namespace Front.MessageHandlers
 {

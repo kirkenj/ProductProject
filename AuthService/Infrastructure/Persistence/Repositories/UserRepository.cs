@@ -36,7 +36,7 @@ namespace Persistence.Repositories
 
             if (!string.IsNullOrEmpty(filter.Email))
             {
-                set = set.Where(obj => obj.Email != null && obj.Email.Contains(filter.Email));
+                set = set.Where(obj => obj.Email != null && obj.Email == filter.Email);
             }
 
             if (!string.IsNullOrEmpty(filter.LoginPart))

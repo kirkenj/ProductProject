@@ -2,7 +2,6 @@
 {
     public class HeadersMessageHandler : DelegatingHandler
     {
-
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             Console.WriteLine("Cors headers attached");
@@ -13,5 +12,6 @@
 
             return await base.SendAsync(request, cancellationToken);
         }
+
     }
 }
