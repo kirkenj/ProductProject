@@ -32,13 +32,38 @@
 
                 @if (EmailEditButtonVisible)
                 {
-                    <td align="left" class="btn btn-primary" itemid="OnEditEmailButton" @onclick="OnEditEmailClicked">Edit</td>
+                    <td align="left" class="btn btn-primary" @onclick="OnEditEmailClicked">Edit</td>
                 }
                 @if (EmailEditConfirmButtonVisible)
                 {
                     <td align="left" class="btn btn-primary" @onclick="OnEditEmailConfirmClicked">Ok</td>
                     <td align="left" class="btn btn-danger" @onclick="OnEditEmailCancelClicked">Cancel</td>
                     <td align="left" class="nav-link" @onclick="OnIHaveTokenClicked">I have token</td>
+                }
+            }
+        </tr>
+        @if (!string.IsNullOrEmpty(LoginChangeInputMessage))
+        {
+            <tr>
+                <td colspan="3" style="color:red">
+                    <div>@LoginChangeInputMessage</div>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>Login</td>
+            <td align="right"><Front.Components.Common.TextBox @ref=LoginInputTextBox Type="text" Class="input-group-text text-lg-end" /> </td>
+            @if (IsAdminOrOwner)
+            {
+
+                @if (LoginEditButtonVisible)
+                {
+                    <td align="left" class="btn btn-primary" @onclick="OnEditLoginClicked">Edit</td>
+                }
+                @if (LoginEditConfirmButtonVisible)
+                {
+                    <td align="left" class="btn btn-primary" @onclick="OnEditLoginConfirmClicked">Ok</td>
+                    <td align="left" class="btn btn-danger" @onclick="OnEditLoginCancelClicked">Cancel</td>
                 }
             }
         </tr>
@@ -123,6 +148,9 @@ else
     private bool EmailEditButtonVisible = true;
     private bool EmailEditConfirmButtonVisible = false;
 
+    private bool LoginEditButtonVisible = true;
+    private bool LoginEditConfirmButtonVisible = false;
+
     private bool EditRoleButtonVisible = true;
     private bool EditRoleConfirmButtonVisible = false;
 
@@ -130,6 +158,7 @@ else
     private bool EditInfoConfirmButtonVisible = false;
 
     private Front.Components.Common.TextBox EmailInputTextBox = new();
+    private Front.Components.Common.TextBox LoginInputTextBox = new();
     private Front.Components.Common.TextBox NameInputTextBox = new();
     private Front.Components.Common.TextBox AddressInputTextBox = new();
     private Front.Components.Common.ListBox<int>? RoleListBox = new();
@@ -138,12 +167,17 @@ else
 
     private string? EmailChangeInputMessage;
 
+    private string? LoginChangeInputMessage;
+
     private static IEnumerable<RoleDto> Roles = null!;
 
     protected override void OnSecondRender()
     {
         EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
         EmailInputTextBox.Disabled = true;
+
+        LoginInputTextBox.Value = userDto?.Login ?? string.Empty;
+        LoginInputTextBox.Disabled = true;
 
         NameInputTextBox.Value = userDto?.Name ?? string.Empty;
         NameInputTextBox.Disabled = true;
@@ -167,9 +201,6 @@ else
             thrownException = null;
             Roles = await gatewayClient.RolesAllAsync();
             userDto = await gatewayClient.UsersGETAsync(Id);
-
-            EmailInputTextBox.Value = userDto?.Email ?? string.Empty;
-            EmailInputTextBox.Disabled = true;
 
             User = authStateProvider.CurrentUser;
             authStateProvider.AuthenticationStateChanged += AuthStateChanged;
@@ -283,6 +314,7 @@ else
             }
             else
             {
+                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); };
                 messageBox.ModalShow("Info", "All current sessions of this user are closed");
             }
 
@@ -291,6 +323,73 @@ else
         catch (Clients.CustomGateway.GatewayException ex)
         {
             inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'", ex.Message);
+        }
+    }
+
+    #endregion
+
+    #region Login
+
+    private void OnEditLoginCancelClicked(MouseEventArgs e)
+    {
+        LoginEditConfirmButtonVisible = false;
+        LoginEditButtonVisible = true;
+        LoginInputTextBox.Value = userDto?.Login ?? string.Empty;
+        LoginInputTextBox.Disabled = true;
+        LoginChangeInputMessage = null;
+        StateHasChanged();
+    }
+
+    private void OnEditLoginClicked(MouseEventArgs e)
+    {
+        LoginEditConfirmButtonVisible = true;
+        LoginEditButtonVisible = false;
+        LoginInputTextBox.Disabled = false;
+        StateHasChanged();
+    }
+
+    private async Task OnEditLoginConfirmClicked(MouseEventArgs e)
+    {
+        if (User == null)
+        {
+            LoginChangeInputMessage = "User is not authenticated";
+            return;
+        }
+
+        if (userDto == null)
+        {
+            LoginChangeInputMessage = "Editing User is not defined";
+            return;
+        }
+
+        if (userDto.Login != LoginInputTextBox.Value)
+        {
+            LoginChangeInputMessage = null;
+
+            try
+            {
+                var message = await gatewayClient.UserTag2Async(new UpdateUserLoginDto() { Id = userDto.Id, NewLogin = LoginInputTextBox.Value });
+
+                if (User.Id == userDto.Id)
+                {
+                    messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
+                    messageBox.ModalShow("Success", "Relogin needed");
+                }
+                else
+                {
+                    messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); };
+                    messageBox.ModalShow("Success", message);
+                }
+            }
+            catch (Exception ex)
+            {
+                EmailChangeInputMessage = ex.Message;
+                return;
+            }
+        }
+        else
+        {
+            OnEditLoginCancelClicked(e);
         }
     }
 
@@ -346,6 +445,7 @@ else
             }
             else
             {
+                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); };
                 messageBox.ModalShow("Success", msg);
             }
         }
@@ -408,7 +508,7 @@ else
         }
     }
     #endregion
-  
+
     private async Task OnTerminateSessionsClicked(MouseEventArgs e)
     {
         if (!IsAdmin || userDto == null)
@@ -433,6 +533,12 @@ else
         {
             messageBox.ModalShow(nameof(GatewayException), ex.Response);
         }
+    }
+
+    protected override void OnParametersSet()
+    {
+        StateHasChanged();
+        base.OnParametersSet();
     }
 }
 

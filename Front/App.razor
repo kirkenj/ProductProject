@@ -16,9 +16,11 @@
 </CascadingAuthenticationState>
 
 @code{
-    protected override void OnInitialized()
+    
+
+    protected override async Task OnInitializedAsync()
     {
-        authStateProvider.Logout();
-        base.OnInitialized();
+        await authStateProvider.GetAuthenticationStateAsync();
+        await base.OnInitializedAsync();
     }
 }
