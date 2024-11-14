@@ -21,7 +21,10 @@
     <div>
         @LoginResult
     </div>
-    <button class="btn btn-primary" @onclick="OnLoginClicked">Log in</button>
+    <div>
+        <button class="btn btn-secondary" @onclick="OnForgotPasswordClicked">Forgot password</button>
+        <button class="btn btn-primary" @onclick="OnLoginClicked">Log in</button>
+    </div>
     <button class="btn btn-primary" @onclick="OnRegisterClicked">Register</button>
 }
 else
@@ -80,5 +83,9 @@ else
     private void OnRegisterClicked(MouseEventArgs e)
     {
         navManager.NavigateTo("register");
+    }
+    private void OnForgotPasswordClicked(MouseEventArgs e)
+    {
+        navManager.NavigateTo("passwordrecovery");
     }
 }

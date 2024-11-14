@@ -47,9 +47,14 @@ namespace AuthAPI.Services
             }
 
             var key = _keyGeneratingDelegate(tokenHash);
-            var trackInfo = await _memoryCache.GetAsync<AssignedTokenInfo<TUserIdType>>(key) ?? throw new InvalidOperationException("Token is not tracked");
+            var trackInfo = await _memoryCache.GetAsync<AssignedTokenInfo<TUserIdType>>(key);
 
-            if (trackInfo == null || trackInfo.UserId.Equals(default))
+            if (trackInfo == null)
+            {
+                return false;
+            }
+
+            if (trackInfo.UserId.Equals(default))
             {
                 throw new InvalidOperationException(nameof(trackInfo));
             }

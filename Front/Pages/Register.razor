@@ -102,7 +102,7 @@ else
             var result = await authClient.RegisterAsync(dto);
             messageBox.ClearOnCloseEvent();
             messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); navManager.NavigateTo(""); };
-            messageBox.ModalShow("Success", "Further details were sent on email");
+            messageBox.ModalShow("Success", result);
         }
         catch (Clients.CustomGateway.GatewayException ex)
         {

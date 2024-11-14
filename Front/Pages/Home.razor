@@ -3,18 +3,3 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
-
-<Front.Components.Modals.MessageBox @ref=messageBox />
-
-
-<button @onclick="onDiasbleClick">awfawf</button>
-
-@code{
-    private Front.Components.Modals.MessageBox messageBox = null!;
-
-
-    private void onDiasbleClick(MouseEventArgs e)
-    {
-        messageBox.ModalShow("wfawf");
-    }
-}

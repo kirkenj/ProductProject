@@ -120,6 +120,39 @@
         }
     </table>
 
+    @if (userDto.Id == (User?.Id ?? Guid.Empty))
+    {
+        @if (UpdatePasswordFormVisible)
+        {
+            @if (!string.IsNullOrEmpty(PasswordMessage))
+            {
+                <div class="text-danger">
+                    @PasswordMessage
+                </div>
+            }
+            <table>
+                <tr>
+                    <td>New password</td>
+                    <td>
+                        <input type="text" class="input-group-text" style="width:auto" @bind-value="NewPassword" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="PasswordCancelClicked">Cancel</button>
+                    </td>
+                    <td align="right">
+                        <button class="btn btn-primary" @onclick="PasswordSubmitClicked">Submit</button>
+                    </td>
+                </tr>
+            </table>
+        }
+        else
+        {
+            <button class="btn btn-primary" @onclick="PasswordUpdateClicked">Update password</button>
+        }
+    }
+
 }
 else if (thrownException != null)
 {
@@ -157,6 +190,8 @@ else
     private bool EditInfoButtonVisible = true;
     private bool EditInfoConfirmButtonVisible = false;
 
+    private bool UpdatePasswordFormVisible = false;
+
     private Front.Components.Common.TextBox EmailInputTextBox = new();
     private Front.Components.Common.TextBox LoginInputTextBox = new();
     private Front.Components.Common.TextBox NameInputTextBox = new();
@@ -168,6 +203,9 @@ else
     private string? EmailChangeInputMessage;
 
     private string? LoginChangeInputMessage;
+
+    private string? PasswordMessage;
+    private string? NewPassword;
 
     private static IEnumerable<RoleDto> Roles = null!;
 
@@ -540,6 +578,48 @@ else
         StateHasChanged();
         base.OnParametersSet();
     }
+
+    #region Password
+    private void PasswordUpdateClicked(MouseEventArgs e)
+    {
+        PasswordMessage = null;
+        UpdatePasswordFormVisible = true;    
+    }
+    private async Task PasswordSubmitClicked(MouseEventArgs e)
+    {
+        if (string.IsNullOrEmpty(NewPassword))
+        {
+            PasswordMessage = "Password can not be empty";
+            return;
+        }
+
+        try
+        {
+            var result = await gatewayClient.PasswordAsync(NewPassword);
+            NewPassword = null;
+            PasswordCancelClicked(e);
+            messageBox.ClearOnCloseEvent();
+            messageBox.ModalShow("Success", "Password updated");
+        }
+        catch (GatewayException ex)
+        {
+            if (ex.StatusCode / 100 == 4)
+            {
+                PasswordMessage = ex.Response;
+            }
+            else
+            {
+                messageBox.ClearOnCloseEvent();
+                messageBox.ModalShow("Error", ex.Message);
+            }
+        }
+    }
+    private void PasswordCancelClicked(MouseEventArgs e)
+    {
+        UpdatePasswordFormVisible = false;
+        NewPassword = null;
+    }
+    #endregion
 }
 
 <style>

@@ -18,6 +18,7 @@
 @code{
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine("Application ran with autologout");
         authStateProvider.Logout();
         await base.OnInitializedAsync();
     }

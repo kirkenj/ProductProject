@@ -128,15 +128,13 @@ namespace CustomGateway.Controllers.Auth
         [Produces("text/plain")]
         public async System.Threading.Tasks.Task<string> ForgotPassword([Microsoft.AspNetCore.Mvc.FromBody] string? body)
         {
-            var q = await _implementation.ForgotPasswordAsync(body);
-            return q;
+            return await _implementation.ForgotPasswordAsync(body);
         }
 
         /// <returns>Success</returns>
         [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Roles/Roles", Name = "RolesAll")]
         public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<RoleDto>> RolesAll()
         {
-
             return await _implementation.RolesAllAsync();
         }
 
