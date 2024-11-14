@@ -22,6 +22,7 @@
         @LoginResult
     </div>
     <button class="btn btn-primary" @onclick="OnLoginClicked">Log in</button>
+    <button class="btn btn-primary" @onclick="OnRegisterClicked">Register</button>
 }
 else
 {
@@ -75,5 +76,9 @@ else
     private void OnLogOutClicked(MouseEventArgs e)
     {
         authStateProvider.Logout();
+    }
+    private void OnRegisterClicked(MouseEventArgs e)
+    {
+        navManager.NavigateTo("register");
     }
 }

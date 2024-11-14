@@ -2,6 +2,7 @@
 @using Front.Services
 @inject CustomAuthStateProvider authStateProvider
 @inject IGatewayClient gatewayClient
+@inject NavigationManager navManager
 
 
 <table class="table">
@@ -67,7 +68,7 @@
                     {
                         <td>@user.Role.Name</td>
                     }
-                    <td><NavLink class="nav-link" href=@($"user/{user.Id}")>View</NavLink>  </td>
+                    <td><NavLink class="btn btn-primary" @onclick="async (e) => {if (OnUserClickedAsync != null) await OnUserClickedAsync(user.Id);}">@ButtonText</NavLink>  </td>
                 </tr>
             }  
         }
@@ -93,6 +94,10 @@
     {
         Users = await gatewayClient.ListAsync(null, null, null, null, null, null, null,null, null, null);
         authenticatedUser = authStateProvider.CurrentUser;
+        if (OnUserButtonClickedAsyncHandler != null)
+        {
+            OnUserClickedAsync += OnUserButtonClickedAsyncHandler;
+        }
     }
 
 
@@ -138,4 +143,14 @@
         RoleFilter = DEFAULT_ROLE_FILTER_VALUE.ToString();
         await OnFilterClicked(e);
     }
+
+
+    public event Func<Guid, Task>? OnUserClickedAsync;
+
+
+    [Parameter]
+    public Func<Guid, Task>? OnUserButtonClickedAsyncHandler { get; set; }
+    [Parameter]
+    public string? ButtonText { get; set; }
 }
+

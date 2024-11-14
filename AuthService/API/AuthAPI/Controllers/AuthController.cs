@@ -26,8 +26,9 @@ namespace AuthAPI.Controllers
             _jwtProviderService = jwtProviderService;
         }
 
+        [Produces("text/plain")]
         [HttpPost("Register")]
-        public async Task<ActionResult<Guid>> Register([FromBody] CreateUserDto createUserDto)
+        public async Task<ActionResult<string>> Register([FromBody] CreateUserDto createUserDto)
         {
             Response<Guid> result = await _mediator.Send(new CreateUserCommand() { CreateUserDto = createUserDto });
             if (result.Success)

@@ -108,8 +108,9 @@ namespace CustomGateway.Controllers.Auth
         }
 
         /// <returns>Success</returns>
+        [Produces("text/plain")]
         [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Auth/Register", Name = "Register")]
-        public async System.Threading.Tasks.Task<System.Guid> Register([Microsoft.AspNetCore.Mvc.FromBody] CreateUserDto? body)
+        public async System.Threading.Tasks.Task<string> Register([Microsoft.AspNetCore.Mvc.FromBody] CreateUserDto? body)
         {
 
             return await _implementation.RegisterAsync(body);

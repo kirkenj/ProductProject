@@ -92,12 +92,12 @@ namespace Clients.AuthApi
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body);
+        System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
@@ -845,7 +845,7 @@ namespace Clients.AuthApi
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body)
+        public virtual System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body)
         {
             return RegisterAsync(body, System.Threading.CancellationToken.None);
         }
@@ -853,7 +853,7 @@ namespace Clients.AuthApi
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -898,12 +898,9 @@ namespace Clients.AuthApi
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Guid>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
@@ -924,6 +921,7 @@ namespace Clients.AuthApi
                     client_.Dispose();
             }
         }
+
 
         /// <returns>Success</returns>
         /// <exception cref="AuthApiException">A server side error occurred.</exception>

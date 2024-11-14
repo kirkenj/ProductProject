@@ -20,6 +20,7 @@
 
 namespace Clients.CustomGateway
 {
+    using Clients.AuthApi;
     using Microsoft.Extensions.Options;
     using System = global::System;
 
@@ -28,12 +29,12 @@ namespace Clients.CustomGateway
     {
         /// <returns>Success</returns>
         /// <exception cref="AuthGatewayClientException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body);
+        System.Threading.Tasks.Task<System.String> RegisterAsync(CreateUserDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="AuthGatewayClientException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.String> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="AuthGatewayClientException">A server side error occurred.</exception>
@@ -104,19 +105,18 @@ namespace Clients.CustomGateway
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
-        
 
         /// <returns>Success</returns>
-        /// <exception cref="AuthGatewayClientException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body)
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body)
         {
             return RegisterAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="AuthGatewayClientException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Guid> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken)
+        /// <exception cref="AuthApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -161,17 +161,14 @@ namespace Clients.CustomGateway
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Guid>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new GatewayException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new GatewayException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -187,7 +184,6 @@ namespace Clients.CustomGateway
                     client_.Dispose();
             }
         }
-
         /// <returns>Success</returns>
         /// <exception cref="AuthGatewayClientException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<LoginResultModel> LoginAsync(LoginDto body)

@@ -1,7 +1,15 @@
 ﻿@page "/users"
-
+@inject NavigationManager navManager
 <PageTitle>Users</PageTitle>
 
 <h1>Users</h1>
 
-<Front.Components.AuthService.UserList/>
+<Front.Components.AuthService.UserList ButtonText="View" OnUserButtonClickedAsyncHandler=OnUserClickedAsync/>
+
+@code{
+    Task OnUserClickedAsync(Guid id)
+    {
+        navManager.NavigateTo($"user/{id}");
+        return Task.CompletedTask;
+    }
+}
