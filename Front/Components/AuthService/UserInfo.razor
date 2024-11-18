@@ -235,7 +235,6 @@ else
     {
         try
         {
-            userDto = null;
             thrownException = null;
             Roles = await gatewayClient.RolesAllAsync();
             userDto = await gatewayClient.UsersGETAsync(Id);
