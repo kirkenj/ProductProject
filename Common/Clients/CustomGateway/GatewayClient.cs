@@ -20,8 +20,6 @@
 
 namespace Clients.CustomGateway
 {
-    using Clients.AuthApi;
-    using Microsoft.Extensions.Options;
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -92,12 +90,12 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.String> RegisterAsync(CreateUserDto body);
+        System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.String> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
@@ -146,12 +144,12 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> UsersListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> UsersListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
@@ -209,12 +207,12 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> PoductListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> PoductListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
@@ -257,20 +255,20 @@ namespace Clients.CustomGateway
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class GatewayClient : IGatewayClient
     {
-        #pragma warning disable 8618
+#pragma warning disable 8618
         private string _baseUrl;
-        #pragma warning restore 8618
+#pragma warning restore 8618
 
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public GatewayClient(IOptions<GatewayClientSettings> clientSettings, System.Net.Http.IHttpClientFactory httpClient)
+        public GatewayClient(string baseUrl, System.Net.Http.HttpClient httpClient)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = clientSettings.Value.Uri;
-            _httpClient = httpClient.CreateClient(nameof(IGatewayClient));
+            BaseUrl = baseUrl;
+            _httpClient = httpClient;
             Initialize();
         }
 
@@ -858,7 +856,7 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.String> RegisterAsync(CreateUserDto body)
+        public virtual System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body)
         {
             return RegisterAsync(body, System.Threading.CancellationToken.None);
         }
@@ -866,9 +864,6 @@ namespace Clients.CustomGateway
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="AuthApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<string> RegisterAsync(CreateUserDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
@@ -914,17 +909,14 @@ namespace Clients.CustomGateway
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new AuthApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = (string)System.Convert.ChangeType(responseData_, typeof(string));
+                            return result_;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new GatewayException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -940,6 +932,7 @@ namespace Clients.CustomGateway
                     client_.Dispose();
             }
         }
+
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<LoginResultModel> LoginAsync(LoginDto body)
@@ -1342,15 +1335,15 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> UsersListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize)
         {
-            return ListAsync(ids, accurateLogin, loginPart, accurateEmail, emailPart, address, name, roleIds, page, pageSize, System.Threading.CancellationToken.None);
+            return UsersListAsync(ids, accurateLogin, loginPart, accurateEmail, emailPart, address, name, roleIds, page, pageSize, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> ListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> UsersListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, System.Collections.Generic.IEnumerable<int> roleIds, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1939,15 +1932,15 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> PoductListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize)
         {
-            return ProductAllAsync(System.Threading.CancellationToken.None);
+            return PoductListAsync(ids, namePart, descriptionPart, priceStart, priceEnd, isAvailable, producerIds, creationDateStart, creationDateEnd, page, pageSize, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> PoductListAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1962,6 +1955,52 @@ namespace Clients.CustomGateway
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "api/Product"
                     urlBuilder_.Append("api/Product");
+                    urlBuilder_.Append('?');
+                    if (ids != null)
+                    {
+                        foreach (var item_ in ids) { urlBuilder_.Append(System.Uri.EscapeDataString("ids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (namePart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("namePart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(namePart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (descriptionPart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("descriptionPart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(descriptionPart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (priceStart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("priceStart")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(priceStart, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (priceEnd != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("priceEnd")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(priceEnd, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (isAvailable != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("isAvailable")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(isAvailable, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (producerIds != null)
+                    {
+                        foreach (var item_ in producerIds) { urlBuilder_.Append(System.Uri.EscapeDataString("producerIds")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (creationDateStart != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("creationDateStart")).Append('=').Append(System.Uri.EscapeDataString(creationDateStart.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (creationDateEnd != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("creationDateEnd")).Append('=').Append(System.Uri.EscapeDataString(creationDateEnd.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (page != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("page")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(page, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2406,7 +2445,7 @@ namespace Clients.CustomGateway
                     var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
                     if (field != null)
                     {
-                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute))
                             as System.Runtime.Serialization.EnumMemberAttribute;
                         if (attribute != null)
                         {
@@ -2418,13 +2457,13 @@ namespace Clients.CustomGateway
                     return converted == null ? string.Empty : converted;
                 }
             }
-            else if (value is bool) 
+            else if (value is bool)
             {
                 return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
             }
             else if (value is byte[])
             {
-                return System.Convert.ToBase64String((byte[]) value);
+                return System.Convert.ToBase64String((byte[])value);
             }
             else if (value is string[])
             {
@@ -2743,10 +2782,10 @@ namespace Clients.CustomGateway
 
 }
 
-#pragma warning restore  108
-#pragma warning restore  114
-#pragma warning restore  472
-#pragma warning restore  612
+#pragma warning restore 108
+#pragma warning restore 114
+#pragma warning restore 472
+#pragma warning restore 612
 #pragma warning restore 1573
 #pragma warning restore 1591
 #pragma warning restore 8073

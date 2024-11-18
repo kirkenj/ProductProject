@@ -39,11 +39,11 @@ namespace CustomGateway.Controllers.Product
         }
 
         /// <returns>Success</returns>
-        [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Product", Name = "ProductAll")]
-        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAll()
+        [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Product", Name = "PoductList")]
+
+        public async Task<ICollection<ProductListDto>> List([FromQuery] IEnumerable<Guid>? ids, [FromQuery] string? namePart, [FromQuery] string? descriptionPart, [FromQuery] double? priceStart, [FromQuery] double? priceEnd, [FromQuery] bool? isAvailable, [FromQuery] IEnumerable<Guid> producerIds, [FromQuery] DateTimeOffset? creationDateStart, [FromQuery] DateTimeOffset? creationDateEnd, [FromQuery] int? page, [FromQuery] int? pageSize)
         {
-            var res = await _implementation.ProductAllAsync(null, null, null, null, null, null, null, null, null, null, null);
-            return res;
+            return await _implementation.List(ids, namePart, descriptionPart, priceStart, priceEnd, isAvailable, producerIds, creationDateStart, creationDateEnd, page, pageSize);
         }
 
         /// <returns>Success</returns>

@@ -56,21 +56,21 @@ namespace ServiceProduct.Tests.Common
 
         public Task<UserDto> UsersGETAsync(Guid id, CancellationToken cancellationToken) => UsersGETAsync(id);
 
-        public Task<ICollection<UserListDto>> ListAsync(IEnumerable<Guid> ids, string accurateLogin, string loginPart, string email, string address, IEnumerable<int> roleIds, int? page, int? pageSize)
+        public Task<ICollection<UserDto>> ListAsync(IEnumerable<Guid> ids, string accurateLogin, string loginPart, string email, string address, IEnumerable<int> roleIds, int? page, int? pageSize)
         {
-            var q = _mapper.Map<ICollection<UserListDto>>(_users);
+            var q = _mapper.Map<ICollection<UserDto>>(_users);
 
             var a = GetPageContent(GetFilteredSet(q.AsQueryable(), ids, accurateLogin, loginPart, email, address), page, pageSize);
 
-            var res = _mapper.Map<ICollection<UserListDto>>(a) ?? throw new ArgumentNullException();
+            var res = _mapper.Map<ICollection<UserDto>>(a) ?? throw new ArgumentNullException();
 
             return Task.FromResult(res);
         }
 
-        public Task<ICollection<UserListDto>> ListAsync(IEnumerable<Guid> ids, string accurateLogin, string loginPart, string email, string address, IEnumerable<int> roleIds, int? page, int? pageSize, CancellationToken cancellationToken)
+        public Task<ICollection<UserDto>> ListAsync(IEnumerable<Guid> ids, string accurateLogin, string loginPart, string email, string address, IEnumerable<int> roleIds, int? page, int? pageSize, CancellationToken cancellationToken)
             => ListAsync(ids, accurateLogin, loginPart, email, address, roleIds, page, pageSize);
 
-        private static IQueryable<UserListDto> GetFilteredSet(IQueryable<UserListDto> set, IEnumerable<Guid> ids, string accurateLogin, string loginPart, string email, string address)
+        private static IQueryable<UserDto> GetFilteredSet(IQueryable<UserDto> set, IEnumerable<Guid> ids, string accurateLogin, string loginPart, string email, string address)
         {
             if (ids != null && ids.Any())
             {
@@ -95,7 +95,7 @@ namespace ServiceProduct.Tests.Common
             return set;
         }
 
-        protected static IQueryable<UserListDto> GetPageContent(IQueryable<UserListDto> query, int? page = default, int? pageSize = default)
+        protected static IQueryable<UserDto> GetPageContent(IQueryable<UserDto> query, int? page = default, int? pageSize = default)
         {
             if (page.HasValue && pageSize.HasValue)
             {
@@ -149,12 +149,7 @@ namespace ServiceProduct.Tests.Common
             throw new NotImplementedException();
         }
 
-        public Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> EmailPUT2Async(SendTokenToUpdateUserEmailDto body, CancellationToken cancellationToken)
+        public Task<string> EmailPUT2Async(UpdateUserEmailDto body)
         {
             throw new NotImplementedException();
         }
@@ -305,6 +300,31 @@ namespace ServiceProduct.Tests.Common
         }
 
         public Task<string> UserTagAsync(string newLogin, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<string> IAuthApiClient.RegisterAsync(CreateUserDto body)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<string> IAuthApiClient.RegisterAsync(CreateUserDto body, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICollection<UserDto>> ListAsync(IEnumerable<Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, IEnumerable<int> roleIds, int? page, int? pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICollection<UserDto>> ListAsync(IEnumerable<Guid> ids, string accurateLogin, string loginPart, string accurateEmail, string emailPart, string address, string name, IEnumerable<int> roleIds, int? page, int? pageSize, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> EmailPUT2Async(UpdateUserEmailDto body, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

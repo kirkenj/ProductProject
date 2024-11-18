@@ -1,0 +1,15 @@
+﻿@page "/Products"
+@inject NavigationManager navManager
+<PageTitle>Products</PageTitle>
+
+<h1>Users</h1>
+
+<Front.Components.ProductService.ProductList ButtonText="View" OnUserButtonClickedAsyncHandler=OnUserClickedAsync />
+
+@code{
+    Task OnUserClickedAsync(Guid id)
+    {
+        navManager.NavigateTo($"product/{id}");
+        return Task.CompletedTask;
+    }
+}

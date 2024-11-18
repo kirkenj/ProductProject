@@ -2,7 +2,6 @@
 using Application.Features.Product.Requests.Commands;
 using Application.Features.Product.Requests.Queries;
 using Application.Models.Product;
-using AutoMapper;
 using Constants;
 using CustomResponse;
 using Extensions.ClaimsPrincipalExtensions;
@@ -20,7 +19,7 @@ namespace ProductAPI.Controllers
     {
         private readonly IMediator _mediator = null!;
 
-        public ProductController(IMediator mediator, IMapper mapper)
+        public ProductController(IMediator mediator)
         {
             _mediator = mediator;
         }

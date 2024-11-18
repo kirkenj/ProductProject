@@ -29,7 +29,7 @@ namespace Clients.ProductApi
     {
         /// <returns>Success</returns>
         /// <exception cref="ProductApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> List(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
@@ -136,7 +136,7 @@ namespace Clients.ProductApi
 
         /// <returns>Success</returns>
         /// <exception cref="ProductApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> ProductAllAsync(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProductListDto>> List(System.Collections.Generic.IEnumerable<System.Guid> ids, string namePart, string descriptionPart, double? priceStart, double? priceEnd, bool? isAvailable, System.Collections.Generic.IEnumerable<System.Guid> producerIds, System.DateTimeOffset? creationDateStart, System.DateTimeOffset? creationDateEnd, int? page, int? pageSize)
         {
             return ProductAllAsync(ids, namePart, descriptionPart, priceStart, priceEnd, isAvailable, producerIds, creationDateStart, creationDateEnd, page, pageSize, System.Threading.CancellationToken.None);
         }
