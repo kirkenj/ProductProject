@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using System.Text.Json;
 
 namespace ProductAPI.Middlewares
 {
@@ -24,7 +25,8 @@ namespace ProductAPI.Middlewares
             catch (ValidationException valEx)
             {
                 context.Response.StatusCode = 400;
-                await context.Response.WriteAsJsonAsync(valEx.Message);
+                string message = $"{nameof(ValidationException)}: " + JsonSerializer.Serialize(valEx.Errors);
+                await context.Response.WriteAsync(message);
                 return;
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 ﻿@page "/register"
 @using Front.Models
+@using Front.Extensions
 @inject Front.Services.CustomAuthStateProvider authStateProvider
 @inject NavigationManager navManager
 @inject Clients.CustomGateway.IAuthGatewayClient authClient
@@ -96,7 +97,7 @@ else
         try
         {
             var dto = new Clients.CustomGateway.CreateUserDto() { Address = this.Address, Email = this.Email, Name = this.Name };
-            
+
             if (!IsValid(dto)) return;
 
             var result = await authClient.RegisterAsync(dto);
@@ -106,9 +107,44 @@ else
         }
         catch (Clients.CustomGateway.GatewayException ex)
         {
+            bool isFailure = ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures);
+
+            if (isFailure && failures != null)
+            {
+                HandleValidationFailure(failures);
+                return;
+            }
+
             messageBox.ModalShow("Error", ex.Message);
         }
     }
+
+    void HandleValidationFailure(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
+    {
+        if (failures == null || !failures.Any())
+        {
+            return;
+        }
+
+        Clients.CustomGateway.CreateUserDto q;
+        
+        foreach (var f in failures)
+        {
+            switch (f.PropertyName.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1])
+            {
+                case nameof(q.Email):
+                    EmailMessage = f.ErrorMessage;    
+                    break;
+                case nameof(q.Address):
+                    AddressMessage = f.ErrorMessage;    
+                    break;
+                case nameof(q.Name):
+                    NameMessage = f.ErrorMessage;    
+                    break;
+            }
+        }
+    }
+
 
     bool IsValid(Clients.CustomGateway.CreateUserDto userDto)
     {

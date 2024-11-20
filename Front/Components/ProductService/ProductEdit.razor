@@ -1,11 +1,10 @@
 ﻿@using Clients.CustomGateway
+@using Front.Extensions
 @inject Front.Services.CustomAuthStateProvider stateProvider;
 @inject NavigationManager navManager
 @inject Clients.CustomGateway.IGatewayClient gatewyClient;
 
-
 <h3>EditProduct</h3>
-
 
 <Front.Components.Modals.MessageBox @ref="MessageBox" />
 <Front.Components.Modals.UserSelectInputBox @ref="UserSelect" />
@@ -346,9 +345,56 @@
             }
             catch (Clients.CustomGateway.GatewayException ex)
             {
+                if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+                {
+                    HandleValidationFailure(failures);
+                    return;
+                }
+
                 MessageBox.ModalShow("Error", ex.Response);
             }
         };
         MessageBox.ModalShow("Warning", "The product will be deleted", "btn btn-danger");
     }
+
+    void HandleValidationFailure(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
+    {
+        if (failures == null || !failures.Any())
+        {
+            return;
+        }
+
+        Clients.CustomGateway.UpdateProductDto q;
+
+        foreach (var f in failures)
+        {
+            switch (f.PropertyName.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1])
+            {
+                case nameof(q.CreationDate):
+                    DateMessage = f.ErrorMessage;
+                    break;
+                case nameof(q.Price):
+                    PriceMessage = f.ErrorMessage;
+                    break;
+                case nameof(q.Name):
+                    NameMessage = f.ErrorMessage;
+                    break;
+                case nameof(q.ProducerId):
+                    ProducerMessage = f.ErrorMessage;
+                    break;
+                case nameof(q.Id):
+                    MessageBox.ModalShow("Error", f.ErrorMessage);
+                    break;
+                case nameof(q.Description):
+                    DescriptionMessage = f.ErrorMessage;
+                    break;
+                case nameof(q.IsAvailable):
+                    IsAvailableMessage = f.ErrorMessage;
+                    break;
+            }
+        }
+
+        StateHasChanged();
+    }
+
 }

@@ -28,9 +28,9 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(s => s.GetService<CustomAuthStateProvider>() ?? throw new Exception());
 
-builder.Services.AddHttpClient<IGatewayClient, GatewayClient>(nameof(IGatewayClient), a => a = new HttpClient() { BaseAddress = new("http://127.0.0.1:4444") }).AddHttpMessageHandler<HeadersMessageHandler>()
+builder.Services.AddHttpClient<IGatewayClient, GatewayClient>(nameof(IGatewayClient), a => a = new HttpClient()).AddHttpMessageHandler<HeadersMessageHandler>()
     .AddHttpMessageHandler<TokenDelegatingHandler>();
-builder.Services.AddHttpClient<IAuthGatewayClient, AuthGatewayClient>(nameof(IAuthGatewayClient), a => a = new HttpClient() { BaseAddress = new("http://127.0.0.1:4444") });
+builder.Services.AddHttpClient<IAuthGatewayClient, AuthGatewayClient>(nameof(IAuthGatewayClient), a => a = new HttpClient());
 
 var sp = builder.Services.BuildServiceProvider();
 

@@ -20,7 +20,6 @@
 
 namespace Clients.CustomGateway
 {
-    using Clients.AuthApi;
     using Microsoft.Extensions.Options;
     using System = global::System;
 
@@ -168,7 +167,7 @@ namespace Clients.CustomGateway
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new AuthApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new GatewayException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally

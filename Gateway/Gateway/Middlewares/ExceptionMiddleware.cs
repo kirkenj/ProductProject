@@ -31,7 +31,7 @@ namespace CustomGateway.Middlewares
                 }
 
                 context.Response.StatusCode = apiEx.StatusCode;
-                await context.Response.WriteAsJsonAsync(apiEx.Response);
+                await context.Response.WriteAsync(apiEx.Response);
                 return;
             }
             catch (ProductApiException apiEx)
@@ -42,7 +42,7 @@ namespace CustomGateway.Middlewares
                 }
 
                 context.Response.StatusCode = apiEx.StatusCode;
-                await context.Response.WriteAsJsonAsync(apiEx.Response);
+                await context.Response.WriteAsync(apiEx.Response);
                 return;
             }
             catch (Exception ex)

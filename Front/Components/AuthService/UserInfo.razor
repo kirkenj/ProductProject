@@ -1,4 +1,5 @@
-﻿@using Front.Models
+﻿@using Front.Extensions
+@using Front.Models
 @using Front.Components.Modals;
 @using Clients.CustomGateway
 @inherits Front.Components.Common.CustomComponentBase
@@ -89,6 +90,15 @@
         {
             RoleListBox = null;
         }
+        @if (!string.IsNullOrEmpty(NameChangeInputMessage))
+        {
+            <tr>
+                <td colspan="3" style="color:red">
+                    <div>@NameChangeInputMessage</div>
+                </td>
+            </tr>
+        }
+
         <tr>
             <td>Name</td>
             <td align="right"><Front.Components.Common.TextBox @ref=NameInputTextBox Type="text" Class="input-group-text text-lg-end"/> </td>
@@ -106,6 +116,14 @@
                 }
             }
         </tr>
+        @if (!string.IsNullOrEmpty(AddressChangeInputMessage))
+        {
+            <tr>
+                <td colspan="3" style="color:red">
+                    <div>@AddressChangeInputMessage</div>
+                </td>
+            </tr>
+        }
         <tr>
             <td> Address</td>
             <td align="right"><Front.Components.Common.TextBox @ref=AddressInputTextBox Type="text" Class="input-group-text text-lg-end"/> </td>
@@ -204,6 +222,10 @@ else
 
     private string? LoginChangeInputMessage;
 
+    private string? AddressChangeInputMessage;
+
+    private string? NameChangeInputMessage;
+
     private string? PasswordMessage;
     private string? NewPassword;
 
@@ -244,7 +266,13 @@ else
         }
         catch (Clients.CustomGateway.GatewayException ex)
         {
-            thrownException = ex;
+            if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+            {
+                HandleValidationFailure(failures);
+                return;
+            }
+
+            messageBox.ModalShow("Error", ex.Response);
         }
 
         StateHasChanged();
@@ -299,10 +327,15 @@ else
                 var message = await gatewayClient.EmailPUTAsync(EmailInputTextBox.Value);
                 ShowEmailChangeConfirmInputBox(message);
             }
-            catch (Exception ex)
+            catch (Clients.CustomGateway.GatewayException ex)
             {
-                EmailChangeInputMessage = ex.Message;
-                return;
+                if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+                {
+                    HandleValidationFailure(failures);
+                    return;
+                }
+
+                messageBox.ModalShow("Error", ex.Response);
             }
         }
         else
@@ -359,7 +392,13 @@ else
         }
         catch (Clients.CustomGateway.GatewayException ex)
         {
-            inputBox.ModalShow($"Input token sent on email '{EmailInputTextBox.Value}'", ex.Message);
+            if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+            {
+                HandleValidationFailure(failures);
+                return;
+            }
+
+            messageBox.ModalShow("Error", ex.Response);
         }
     }
 
@@ -418,10 +457,15 @@ else
                     messageBox.ModalShow("Success", message);
                 }
             }
-            catch (Exception ex)
+            catch (Clients.CustomGateway.GatewayException ex)
             {
-                EmailChangeInputMessage = ex.Message;
-                return;
+                if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+                {
+                    HandleValidationFailure(failures);
+                    return;
+                }
+
+                messageBox.ModalShow("Error", ex.Response);                
             }
         }
         else
@@ -488,7 +532,13 @@ else
         }
         catch (GatewayException ex)
         {
-            messageBox.ModalShow(nameof(GatewayException), ex.Response);
+            if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+            {
+                HandleValidationFailure(failures);
+                return;
+            }
+
+            messageBox.ModalShow("Error", ex.Response);            
         }
     }
 
@@ -539,9 +589,15 @@ else
             navManager.NavigateTo("");
             navManager.NavigateTo(uri);
         }
-        catch (GatewayException ex) when (ex.HResult == 400)
+        catch (GatewayException ex)
         {
-            messageBox.ModalShow(nameof(GatewayException), ex.Response);
+            if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+            {
+                HandleValidationFailure(failures);
+                return;
+            }
+
+            messageBox.ModalShow("Error", ex.Response);
         }
     }
     #endregion
@@ -568,7 +624,13 @@ else
         }
         catch (GatewayException ex)
         {
-            messageBox.ModalShow(nameof(GatewayException), ex.Response);
+            if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+            {
+                HandleValidationFailure(failures);
+                return;
+            }
+
+            messageBox.ModalShow("Error", ex.Response);
         }
     }
 
@@ -602,15 +664,13 @@ else
         }
         catch (GatewayException ex)
         {
-            if (ex.StatusCode / 100 == 4)
+            if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
             {
-                PasswordMessage = ex.Response;
+                HandleValidationFailure(failures);
+                return;
             }
-            else
-            {
-                messageBox.ClearOnCloseEvent();
-                messageBox.ModalShow("Error", ex.Message);
-            }
+
+            messageBox.ModalShow("Error", ex.Response);
         }
     }
     private void PasswordCancelClicked(MouseEventArgs e)
@@ -619,6 +679,47 @@ else
         NewPassword = null;
     }
     #endregion
+
+
+    void HandleValidationFailure(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
+    {
+        if (failures == null || !failures.Any())
+        {
+            return;
+        }
+
+        Clients.CustomGateway.UpdateUserEmailDto emailDto;
+        Clients.CustomGateway.UpdateUserInfoDto infoDto;
+        Clients.CustomGateway.UpdateUserLoginDto loginDto;
+        Clients.CustomGateway.UpdateUserRoleDTO roleDto;
+        
+        foreach (var f in failures)
+        {
+            switch (f.PropertyName.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1])
+            {
+                case nameof(emailDto.Id):
+                    messageBox.ModalShow("Error", f.ErrorMessage);
+                    break;
+                case nameof(emailDto.Email):
+                    EmailChangeInputMessage = f.ErrorMessage;
+                    break;
+                case nameof(infoDto.Address):
+                    AddressChangeInputMessage = f.ErrorMessage;
+                    break;
+                case nameof(infoDto.Name):
+                    NameChangeInputMessage = f.ErrorMessage;
+                    break;
+                case nameof(loginDto.NewLogin):
+                    messageBox.ModalShow("Error", f.ErrorMessage);
+                    break;
+                case nameof(roleDto.RoleID):
+                    messageBox.ModalShow("Error", f.ErrorMessage);
+                    break;
+            }
+        }
+
+        StateHasChanged();
+    }
 }
 
 <style>

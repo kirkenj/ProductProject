@@ -10,6 +10,8 @@ namespace Application.DTOs.User.Validators
         {
             Include(new IIdDtoValidator<Guid>());
 
+            RuleFor(u => u.NewLogin).NotEmpty();
+
             RuleFor(u => u.NewLogin).MustAsync(async (login, token) =>
             {
                 var result = await userRepository.GetAsync(new() { AccurateLogin = login });
