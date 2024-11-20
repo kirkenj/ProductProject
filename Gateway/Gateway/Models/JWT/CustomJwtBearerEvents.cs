@@ -6,10 +6,12 @@ namespace CustomGateway.Models.JWT
     public class CustomJwtBearerEvents : JwtBearerEvents
     {
         private readonly ITokenValidationClient _tokenValidationClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CustomJwtBearerEvents(ITokenValidationClient authClientService)
+        public CustomJwtBearerEvents(ITokenValidationClient authClientService, IHttpContextAccessor httpContextAccessor)
         {
             _tokenValidationClient = authClientService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public override async Task TokenValidated(TokenValidatedContext context)
@@ -21,6 +23,12 @@ namespace CustomGateway.Models.JWT
             if (!result)
             {
                 context.Fail("Token is banned by auth service");
+                if (_httpContextAccessor.HttpContext != null)
+                {
+                    _httpContextAccessor.HttpContext.Request.Headers.Authorization = new();
+                }
+
+                return;
             }
 
             await base.TokenValidated(context);
