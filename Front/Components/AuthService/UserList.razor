@@ -68,7 +68,7 @@
                     {
                         <td>@user.Role.Name</td>
                     }
-                    <td><NavLink class="btn btn-primary" @onclick="async (e) => {if (OnUserClickedAsync != null) await OnUserClickedAsync(user.Id);}">@ButtonText</NavLink>  </td>
+                    <td><NavLink class="btn btn-primary" @onclick="async (e) => {if (OnUserClickedAsync != null) await OnUserClickedAsync(user);}">@ButtonText</NavLink>  </td>
                 </tr>
             }  
         }
@@ -179,12 +179,10 @@
         await OnFilterClicked(e);
     }
 
-
-    public event Func<Guid, Task>? OnUserClickedAsync;
-
+    public event Func<UserDto, Task>? OnUserClickedAsync;
 
     [Parameter]
-    public Func<Guid, Task>? OnUserButtonClickedAsyncHandler { get; set; }
+    public Func<UserDto, Task>? OnUserButtonClickedAsyncHandler { get; set; }
     [Parameter]
     public string? ButtonText { get; set; }
 }

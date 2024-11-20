@@ -101,7 +101,7 @@ else
 
             var result = await authClient.RegisterAsync(dto);
             messageBox.ClearOnCloseEvent();
-            messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); navManager.NavigateTo(""); };
+            messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); navManager.NavigateTo(""); return Task.CompletedTask; };
             messageBox.ModalShow("Success", result);
         }
         catch (Clients.CustomGateway.GatewayException ex)

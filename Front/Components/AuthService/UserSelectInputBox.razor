@@ -1,9 +1,10 @@
 ﻿@namespace Front.Components.Modals
+@using Clients.CustomGateway
 
 @if (showModal)
 {
-    <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
-        <div class="modal-dialog">
+    <div class="modal fade show" id="myModal" style="display:grid" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
 
                 <!-- Modal Header -->
@@ -15,11 +16,13 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div>@Message</div>
+                    <div class="text-danger">@OwnMessage</div>
+                    <Front.Components.AuthService.UserList OnUserButtonClickedAsyncHandler="UserClicked" ButtonText="Select"/>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="@(OkButtonCssClass ?? "btn btn-success")" @onclick=@ModalOk>Ok</button>
+                    <button type="button" class="btn" @onclick="@ModalCancel">Cancel</button>
                 </div>
 
             </div>
@@ -33,19 +36,19 @@
 
     public string Message { get; set; } = string.Empty;
 
-    public string? OkButtonCssClass = null;
+    public string OwnMessage { get; set; } = string.Empty;
 
     bool showModal = false;
 
-    public delegate Task OnCloseAsyncCallback(bool cancelled);
+    public delegate Task OnCloseAsyncCallback(bool cancelled, UserDto? result);
 
-    public event OnCloseAsyncCallback OnClose = (cancelled) => { return Task.CompletedTask; };
+    public event OnCloseAsyncCallback OnCloseAsync = (c, r) => { return Task.CompletedTask; };
 
-    public void ModalShow(string header, string? message = null, string? OkButtonCssClass = null)
+    public void ModalShow(string header, string? message = null, string? value = null)
     {
-        this.OkButtonCssClass = OkButtonCssClass;
         HeaderText = header;
         Message = string.IsNullOrEmpty(message) ? string.Empty : message;
+        OwnMessage = string.Empty;
         showModal = true;
         StateHasChanged();
     }
@@ -53,17 +56,15 @@
     private async Task ModalCancel()
     {
         showModal = false;
-        await OnClose(true);
+        await OnCloseAsync(true, null);
+        StateHasChanged();
     }
 
-    private async Task ModalOk()
+    public async Task UserClicked(UserDto user)
     {
+        Console.WriteLine($"User selected {user.Id}");
         showModal = false;
-        await OnClose(false);
-    }
-
-    public void ClearOnCloseEvent()
-    {
-        OnClose = (cancelled) => { return Task.CompletedTask; };
+        await OnCloseAsync(false, user);
+        StateHasChanged();
     }
 }

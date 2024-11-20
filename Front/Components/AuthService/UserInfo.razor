@@ -346,12 +346,12 @@ else
 
             if ((User?.Id ?? Guid.Empty) == userDto.Id)//check if the method is wotking with authenticated user. If so user will have to relogin
             {
-                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
+                messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); return Task.CompletedTask; };
                 messageBox.ModalShow("Success","Now you have to login with new parameters");
             }
             else
             {
-                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); };
+                messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); return Task.CompletedTask; };
                 messageBox.ModalShow("Info", "All current sessions of this user are closed");
             }
 
@@ -409,12 +409,12 @@ else
 
                 if (User.Id == userDto.Id)
                 {
-                    messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
+                    messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); return Task.CompletedTask; };
                     messageBox.ModalShow("Success", "Relogin needed");
                 }
                 else
                 {
-                    messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); };
+                    messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); return Task.CompletedTask; };
                     messageBox.ModalShow("Success", message);
                 }
             }
@@ -477,12 +477,12 @@ else
 
             if (User.Id == userDto.Id)
             {
-                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
+                messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); return Task.CompletedTask; };
                 messageBox.ModalShow("Success", "Relogin needed");
             }
             else
             {
-                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); };
+                messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); var url = navManager.Uri; navManager.NavigateTo(""); navManager.NavigateTo(url); return Task.CompletedTask; };
                 messageBox.ModalShow("Success", msg);
             }
         }
@@ -559,7 +559,7 @@ else
             if (userDto.Id == User?.Id)
             {
                 messageBox.ModalShow("Attention", "Relogin needed"); 
-                messageBox.OnClose += () => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); };
+                messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); return Task.CompletedTask; };
             }
             else
             {

@@ -10,37 +10,69 @@
 @if (productDto != null)
 {
     <Front.Components.Modals.MessageBox @ref=messageBox />
-    
+
     <table>
         <tr>
-            <th>Id</th>
-            <td align="right">@productDto.Id</td>
+            <th>
+                Name
+            </th>
+            <td align="right">
+                @productDto.Name
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                Price
+            </th>
+            <td align="right">
+                @productDto.Price
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                Available now
+            </th>
+            <td align="right">
+                @(productDto.IsAvailable ? "Yes": "No")
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                Creation date
+            </th>
+            <td align="right">
+                @productDto.CreationDate.ToString("dd MMM yyyy")
+            </td>
         </tr>
         <tr>
-            <th>Name</th>
-            <td align="right">@productDto.Name</td>
+            <th>
+                Producer
+            </th>
+            <td align="right">
+                @producerDto.Name
+            </td>
         </tr>
         <tr>
-            <th>Price</th>
-            <td align="right">@productDto.Price</td>
+            <th>
+                Description
+            </th>
         </tr>
         <tr>
-            <th>Producer</th>
-            <td align="right">@producerDto.Name</td>
+            <td colspan="2">
+                @productDto.Description
+            </td>
         </tr>
-        <tr>
-            <th>Created at</th>
-            <td align="right">@productDto.CreationDate.ToString("dd MMM yyyy")</td>
-        </tr>
-        <tr>
-            <th>Available:</th>
-            <td align="right">@(productDto.IsAvailable ? "Yes" : "No")</td>
-        </tr>
-        <tr>
-            <th>Description</th>
-        </tr>
+        @if(authStateProvider.CurrentUser != null && (authStateProvider.CurrentUser.Id == productDto.ProducerId || authStateProvider.CurrentUser.IsAdmin))
+        {
+            <tr>
+                <td></td>
+                <td><button class="btn btn-primary" @onclick="OnEditClicked">Edit</button></td>
+            </tr>
+        }
     </table>
-    <div>@productDto.Description</div>
 }
 else
 {
@@ -82,21 +114,8 @@ else
 
         StateHasChanged();
     }
+    private void OnEditClicked(MouseEventArgs e)
+    {
+        navManager.NavigateTo($"Product/{Id}/edit");
+    }
 }
-
-<style>
-    select {
-        border: 0;
-        width: 100%;
-        height:100%;
-    }
-
-    input{
-        width: 100%;
-    }
-
-    input:disabled {
-        border:0;
-        background-color: rgba(255, 255, 255, .0);
-    }    
-</style>

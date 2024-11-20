@@ -1,4 +1,5 @@
 ﻿@page "/users"
+@using Clients.CustomGateway
 @inject NavigationManager navManager
 <PageTitle>Users</PageTitle>
 
@@ -7,9 +8,9 @@
 <Front.Components.AuthService.UserList ButtonText="View" OnUserButtonClickedAsyncHandler=OnUserClickedAsync/>
 
 @code{
-    Task OnUserClickedAsync(Guid id)
+    Task OnUserClickedAsync(UserDto user)
     {
-        navManager.NavigateTo($"user/{id}");
+        navManager.NavigateTo($"user/{user.Id}");
         return Task.CompletedTask;
     }
 }

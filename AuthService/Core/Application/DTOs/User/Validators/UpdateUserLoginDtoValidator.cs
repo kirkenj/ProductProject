@@ -14,7 +14,7 @@ namespace Application.DTOs.User.Validators
             {
                 var result = await userRepository.GetAsync(new() { AccurateLogin = login });
                 return result == null;
-            });
+            }).WithMessage("This login is already taken.");
         }
     }
 }
