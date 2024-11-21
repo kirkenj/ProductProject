@@ -14,7 +14,7 @@
             <th></th>
         </tr>
     </thead>
-    
+
     <thead>
         <tr>
             <th><input class="input-group-text" @bind-value=NameFilter /></th>
@@ -26,7 +26,7 @@
             </th>
             <td><input type="checkbox" @bind-value=AvailableFilter checked="@(AvailableFilter)" /> Available only</td>
             <th style='white-space: nowrap'>
-                <button class="btn btn-primary" @onclick="OnFilterClicked">Filter</button>
+                <button class="btn btn-primary" @onclick="@((e) => OnFilterClicked(false))">Filter</button>
                 <button class="btn btn-danger" @onclick="OnClearFilterClicked">Reset</button>
             </th>
         </tr>
@@ -43,14 +43,14 @@
                     <td>@(user.IsAvailable ? "Yes" : "No")</td>
                     <td><NavLink class="btn btn-primary" @onclick="async (e) => {if (OnUserClickedAsync != null) await OnUserClickedAsync(user.Id);}">@ButtonText</NavLink>  </td>
                 </tr>
-            }  
+            }
         }
     </tbody>
     <tfoot>
         <tr>
             @if (ShowLoadMoreButton)
             {
-                <td align="center" colspan="5"><button class="btn btn btn-secondary" @onclick="OnFilterClicked">Load more</button></td>
+                <td align="center" colspan="5"><button class="btn btn btn-secondary" @onclick="@((e) => OnFilterClicked(true))">Load more</button></td>
             }
         </tr>
     </tfoot>
@@ -87,16 +87,16 @@
             OnUserClickedAsync += OnUserButtonClickedAsyncHandler;
         }
 
-        await OnFilterClicked(new());
+        await OnFilterClicked(false);
     }
 
 
-    private async Task OnFilterClicked(MouseEventArgs e)
+    private async Task OnFilterClicked(bool incrimentPageCounter = false)
     {
         var filter = $"Name:{NameFilter}; PriceFilterFrom:{PriceFilterFrom}; PriceFilterTo:{PriceFilterTo}; AvailableFilter:{AvailableFilter}";
         Console.WriteLine(filter);
         List<ProductListDto> res;
-        if (filter == currentFilter)
+        if (filter == currentFilter && incrimentPageCounter)
         {
             res = (await gatewayClient.PoductListAsync(null, NameFilter, null, PriceFilterFrom, PriceFilterTo, AvailableFilter == false ? null : true, null, null, null, ++_loadCounter, LoadAmm)).ToList();
             Products.AddRange(res);
@@ -126,7 +126,7 @@
         NameFilter = null;
         AvailableFilter = true;
         currentFilter = null;
-        await OnFilterClicked(e);
+        await OnFilterClicked();
     }
 
 
@@ -138,4 +138,3 @@
     [Parameter]
     public string? ButtonText { get; set; }
 }
-

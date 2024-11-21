@@ -28,31 +28,21 @@ namespace AuthAPI.FIlters
 
             if (objectResult.Value is IReadOnlyCollection<UserDto> userList)
             {
-                HadnleUserListDtoCollection(userList);
+                SetDefaultValues(userList);
             }
-
-
-            if (objectResult.Value is UserDto userDto)
+            else if (objectResult.Value is UserDto userDto)
             {
-                HadnleSingleUserDto(userDto);
+                SetDefaultValues(userDto);
             }
 
             await next();
         }
 
-        private static void HadnleSingleUserDto(UserDto userDto)
-        {
-            SetDefaultValues(userDto);
-        }
-
-        private static void HadnleUserListDtoCollection(IReadOnlyCollection<UserDto> userList)
+        private static void SetDefaultValues(IReadOnlyCollection<UserDto> userList)
         {
             foreach (var item in userList)
             {
-                if (item != null)
-                {
-                    SetDefaultValues(item);
-                }
+                SetDefaultValues(item);
             }
         }
 
