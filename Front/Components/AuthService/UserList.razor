@@ -45,7 +45,7 @@
                 </th>
             }
             <th style='white-space: nowrap'>
-                <button class="btn btn-primary" @onclick="(e) => OnFilterClicked()">Filter</button>
+                <button class="btn btn-primary" @onclick="async (e) => await OnFilterClicked()">Filter</button>
                 <button class="btn btn-danger" @onclick="OnClearFilterClicked">Clear</button>
             </th>
         </tr>
@@ -77,7 +77,7 @@
         <tr>
             @if (ShowLoadMoreButton)
             {
-                <td align="center" colspan=@(IsAdminView ? "6" : "4")><button class="btn btn btn-secondary" @onclick="(e) => OnFilterClicked(true)">Load more</button></td>
+                <td align="center" colspan=@(IsAdminView ? "6" : "4")><button class="btn btn btn-secondary" @onclick="async (e) => await OnFilterClicked(true)">Load more</button></td>
             }
         </tr>
     </tfoot>
