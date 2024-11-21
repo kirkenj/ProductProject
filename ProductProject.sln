@@ -89,7 +89,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomGateway", "Common\Cli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductApi", "Common\Clients\ProductApi\ProductApi.csproj", "{4080AA8D-D556-45E0-AFDB-74295CCF1641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpDelegatingHandlers", "HttpDelegatingHandlers\HttpDelegatingHandlers.csproj", "{774A10F2-EA4C-4C79-AD18-ECB8E478F28F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpDelegatingHandlers", ""Common\HttpDelegatingHandlers\HttpDelegatingHandlers.csproj", "{774A10F2-EA4C-4C79-AD18-ECB8E478F28F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

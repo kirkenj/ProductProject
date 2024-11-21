@@ -10,7 +10,7 @@
     <ProjectReference Include="..\..\..\Common\Clients\AuthClientService\AuthClientService.csproj" />
     <ProjectReference Include="..\..\..\Common\Cache\Cache.csproj" />
     <ProjectReference Include="..\..\..\Common\EmailSender\EmailSender.csproj" />
-    <ProjectReference Include="..\..\..\HttpDelegatingHandlers\HttpDelegatingHandlers.csproj" />
+    <ProjectReference Include="..\..\..\Common\HttpDelegatingHandlers\HttpDelegatingHandlers.csproj" />
     <ProjectReference Include="..\..\Core\Application\Application.csproj" />
     <ProjectReference Include="..\..\Core\Application\Application.csproj" />
     <ProjectReference Include="..\..\Core\Application\Application.csproj" />
