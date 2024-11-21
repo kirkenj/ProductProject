@@ -20,7 +20,6 @@
 
 namespace Clients.CustomGateway
 {
-    using Microsoft.Extensions.Options;
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -66,12 +65,12 @@ namespace Clients.CustomGateway
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public AuthGatewayClient(IOptions<GatewayClientSettings> clientSettings, IHttpClientFactory httpClient)
+        public AuthGatewayClient(string url, HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = clientSettings.Value.Uri;
+            BaseUrl = url;
             
-            _httpClient = httpClient.CreateClient(nameof(IAuthGatewayClient));
+            _httpClient = httpClient;
             
             Initialize();
         }

@@ -1,8 +1,6 @@
 using Clients.AuthApi;
 using HashProvider.Contracts;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Clients.AuthClientService
 {
@@ -11,23 +9,26 @@ namespace Clients.AuthClientService
         public Task<bool> IsTokenValid(string token);
     }
 
-    public class TokenValidationClient : AuthApiClient, ITokenValidationClient
+    public class TokenValidationClient : ITokenValidationClient
     {
-        private static IHashProvider? HashProvider;
-        private static ILogger Logger = null!;
+        private readonly IAuthApiClient _authApiClient;
 
-        public TokenValidationClient(IOptions<AuthClientSettings> baseUrl, IHttpClientFactory httpClient, IHttpContextAccessor contextAccessor, ILogger<TokenValidationClient> logger) : base(baseUrl, httpClient.CreateClient(nameof(ITokenValidationClient)), contextAccessor)
+        private static IHashProvider? HashProvider;
+        private readonly ILogger _logger = null!;
+
+        public TokenValidationClient(IAuthApiClient authApiClient, ILogger<TokenValidationClient> logger)
         {
-            Logger = logger;
+            _authApiClient = authApiClient;
+            _logger = logger;
         }
 
         private async Task UpdateEncodingAndHashAlgoritm()
         {
-            Logger.LogInformation($"Sending request to auth client for hashDefaults.");
+            _logger.LogInformation($"Sending request to auth client for hashDefaults.");
 
-            var defaults = await GetHashDefaultsAsync();
+            var defaults = await _authApiClient.GetHashDefaultsAsync();
 
-            Logger.LogInformation($"Request to auth client for hashDefaults - Success.");
+            _logger.LogInformation($"Request to auth client for hashDefaults - Success.");
 
             HashProvider = new HashProvider.Models.HashProvider(new HashProvider.Models.HashProviderSettings { EncodingName = defaults.EncodingName, HashAlgorithmName = defaults.HashAlgorithmName });
         }
@@ -41,7 +42,7 @@ namespace Clients.AuthClientService
 
             var tokenHash = HashProvider?.GetHash(token) ?? throw new ApplicationException($"Couldn't get hash");
 
-            return await IsTokenValidAsync(tokenHash);
+            return await _authApiClient.IsTokenValidAsync(tokenHash);
         }
     }
 }

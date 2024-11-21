@@ -4,8 +4,10 @@ using Cache.Models;
 using Clients.AuthApi;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using HttpDelegatingHandlers;
 using Infrastucture.AuthClient;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 using System.Text.Json;
 
@@ -17,8 +19,20 @@ namespace Infrastructure
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, bool isDevelopment)
         {
             services.Configure<AuthClientSettings>((s) => s.Uri = Environment.GetEnvironmentVariable("AuthApiUri") ?? throw new ArgumentException("Couldn't get AuthApi Uri"));
-            services.AddHttpClient();
-            services.AddScoped<IAuthApiClient, AuthApiClient>();
+
+            services.AddScoped<AuthHeaderHandler>();
+            
+            const string HttpClientName = "WithHandler";
+            services.AddHttpClient(HttpClientName).AddHttpMessageHandler<AuthHeaderHandler>();
+
+            services.AddScoped<IAuthApiClient, AuthApiClient>(sp =>
+            {
+                var clf = sp.GetRequiredService<IHttpClientFactory>();
+                var cl = clf.CreateClient(HttpClientName);
+                var config = sp.GetRequiredService<IOptions<AuthClientSettings>>();
+                return new AuthApiClient(config.Value.Uri, cl);
+            });
+
             services.AddScoped<IAuthApiClientService, AuthClientService>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

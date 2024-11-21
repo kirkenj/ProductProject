@@ -86,23 +86,11 @@ namespace Clients.ProductApi
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public ProductApiClient(IOptions<ProductClientSettings> baseUrl, HttpClient httpClient, IHttpContextAccessor contextAccessor)
+        public ProductApiClient(string baseUrl, HttpClient httpClient)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = baseUrl.Value.Uri;
+            BaseUrl = baseUrl;
             _httpClient = httpClient;
-            var authResult = contextAccessor.HttpContext.Request.Headers.FirstOrDefault(h => h.Key == "Authorization");
-            if (authResult.Value.Any())
-            {
-                var r = authResult.Value.First().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-                if (r.Length != 2)
-                {
-                    throw new ApplicationException();
-                }
-
-                httpClient.DefaultRequestHeaders.Authorization = new(r[0], r[1]);
-            }
             Initialize();
         }
 

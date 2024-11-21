@@ -8,19 +8,17 @@ using Front.MessageHandlers;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Options;
 
-
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 
-builder.Services.Configure<GatewayClientSettings>(o => o.Uri = "https://localhost:7023/");
+builder.Services.Configure<GatewayClientSettings>(o => o.Uri = builder.Configuration["GatewayUri"]?.ToString() ?? throw new Exception("Couldn't get \"GatewayUri\""));
 
 builder.Services.AddLogging();
 
 builder.Services.AddScoped<HeadersMessageHandler>();
 builder.Services.AddScoped<TokenDelegatingHandler>();
-
 
 builder.Services.AddScoped<IAccessTokenProvider, CustomTokenAccessor>();
 builder.Services.AddScoped<LocalStorageAccessor>();
@@ -28,13 +26,19 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(s => s.GetService<CustomAuthStateProvider>() ?? throw new Exception());
 
-builder.Services.AddHttpClient<IGatewayClient, GatewayClient>(nameof(IGatewayClient), a => a = new HttpClient()).AddHttpMessageHandler<HeadersMessageHandler>()
-    .AddHttpMessageHandler<TokenDelegatingHandler>();
 builder.Services.AddHttpClient<IAuthGatewayClient, AuthGatewayClient>(nameof(IAuthGatewayClient), a => a = new HttpClient());
 
-var sp = builder.Services.BuildServiceProvider();
+builder.Services.AddHttpClient<IGatewayClient, GatewayClient>(nameof(IGatewayClient), a => a = new HttpClient()).AddHttpMessageHandler<HeadersMessageHandler>()
+    .AddHttpMessageHandler<TokenDelegatingHandler>();
 
-builder.Services.AddScoped<IAuthGatewayClient, AuthGatewayClient>();
+builder.Services.AddScoped<IAuthGatewayClient, AuthGatewayClient>(sp =>
+{
+    var clf = sp.GetRequiredService<IHttpClientFactory>();
+    var client = clf.CreateClient(nameof(IAuthGatewayClient));
+    var settings = sp.GetService<IOptions<GatewayClientSettings>>() ?? throw new Exception("IOptions<GatewayClientSettings> is null");
+    return new AuthGatewayClient(settings.Value.Uri, client);
+});
+
 builder.Services.AddScoped<IGatewayClient, GatewayClient>(sp => 
 {
     var clf = sp.GetRequiredService<IHttpClientFactory>();
