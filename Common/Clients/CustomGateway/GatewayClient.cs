@@ -23,7 +23,7 @@ namespace Clients.CustomGateway
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface IGatewayClient
+    public partial interface IGatewayClient : IAuthGatewayClient
     {
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>

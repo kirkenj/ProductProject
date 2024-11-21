@@ -26,17 +26,17 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(s => s.GetService<CustomAuthStateProvider>() ?? throw new Exception());
 
-builder.Services.AddHttpClient<IAuthGatewayClient, AuthGatewayClient>(nameof(IAuthGatewayClient), a => a = new HttpClient());
+builder.Services.AddHttpClient<IAuthGatewayClient, GatewayClient>(nameof(IAuthGatewayClient), a => a = new HttpClient());
 
 builder.Services.AddHttpClient<IGatewayClient, GatewayClient>(nameof(IGatewayClient), a => a = new HttpClient()).AddHttpMessageHandler<HeadersMessageHandler>()
     .AddHttpMessageHandler<TokenDelegatingHandler>();
 
-builder.Services.AddScoped<IAuthGatewayClient, AuthGatewayClient>(sp =>
+builder.Services.AddScoped<IAuthGatewayClient, GatewayClient>(sp =>
 {
     var clf = sp.GetRequiredService<IHttpClientFactory>();
     var client = clf.CreateClient(nameof(IAuthGatewayClient));
     var settings = sp.GetService<IOptions<GatewayClientSettings>>() ?? throw new Exception("IOptions<GatewayClientSettings> is null");
-    return new AuthGatewayClient(settings.Value.Uri, client);
+    return new GatewayClient(settings.Value.Uri, client);
 });
 
 builder.Services.AddScoped<IGatewayClient, GatewayClient>(sp => 
