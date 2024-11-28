@@ -1,25 +1,44 @@
-﻿@inject Front.Services.CustomAuthStateProvider authStateProvider;
+﻿@inject Front.Services.LocalStorageAccessor storageAccessor;
+@inject NavigationManager navManager
 
-<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly">
-        <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-        </Found>
-        <NotFound>
-            <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-</CascadingAuthenticationState>
+<Front.Components.Modals.MessageBox @ref="MessageBox" />
 
+
+<ErrorBoundary>
+    <ChildContent>
+        <CascadingAuthenticationState>
+            <Router AppAssembly="@typeof(App).Assembly">
+                <Found Context="routeData">
+                    <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                    <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+                </Found>
+                <NotFound>
+                    <PageTitle>Not found</PageTitle>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <p role="alert">Sorry, there's nothing at this address.</p>
+                    </LayoutView>
+                </NotFound>
+            </Router>
+        </CascadingAuthenticationState>
+    </ChildContent>
+    <ErrorContent>
+        @{
+            MessageBox.OnClose += async (e) => 
+            {
+                await storageAccessor.Clear();
+                navManager.NavigateTo("", true); 
+            };
+            MessageBox.ModalShow("Fatal error", "Due to fatal error current session will be terminated");
+        }
+    </ErrorContent>
+</ErrorBoundary>
 @code{
+    Front.Components.Modals.MessageBox MessageBox = null!;
+
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Application ran with autologout");
-        authStateProvider.Logout();
+        Console.WriteLine("Application ran with storage cleanup");
+        await storageAccessor.Clear();
         await base.OnInitializedAsync();
     }
 }

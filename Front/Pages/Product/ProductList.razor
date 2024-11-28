@@ -7,18 +7,19 @@
 
 @if(stateProvider.CurrentUser != null)
 {
-    <button class="btn btn-primary" @onclick="OnAddProductClicked">Add product</button>
+    <button class="btn btn-primary" @onclick="OnViewProductClicked">Add product</button>
 }
 
-<Front.Components.ProductService.ProductList ButtonText="View" OnUserButtonClickedAsyncHandler=OnUserClickedAsync />
+<Front.Components.ProductService.ProductList ButtonText="View" OnObjectButtonClickedAsyncHandler=OnObjectClickedAsync />
 
 @code{
-    Task OnUserClickedAsync(Guid id)
+    Task OnObjectClickedAsync(Guid id)
     {
         navManager.NavigateTo($"product/{id}");
         return Task.CompletedTask;
     }
-    private void OnAddProductClicked(MouseEventArgs e)
+
+    private void OnViewProductClicked(MouseEventArgs e)
     {
         navManager.NavigateTo("AddProduct");
     }

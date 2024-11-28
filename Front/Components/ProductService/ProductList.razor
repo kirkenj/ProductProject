@@ -82,9 +82,9 @@
     {
         LoadAmm = DEFAULT_LOAD_VALUE;
         authenticatedUser = authStateProvider.CurrentUser;
-        if (OnUserButtonClickedAsyncHandler != null)
+        if (OnObjectButtonClickedAsyncHandler != null)
         {
-            OnUserClickedAsync += OnUserButtonClickedAsyncHandler;
+            OnUserClickedAsync += OnObjectButtonClickedAsyncHandler;
         }
 
         await OnFilterClicked(false);
@@ -134,7 +134,7 @@
 
 
     [Parameter]
-    public Func<Guid, Task>? OnUserButtonClickedAsyncHandler { get; set; }
+    public Func<Guid, Task>? OnObjectButtonClickedAsyncHandler { get; set; }
     [Parameter]
     public string? ButtonText { get; set; }
 }
