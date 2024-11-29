@@ -12,8 +12,10 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Gateway/Gateway/CustomGateway.csproj", "Gateway/Gateway/"]
-COPY ["Common/Clients/Clients.csproj", "Common/Clients/"]
+COPY ["Common/Clients/AuthClientService/AuthClientService.csproj", "Common/Clients/AuthClientService/"]
 COPY ["Common/HashProvider/HashProvider.csproj", "Common/HashProvider/"]
+COPY ["Common/Clients/ProductApi/ProductApi.csproj", "Common/Clients/ProductApi/"]
+COPY ["Common/HttpDelegatingHandlers/HttpDelegatingHandlers.csproj", "Common/HttpDelegatingHandlers/"]
 RUN dotnet restore "./Gateway/Gateway/CustomGateway.csproj"
 COPY . .
 WORKDIR "/src/Gateway/Gateway"

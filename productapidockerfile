@@ -15,7 +15,7 @@ COPY ["ProductService/Api/ProductAPI/ProductAPI.csproj", "ProductService/Api/Pro
 COPY ["Common/Constants/Constants.csproj", "Common/Constants/"]
 COPY ["Common/Extensions/Extensions.csproj", "Common/Extensions/"]
 COPY ["ProductService/Core/Application/Application.csproj", "ProductService/Core/Application/"]
-COPY ["Common/Clients/Clients.csproj", "Common/Clients/"]
+COPY ["Common/Clients/AuthClientService/AuthClientService.csproj", "Common/Clients/AuthClientService/"]
 COPY ["Common/HashProvider/HashProvider.csproj", "Common/HashProvider/"]
 COPY ["Common/EmailSender/EmailSender.csproj", "Common/EmailSender/"]
 COPY ["Common/Repository/Repository.csproj", "Common/Repository/"]
@@ -23,6 +23,7 @@ COPY ["Common/Cache/Cache.csproj", "Common/Cache/"]
 COPY ["Common/Response/CustomResponse.csproj", "Common/Response/"]
 COPY ["ProductService/Core/Domain/Domain.csproj", "ProductService/Core/Domain/"]
 COPY ["ProductService/Infrastucture/Infrastucture/Infrastructure.csproj", "ProductService/Infrastucture/Infrastucture/"]
+COPY ["Common/HttpDelegatingHandlers/HttpDelegatingHandlers.csproj", "Common/HttpDelegatingHandlers/"]
 COPY ["ProductService/Infrastucture/Persistence/Persistence.csproj", "ProductService/Infrastucture/Persistence/"]
 RUN dotnet restore "./ProductService/Api/ProductAPI/ProductAPI.csproj"
 COPY . .

@@ -1,5 +1,6 @@
 ﻿@inject Front.Services.LocalStorageAccessor storageAccessor;
 @inject NavigationManager navManager
+@inject Front.Services.CustomAuthStateProvider stateProvider;
 
 <Front.Components.Modals.MessageBox @ref="MessageBox" />
 
@@ -38,6 +39,7 @@
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("Application ran with storage cleanup");
+        stateProvider.Logout();
         await storageAccessor.Clear();
         await base.OnInitializedAsync();
     }
