@@ -1,11 +1,11 @@
+using Clients.CustomGateway;
 using Front;
+using Front.MessageHandlers;
 using Front.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Clients.CustomGateway;
-using Front.MessageHandlers;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Options;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -39,7 +39,7 @@ builder.Services.AddScoped<IAuthGatewayClient, GatewayClient>(sp =>
     return new GatewayClient(settings.Value.Uri, client);
 });
 
-builder.Services.AddScoped<IGatewayClient, GatewayClient>(sp => 
+builder.Services.AddScoped<IGatewayClient, GatewayClient>(sp =>
 {
     var clf = sp.GetRequiredService<IHttpClientFactory>();
     var client = clf.CreateClient(nameof(IGatewayClient));

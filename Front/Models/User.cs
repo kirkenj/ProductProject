@@ -20,7 +20,7 @@ namespace Front.Models
         ],
         Consts.AuthTypeName));
 
-        public static User FromClaimsPrincipal(ClaimsPrincipal principal) 
+        public static User FromClaimsPrincipal(ClaimsPrincipal principal)
         {
             var guidStr = principal.FindFirst(ClaimTypes.Sid)?.Value ?? throw new ArgumentException(nameof(ClaimTypes.Sid));
             return new()
@@ -29,7 +29,7 @@ namespace Front.Models
                 Role = principal.FindFirst(ClaimTypes.Role)?.Value ?? throw new ArgumentException(nameof(ClaimTypes.Role)),
                 Email = principal.FindFirst(ClaimTypes.Email)?.Value ?? throw new ArgumentException(nameof(ClaimTypes.Email)),
                 Id = Guid.TryParse(guidStr, out Guid value) ? value : Guid.Empty
-            }; 
+            };
         }
 
         public override bool Equals(object? obj)

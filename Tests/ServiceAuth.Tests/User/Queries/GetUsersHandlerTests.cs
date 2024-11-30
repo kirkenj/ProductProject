@@ -1,4 +1,3 @@
-using Application.DTOs.User;
 using Application.Features.User.Requests.Queries;
 using AutoMapper;
 using MediatR;

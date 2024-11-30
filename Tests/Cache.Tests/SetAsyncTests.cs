@@ -12,7 +12,7 @@ namespace Cache.Tests
         private const int _inaccuracyMs = 20;
 
         public SetAsyncTests(Type type) : base(type) { }
-        
+
 
         [Test]
         public void SetAsync_KeyNullValueNullOffset99ms_ThrowsArgumentNullException()

@@ -3,7 +3,6 @@ using Application.Contracts.Persistence;
 using Application.DTOs.Product;
 using Application.Features.Product.Handlers.Commands;
 using Application.MediatRBehaviors;
-using Application.Models.UserClient;
 using Cache.Contracts;
 using Cache.Models;
 using Clients.AuthApi;

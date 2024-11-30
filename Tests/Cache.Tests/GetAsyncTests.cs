@@ -1,8 +1,5 @@
-using Cache.Contracts;
 using Cache.Models;
 using Cache.Tests.Models;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Caching.Memory;
 
 #pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
 

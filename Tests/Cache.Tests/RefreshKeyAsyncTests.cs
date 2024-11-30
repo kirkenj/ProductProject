@@ -12,7 +12,7 @@ namespace Cache.Tests
     {
 
         public RefreshKeyAsyncTests(Type type) : base(type) { }
-        
+
         [Test]
         public async Task RefreshKeyAsync_KeyNotSet_ReturnsFalse()
         {

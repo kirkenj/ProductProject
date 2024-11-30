@@ -21,7 +21,7 @@ namespace Infrastructure
             services.Configure<AuthClientSettings>((s) => s.Uri = Environment.GetEnvironmentVariable("AuthApiUri") ?? throw new ArgumentException("Couldn't get AuthApi Uri"));
 
             services.AddScoped<AuthHeaderHandler>();
-            
+
             const string HttpClientName = "WithHandler";
             services.AddHttpClient(HttpClientName).AddHttpMessageHandler<AuthHeaderHandler>();
 

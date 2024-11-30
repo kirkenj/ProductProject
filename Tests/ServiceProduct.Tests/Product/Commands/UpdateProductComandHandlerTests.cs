@@ -8,7 +8,7 @@ using ServiceProduct.Tests.Common;
 namespace ServiceAuth.Tests.Product.Commands
 {
     public class UpdateProductComandHandlerTests : TestBase
-    { 
+    {
         [SetUp]
         public void Setup()
         {
@@ -48,9 +48,9 @@ namespace ServiceAuth.Tests.Product.Commands
             //act
             var func = async () => await Mediator.Send(new UpdateProductCommand
             {
-                UpdateProductDto = new() 
-                { 
-                    Id = default, 
+                UpdateProductDto = new()
+                {
+                    Id = default,
                     ProducerId = default,
                     CreationDate = default,
                     Description = default,
@@ -169,10 +169,10 @@ namespace ServiceAuth.Tests.Product.Commands
                 Id = product.Id,
                 Name = Guid.NewGuid().ToString(),
                 Price = (decimal)Random.Shared.NextDouble(),
-                CreationDate= DateTime.Now.AddMinutes(12),
+                CreationDate = DateTime.Now.AddMinutes(12),
                 Description = Guid.NewGuid().ToString(),
                 IsAvailable = !product.IsAvailable,
-                ProducerId= newOwner.Id,
+                ProducerId = newOwner.Id,
             };
             //act
 
@@ -234,10 +234,10 @@ namespace ServiceAuth.Tests.Product.Commands
                 Id = product.Id,
                 Name = Guid.NewGuid().ToString(),
                 Price = (decimal)Random.Shared.NextDouble(),
-                CreationDate= DateTime.Now.AddMinutes(12),
+                CreationDate = DateTime.Now.AddMinutes(12),
                 Description = Guid.NewGuid().ToString(),
                 IsAvailable = !product.IsAvailable,
-                ProducerId= newOwner.Id,
+                ProducerId = newOwner.Id,
             };
             //act
 
@@ -299,10 +299,10 @@ namespace ServiceAuth.Tests.Product.Commands
                 Id = product.Id,
                 Name = Guid.NewGuid().ToString(),
                 Price = (decimal)Random.Shared.NextDouble(),
-                CreationDate= DateTime.Now.AddMinutes(12),
+                CreationDate = DateTime.Now.AddMinutes(12),
                 Description = Guid.NewGuid().ToString(),
                 IsAvailable = !product.IsAvailable,
-                ProducerId= newOwner.Id,
+                ProducerId = newOwner.Id,
             };
             //act
 
@@ -364,10 +364,10 @@ namespace ServiceAuth.Tests.Product.Commands
                 Id = product.Id,
                 Name = Guid.NewGuid().ToString(),
                 Price = (decimal)Random.Shared.NextDouble(),
-                CreationDate= DateTime.Now.AddMinutes(12),
+                CreationDate = DateTime.Now.AddMinutes(12),
                 Description = Guid.NewGuid().ToString(),
                 IsAvailable = !product.IsAvailable,
-                ProducerId= newOwner.Id,
+                ProducerId = newOwner.Id,
             };
             //act
 

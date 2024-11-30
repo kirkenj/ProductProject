@@ -13,7 +13,7 @@ namespace Repository.Tests.GenericFiltrableRepository
         public GetAsyncTests(Type type) : base(type) { }
 
         [SetUp]
-        public async Task SetUp() 
+        public async Task SetUp()
         {
             _testDbContext = await TestConstants.GetDbContextAsync();
         }

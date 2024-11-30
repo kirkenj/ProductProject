@@ -1,7 +1,7 @@
-﻿using Front.Models;
+﻿using Clients.CustomGateway;
+using Front.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Clients.CustomGateway;
 
 namespace Front.Services
 {

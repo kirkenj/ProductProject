@@ -10,7 +10,7 @@ namespace Front.Extensions
         public static bool IsValidationException(this Clients.CustomGateway.GatewayException ex, out IEnumerable<ValidationFailure>? failures)
         {
             ArgumentNullException.ThrowIfNull(ex, nameof(ex));
-        
+
             if (!ex.Response.StartsWith(nameof(ValidationException)))
             {
                 failures = null;

@@ -1,8 +1,5 @@
-using Cache.Contracts;
 using Cache.Models;
 using Cache.Tests.Models;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 
 #pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
 
@@ -14,7 +11,7 @@ namespace Cache.Tests
     public class RemoveAsyncTests : TestBase
     {
         public RemoveAsyncTests(Type type) : base(type) { }
-        
+
         [Test]
         public void RemoveAsync_KeyNull_ThrowsArgumentNullException()
         {
