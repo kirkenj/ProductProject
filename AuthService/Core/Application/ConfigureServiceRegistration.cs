@@ -63,7 +63,7 @@ namespace Application
             var roleRep = provider.GetRequiredService<IRoleRepository>();
             var getRoleTask = roleRep.GetAsync(createUserSettings.DefaultRoleID);
             getRoleTask.Wait();
-            if (getRoleTask.Result == null) 
+            if (getRoleTask.Result == null)
             {
                 throw new ArgumentException($"Role with id '{createUserSettings.DefaultRoleID}' doesn't exist.");
             }

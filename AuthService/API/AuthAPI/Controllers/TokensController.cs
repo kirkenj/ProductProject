@@ -25,7 +25,7 @@ namespace AuthAPI.Controllers
             bool result = await _tokenTracker.IsValid(tokenHash);
             return Ok(result);
         }
-        
+
         [Authorize]
         [HttpPost("InvalidateUsersToken")]
         public async Task<ActionResult> InvalidateToken(Guid userId)

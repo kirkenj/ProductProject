@@ -2,7 +2,6 @@
 using Clients.ProductApi;
 using Exceptions;
 using HttpDelegatingHandlers;
-using Microsoft.Extensions.Options;
 
 namespace CustomGateway.Registrations
 {
@@ -21,9 +20,9 @@ namespace CustomGateway.Registrations
             {
                 var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
                 var client = clientFactory.CreateClient(HTTTP_CLIENT_NAME);
-                var url = Environment.GetEnvironmentVariable(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME) 
+                var url = Environment.GetEnvironmentVariable(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME)
                     ?? throw new CouldNotGetEnvironmentVariableException(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME);
-                
+
                 return new AuthApiClient(url, client);
             });
 
@@ -33,7 +32,7 @@ namespace CustomGateway.Registrations
                 var client = clientFactory.CreateClient(HTTTP_CLIENT_NAME);
                 var url = Environment.GetEnvironmentVariable(PRODUCT_API_URI_ENVIRONMENT_VARIBALE_NAME)
                     ?? throw new CouldNotGetEnvironmentVariableException(PRODUCT_API_URI_ENVIRONMENT_VARIBALE_NAME);
-                
+
                 return new ProductApiClient(url, client);
             });
 

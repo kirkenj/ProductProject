@@ -3,12 +3,12 @@ using Cache.Contracts;
 using Cache.Models;
 using EmailSender.Contracts;
 using EmailSender.Models;
+using Exceptions;
 using HashProvider.Contracts;
 using HashProvider.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
-using Exceptions;
 
 namespace Infrastructure
 {

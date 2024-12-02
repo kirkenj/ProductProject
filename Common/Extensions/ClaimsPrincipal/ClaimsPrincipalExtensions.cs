@@ -4,7 +4,7 @@ namespace Extensions.ClaimsPrincipalExtensions
 {
     public static class ClaimsPrincipalExtensions
     {
-        public static Guid? GetUserId(this ClaimsPrincipal User) 
+        public static Guid? GetUserId(this ClaimsPrincipal User)
         {
             var str = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value ?? null;
             return !string.IsNullOrEmpty(str) && Guid.TryParse(str, out Guid ret) ? ret : null;

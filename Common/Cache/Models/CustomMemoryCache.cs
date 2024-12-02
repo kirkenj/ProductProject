@@ -30,9 +30,9 @@ namespace Cache.Models
             {
                 throw new ArgumentException($"{nameof(key)} is null", nameof(key));
             }
-            
+
             var objRes = _implementation.Get(key.Trim());
-            if (objRes == null) 
+            if (objRes == null)
             {
                 return Task.FromResult(false);
             }

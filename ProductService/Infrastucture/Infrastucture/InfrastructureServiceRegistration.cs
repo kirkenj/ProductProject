@@ -64,7 +64,7 @@ namespace Infrastructure
             }
 
             var useDefaultCacheStr = Environment.GetEnvironmentVariable(USE_DEFAULT_CACHE_ENVIRONMENT_VARIBALE_NAME);
-            
+
             if (useDefaultCacheStr != null && bool.TryParse(useDefaultCacheStr, out bool result) && result)
             {
                 services.AddMemoryCache();

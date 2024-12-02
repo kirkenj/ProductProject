@@ -15,7 +15,7 @@ namespace AuthAPI.Registrations
         {
             var settingsJson = Environment.GetEnvironmentVariable(JWT_SETTINGS_ENVIRONMENT_VARIBALE_NAME) ?? throw new CouldNotGetEnvironmentVariableException(JWT_SETTINGS_ENVIRONMENT_VARIBALE_NAME);
             var settings = JsonSerializer.Deserialize<JwtSettings>(settingsJson) ?? throw new InvalidOperationException("Couldn't deserialize JwtSettings from environment");
-            
+
             services.Configure<JwtSettings>((configuration) =>
             {
                 configuration.Issuer = settings.Issuer ?? throw new ArgumentException($"JwtSettings: {nameof(settings.Issuer)}  is null");
