@@ -5,7 +5,10 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "JwtSettings": "{\"Audience\": \"Little cats\", \"DurationInMinutes\": 60, \"Issuer\": \"AuthApi\", \"Key\": \"qADyPp0pMJxKU9xyjzPlqExULaXs7RD0qSTcWoalU8A=\", \"SecurityAlgorithm\": \"HS256\"}",
+        "AuthApiUri": "https://localhost:7067",
+        "ProductApiUri": "https://localhost:7198"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7023;http://localhost:5215"

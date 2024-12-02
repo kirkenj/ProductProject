@@ -3,7 +3,7 @@ using Application.Features.User.Requests.Commands;
 using Application.Features.User.Requests.Queries;
 using Application.Models.User;
 using AuthAPI.Contracts;
-using AuthAPI.FIlters;
+using AuthAPI.ActionFIlters;
 using Constants;
 using CustomResponse;
 using Extensions.ClaimsPrincipalExtensions;

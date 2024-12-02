@@ -12,8 +12,8 @@ namespace Persistence
 
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Role> Roles { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,8 +36,8 @@ namespace Persistence
 
             ((string login, string password, string name, string email) userData, int roleID)[] startUsersArray = new[]
             {
-                (("admin", "admin", "seeding admin", "kirkenj@bk.ru"), adminRole.Id),
-                (("user", "user", "seeding user", "kirkend@bk.ru"), regularRole.Id)
+                (("admin", "admin", "seeding admin", "admin@product"), adminRole.Id),
+                (("user", "user", "seeding user", "user@product"), regularRole.Id)
             };
 
             foreach (var item in startUsersArray)

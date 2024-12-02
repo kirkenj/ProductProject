@@ -1,4 +1,4 @@
-﻿namespace Front.MessageHandlers
+﻿namespace Front.Services.MessageHandlers
 {
     public class HeadersMessageHandler : DelegatingHandler
     {

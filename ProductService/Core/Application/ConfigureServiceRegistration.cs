@@ -1,6 +1,5 @@
 ﻿using Application.MediatRBehaviors;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -8,7 +7,7 @@ namespace Application
 {
     public static class ConfigureServiceRegistration
     {
-        public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

@@ -10,9 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.ConfigureApplicationServices(builder.Configuration);
+builder.Services.ConfigureApplicationServices();
 builder.Services.ConfigurePersistenceServices();
-builder.Services.ConfigureJwtAuthentication(builder.Configuration);
+builder.Services.ConfigureJwtAuthentication();
 builder.Services.ConfigureInfrastructureServices(builder.Environment.IsDevelopment());
 
 builder.Services.AddControllers();

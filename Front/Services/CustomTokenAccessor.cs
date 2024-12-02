@@ -30,9 +30,6 @@ namespace Front.Services
             return new AccessTokenResult(status, aToken, null, null);
         }
 
-        public async ValueTask<AccessTokenResult> RequestAccessToken(AccessTokenRequestOptions options)
-        {
-            return await RequestAccessToken();
-        }
+        public async ValueTask<AccessTokenResult> RequestAccessToken(AccessTokenRequestOptions options) => await RequestAccessToken();
     }
 }

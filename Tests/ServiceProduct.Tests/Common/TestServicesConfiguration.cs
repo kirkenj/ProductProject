@@ -8,7 +8,7 @@ using Cache.Models;
 using Clients.AuthApi;
 using EmailSender.Contracts;
 using FluentValidation;
-using Infrastucture.AuthClient;
+using Infrastructure.AuthClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence;

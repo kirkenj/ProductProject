@@ -35,12 +35,4 @@
 </ErrorBoundary>
 @code{
     Front.Components.Modals.MessageBox MessageBox = null!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        Console.WriteLine("Application ran with storage cleanup");
-        stateProvider.Logout();
-        await storageAccessor.Clear();
-        await base.OnInitializedAsync();
-    }
 }

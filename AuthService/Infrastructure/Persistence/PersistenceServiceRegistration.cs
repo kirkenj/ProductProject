@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Persistence;
+using Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Repositories;
@@ -7,6 +8,8 @@ namespace Persistence
 {
     public static class PersistenceServiceRegistration
     {
+        private const string DATABASE_CONNECTION_STRING_ENVIRONMENT_VARIBALE_NAME = "AuthDbConnectionString";
+
         public static IServiceCollection ConfigurePersistenceServices(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
@@ -14,15 +17,14 @@ namespace Persistence
 
             services.AddDbContext<AuthDbContext>(options =>
             {
-                var cString = Environment.GetEnvironmentVariable("AuthDbConnectionString") ?? throw new ArgumentException("Couldn't get connection string");
+                var cString = Environment.GetEnvironmentVariable(DATABASE_CONNECTION_STRING_ENVIRONMENT_VARIBALE_NAME)
+                    ?? throw new CouldNotGetEnvironmentVariableException(DATABASE_CONNECTION_STRING_ENVIRONMENT_VARIBALE_NAME);
                 options.UseSqlServer(cString);
             });
 
-            using (var scope = services.BuildServiceProvider())
-            using (var context = scope.GetService<AuthDbContext>() ?? throw new Exception())
-            {
-                context.Database.EnsureCreated();
-            }
+            using var scope = services.BuildServiceProvider();
+            using var context = scope.GetService<AuthDbContext>() ?? throw new Exception();
+            context.Database.EnsureCreated();
             return services;
         }
     }

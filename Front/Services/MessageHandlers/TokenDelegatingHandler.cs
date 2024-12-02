@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 
-namespace Front.MessageHandlers
+namespace Front.Services.MessageHandlers
 {
     public class TokenDelegatingHandler : AuthorizationMessageHandler
     {

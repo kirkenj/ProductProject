@@ -1,10 +1,11 @@
 ﻿using Application.DTOs.Role;
 using Application.DTOs.User;
 using Constants;
+using Extensions.ClaimsPrincipalExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AuthAPI.FIlters
+namespace AuthAPI.ActionFIlters
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class GetUserActionFilterAttribute : Attribute, IAsyncResultFilter
@@ -28,28 +29,31 @@ namespace AuthAPI.FIlters
 
             if (objectResult.Value is IReadOnlyCollection<UserDto> userList)
             {
-                SetDefaultValues(userList);
+                SetDefaultValues(context, userList);
             }
             else if (objectResult.Value is UserDto userDto)
             {
-                SetDefaultValues(userDto);
+                SetDefaultValues(context, userDto);
             }
 
             await next();
         }
 
-        private static void SetDefaultValues(IReadOnlyCollection<UserDto> userList)
+        private static void SetDefaultValues(ResultExecutingContext context, IReadOnlyCollection<UserDto> userList)
         {
             foreach (var item in userList)
             {
-                SetDefaultValues(item);
+                SetDefaultValues(context, item);
             }
         }
 
-        private static UserDto SetDefaultValues(UserDto user)
+        private static UserDto SetDefaultValues(ResultExecutingContext context, UserDto user)
         {
-            user.Role = DefaultRole;
-            user.Address = ADDRESS_PLACEHOLDER;
+            if ((context.HttpContext.User.GetUserId() ?? Guid.Empty) != user.Id)
+            {
+                user.Role = DefaultRole;
+                user.Address = ADDRESS_PLACEHOLDER;
+            }
             return user;
         }
     }

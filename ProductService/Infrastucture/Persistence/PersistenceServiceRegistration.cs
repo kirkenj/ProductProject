@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Persistence;
+using Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Repositories;
@@ -7,13 +8,16 @@ namespace Persistence
 {
     public static class PersistenceServiceRegistration
     {
+        private const string DATABASE_CONNECTION_STRING_ENVIRONMENT_VARIBALE_NAME = "ProductDbConnectionString";
+
         public static IServiceCollection ConfigurePersistenceServices(this IServiceCollection services)
         {
             services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddDbContext<ProductDbContext>(options =>
             {
-                var cString = Environment.GetEnvironmentVariable("ProductDbConnectionString") ?? throw new ArgumentException("Couldn't get connection string");
+                var cString = Environment.GetEnvironmentVariable(DATABASE_CONNECTION_STRING_ENVIRONMENT_VARIBALE_NAME)
+                    ?? throw new CouldNotGetEnvironmentVariableException(DATABASE_CONNECTION_STRING_ENVIRONMENT_VARIBALE_NAME);
                 options.UseSqlServer(cString);
             });
 

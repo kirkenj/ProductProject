@@ -6,13 +6,13 @@ using Clients.AuthApi;
 using Microsoft.Extensions.Logging;
 using System.Text;
 
-namespace Infrastucture.AuthClient
+namespace Infrastructure.AuthClient
 {
     public class AuthClientService : IAuthApiClientService
     {
         private readonly IAuthApiClient _authClient;
         private readonly ICustomMemoryCache _customMemoryCache;
-        private readonly string cacheKeyPrefix = "ProductAPI_AuthService_";
+        private const string CACHE_KEY_PREFIX = "ProductAPI_AuthService_";
         private readonly IMapper _mapper;
         private readonly ILogger<AuthClientService> _logger;
 
@@ -30,7 +30,7 @@ namespace Infrastucture.AuthClient
             {
                 var parametersAsString = StringifyParameters(ids, accurateLogin, loginPart, accurateEmail, address, roleIds, page, pageSize);
 
-                var cacheKey = cacheKeyPrefix + parametersAsString;
+                var cacheKey = CACHE_KEY_PREFIX + parametersAsString;
 
                 _logger.LogInformation($"Sending request for {nameof(AuthClientUser)} with filter: {parametersAsString}");
 
@@ -50,7 +50,7 @@ namespace Infrastucture.AuthClient
 
                 result = _mapper.Map<List<AuthClientUser>>(qResult);
 
-                var tasks = result.Select(r => _customMemoryCache.SetAsync(cacheKeyPrefix + "userId_" + r.Id, result, TimeSpan.FromMilliseconds(10_000)))
+                var tasks = result.Select(r => _customMemoryCache.SetAsync(CACHE_KEY_PREFIX + "userId_" + r.Id, result, TimeSpan.FromMilliseconds(10_000)))
                 .Append(_customMemoryCache.SetAsync(cacheKey, result, TimeSpan.FromMilliseconds(10_000)));
 
                 await Task.WhenAll(tasks);
@@ -68,7 +68,7 @@ namespace Infrastucture.AuthClient
         {
             try
             {
-                var cacheKey = cacheKeyPrefix + "userId_" + userId;
+                var cacheKey = CACHE_KEY_PREFIX + "userId_" + userId;
 
                 Console.WriteLine($"Trying to get a {nameof(AuthClientUser)} from {nameof(AuthClientService)} with {nameof(userId)} = {userId}");
 

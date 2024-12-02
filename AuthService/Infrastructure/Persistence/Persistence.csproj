@@ -27,6 +27,7 @@
 	  <PackageReference Include="System.Text.Json" Version="8.0.5" />
 	  <ProjectReference Include="..\..\..\Common\Cache\Cache.csproj" />
 	  <ProjectReference Include="..\..\..\Common\Repository\Repository.csproj" />
+	  <ProjectReference Include="..\..\..\Exceptions\Exceptions.csproj" />
 	  <ProjectReference Include="..\..\Core\Application\Application.csproj" />
   </ItemGroup>
 

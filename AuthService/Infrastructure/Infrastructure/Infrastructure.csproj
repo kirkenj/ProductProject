@@ -16,6 +16,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Common\EmailSender\EmailSender.csproj" />
 	  <ProjectReference Include="..\..\..\Common\HashProvider\HashProvider.csproj" />
+	  <ProjectReference Include="..\..\..\Exceptions\Exceptions.csproj" />
 	  <ProjectReference Include="..\..\Core\Application\Application.csproj" />
 	</ItemGroup>
 </Project>
