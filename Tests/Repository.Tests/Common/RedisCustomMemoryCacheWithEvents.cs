@@ -5,12 +5,8 @@ namespace Repository.Tests.Common
 {
     public class RedisCustomMemoryCacheWithEvents : RedisCustomMemoryCache
     {
-        public RedisCustomMemoryCacheWithEvents(IOptions<CustomCacheOptions> optionsAccessor) : base(optionsAccessor)
-        {
-        }
-        public RedisCustomMemoryCacheWithEvents(CustomCacheOptions optionsAccessor) : base(optionsAccessor)
-        {
-        }
+        public RedisCustomMemoryCacheWithEvents(string redisCString) : base(redisCString)
+        { }
 
         public delegate void OnGetHandler(string key, object? result);
 

@@ -6,10 +6,13 @@ using Cache.Contracts;
 using EmailSender.Contracts;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Persistence;
 using ServiceAuth.Tests.Common;
+using System.Security.Cryptography;
+using System.Text;
 using Tools;
 
 
@@ -299,8 +302,31 @@ namespace ServiceAuth.Tests.User.Commands
         public async Task LoginHandler_RegularLogin_ReturnsOk()
         {
             //arrange
-            var email = "kirkenj@bk.ru";
-            var password = "admin";
+            string email = "test@test";
+            string password = "SOMECOOLPWD228";
+
+
+            string hashAlgorithmName = "MD5";
+            HashAlgorithm hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? throw new();
+            Encoding encoding = Encoding.UTF8;
+            var pwdBytes = encoding.GetBytes(password);
+            var pwdHash = hashAlgorithm.ComputeHash(pwdBytes);
+            var pwdHashString = encoding.GetString(pwdHash);
+            Domain.Models.User u = new()
+            {
+                Id = Guid.NewGuid(),
+                Login = "item.userData.login",
+                RoleID = 2,
+                Email = email,
+                Name = "item.userData.name",
+                Address = "Confidential",
+                PasswordHash = pwdHashString,
+                StringEncoding = encoding.BodyName,
+                HashAlgorithm = hashAlgorithmName
+            };
+
+            Context.Add(u);
+            await Context.SaveChangesAsync();
             var expectedResult = Mapper.Map<UserDto>(Users.First(u => u.Email == email));
 
             //act

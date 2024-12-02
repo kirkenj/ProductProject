@@ -1,7 +1,6 @@
 ﻿using Cache.Contracts;
 using Cache.Models;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 
 namespace Cache.Tests.Models
 {
@@ -13,15 +12,7 @@ namespace Cache.Tests.Models
         {
             if (type == typeof(RedisCustomMemoryCache))
             {
-
-                CustomCacheOptions customCacheOptions = new()
-                {
-                    ConnectionUri = "localhost:3330"
-                };
-
-                IOptions<CustomCacheOptions> options = Options.Create(customCacheOptions);
-
-                _cache = new RedisCustomMemoryCache(options);
+                _cache = new RedisCustomMemoryCache("localhost:3300");
             }
             else if (type == typeof(CustomMemoryCache))
             {

@@ -44,7 +44,6 @@ namespace ServiceAuth.Tests.Common
 
             services.AddValidatorsFromAssembly(typeof(CreateUserComandHandler).Assembly);
 
-            services.Configure<CustomCacheOptions>(a => a.ConnectionUri = "localhost:3330");
             services.Configure<ForgotPasswordSettings>(a =>
             {
                 a.EmailBodyFormat = "sdfhjk{0}";
@@ -72,7 +71,7 @@ namespace ServiceAuth.Tests.Common
             });
 
             services.AddLogging();
-            services.AddSingleton<ICustomMemoryCache, RedisCustomMemoryCacheWithEvents>();
+            services.AddSingleton<ICustomMemoryCache, RedisCustomMemoryCacheWithEvents>(sp => new("localhost:3300"));
             services.AddSingleton<IEmailSender, TestEmailSender>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();

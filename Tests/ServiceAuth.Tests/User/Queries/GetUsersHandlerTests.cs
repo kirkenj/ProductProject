@@ -1,3 +1,4 @@
+using Application.DTOs.User;
 using Application.Features.User.Requests.Queries;
 using AutoMapper;
 using MediatR;
@@ -12,8 +13,8 @@ namespace ServiceAuth.Tests.User.Queries
     {
         public IMapper Mapper { get; set; } = null!;
         public IMediator Mediator { get; set; } = null!;
-        public AuthDbContext Context { get; set; }
-        public IEnumerable<Domain.Models.User> Roles => Context.Users;
+        public AuthDbContext Context { get; set; } = null!;
+        public IEnumerable<Domain.Models.User> Users => Context.Users;
 
         [SetUp]
         public void Setup()
@@ -31,7 +32,7 @@ namespace ServiceAuth.Tests.User.Queries
         public async Task GetUserListRequest_ReturnsAllValues()
         {
             //arrange
-            var expectedResult = Mapper.Map<List<UserListDto>>(Roles);
+            var expectedResult = Mapper.Map<List<UserDto>>(Users);
 
             //act
             var result = await Mediator.Send(new GetUserListRequest() { });

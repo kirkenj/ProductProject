@@ -40,10 +40,8 @@ namespace ServiceProduct.Tests.Common
 
             services.AddValidatorsFromAssembly(typeof(UpdateProductComandHandler).Assembly);
 
-            services.Configure<CustomCacheOptions>(a => a.ConnectionUri = "localhost:3330");
-
             services.AddLogging();
-            services.AddSingleton<ICustomMemoryCache, RedisCustomMemoryCacheWithEvents>();
+            services.AddSingleton<ICustomMemoryCache, RedisCustomMemoryCacheWithEvents>(sp => new("localhost:3300"));
             services.AddSingleton<IEmailSender, TestEmailSender>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IAuthApiClient, TestAuthClient>();

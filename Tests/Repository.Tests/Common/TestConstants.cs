@@ -78,14 +78,11 @@ namespace Repository.Tests.Common
             return testDbContext;
         }
 
-        public static CustomCacheOptions CustomCacheOptions => new()
-        {
-            ConnectionUri = "localhost:3330",
-        };
+        public static string CustomCacheCString => "localhost:3300";
 
         public static RedisCustomMemoryCacheWithEvents GetEmptyReddis()
         {
-            var val = new RedisCustomMemoryCacheWithEvents(CustomCacheOptions);
+            var val = new RedisCustomMemoryCacheWithEvents(CustomCacheCString);
             val.ClearDb();
             val.DropEvents();
             return val;
