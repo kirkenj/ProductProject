@@ -72,8 +72,9 @@ namespace Infrastructure
             }
             else
             {
-                services.Configure<CustomCacheOptions>((a) => { a.ConnectionUri = Environment.GetEnvironmentVariable(REDIS_URL_ENVIRONMENT_VARIBALE_NAME) ?? throw new CouldNotGetEnvironmentVariableException(REDIS_URL_ENVIRONMENT_VARIBALE_NAME); });
-                services.AddScoped<ICustomMemoryCache, RedisCustomMemoryCache>();
+                var redisConString = Environment.GetEnvironmentVariable(REDIS_URL_ENVIRONMENT_VARIBALE_NAME)
+                    ?? throw new CouldNotGetEnvironmentVariableException(REDIS_URL_ENVIRONMENT_VARIBALE_NAME);
+                services.AddScoped<ICustomMemoryCache, RedisCustomMemoryCache>(sp => new RedisCustomMemoryCache(redisConString));
             }
 
             return services;

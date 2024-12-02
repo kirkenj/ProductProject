@@ -12,15 +12,11 @@ namespace Cache.Models
         private readonly ConnectionMultiplexer connection;
 
 
-        public RedisCustomMemoryCache(IOptions<CustomCacheOptions> optionsAccessor) : this(optionsAccessor?.Value ?? throw new ArgumentNullException(nameof(optionsAccessor)))
+        public RedisCustomMemoryCache(string redisConnectionString)
         {
-        }
+            ArgumentNullException.ThrowIfNull(redisConnectionString);
 
-        public RedisCustomMemoryCache(CustomCacheOptions optionsAccessor)
-        {
-            ArgumentNullException.ThrowIfNull(optionsAccessor);
-
-            connection = ConnectionMultiplexer.Connect(optionsAccessor.ConnectionUri ?? throw new ArgumentNullException(nameof(optionsAccessor), nameof(optionsAccessor.ConnectionUri) + " is null"));
+            connection = ConnectionMultiplexer.Connect(redisConnectionString);
 
             _implementation = connection.GetDatabase();
 

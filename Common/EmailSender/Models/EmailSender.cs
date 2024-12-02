@@ -48,7 +48,7 @@ namespace EmailSender.Models
             }
             catch (Exception ex)
             {
-                Logger.LogInformation($"Message to {email.To}. Fail:" + ex.ToString());
+                Logger.LogInformation($"Message to {email.To}. Fail: {ex}");
                 return false;
             }
         }
