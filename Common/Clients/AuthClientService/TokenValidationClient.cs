@@ -1,8 +1,7 @@
-using Clients.AuthApi;
 using HashProvider.Contracts;
 using Microsoft.Extensions.Logging;
 
-namespace Clients.AuthClientService
+namespace Clients.AuthApi
 {
     public interface ITokenValidationClient
     {

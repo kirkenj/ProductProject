@@ -20,8 +20,6 @@
 
 namespace Clients.AuthApi
 {
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Options;
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]

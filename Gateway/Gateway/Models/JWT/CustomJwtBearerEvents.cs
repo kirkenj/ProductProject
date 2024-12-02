@@ -1,4 +1,4 @@
-﻿using Clients.AuthClientService;
+﻿using Clients.AuthApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CustomGateway.Models.JWT

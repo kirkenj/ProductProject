@@ -8,7 +8,6 @@ using Exceptions;
 using HttpDelegatingHandlers;
 using Infrastructure.AuthClient;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System.Reflection;
 using System.Text.Json;
 
@@ -25,8 +24,6 @@ namespace Infrastructure
 
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, bool isDevelopment)
         {
-            services.Configure<AuthClientSettings>((s) => s.Uri = Environment.GetEnvironmentVariable(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME) ?? throw new CouldNotGetEnvironmentVariableException(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME));
-
             services.AddScoped<AuthHeaderHandler>();
 
             services.AddHttpClient(HTTTP_CLIENT_NAME).AddHttpMessageHandler<AuthHeaderHandler>();
@@ -35,8 +32,9 @@ namespace Infrastructure
             {
                 var clf = sp.GetRequiredService<IHttpClientFactory>();
                 var cl = clf.CreateClient(HTTTP_CLIENT_NAME);
-                var config = sp.GetRequiredService<IOptions<AuthClientSettings>>();
-                return new AuthApiClient(config.Value.Uri, cl);
+                var url = Environment.GetEnvironmentVariable(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME)
+                    ?? throw new CouldNotGetEnvironmentVariableException(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME);
+                return new AuthApiClient(url, cl);
             });
 
             services.AddScoped<IAuthApiClientService, AuthClientService>();
