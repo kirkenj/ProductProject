@@ -16,7 +16,7 @@ COPY ["Common/Clients/AuthClientService/AuthClientService.csproj", "Common/Clien
 COPY ["Common/HashProvider/HashProvider.csproj", "Common/HashProvider/"]
 COPY ["Common/Clients/ProductApi/ProductApi.csproj", "Common/Clients/ProductApi/"]
 COPY ["Common/HttpDelegatingHandlers/HttpDelegatingHandlers.csproj", "Common/HttpDelegatingHandlers/"]
-COPY ["Exceptions/Exceptions.csproj", "Exceptions/"]
+COPY ["Common/Exceptions/Exceptions.csproj", "Common/Exceptions/"]
 RUN dotnet restore "./Gateway/Gateway/CustomGateway.csproj"
 COPY . .
 WORKDIR "/src/Gateway/Gateway"

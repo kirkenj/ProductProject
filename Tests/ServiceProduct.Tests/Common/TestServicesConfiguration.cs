@@ -4,7 +4,6 @@ using Application.DTOs.Product;
 using Application.Features.Product.Handlers.Commands;
 using Application.MediatRBehaviors;
 using Cache.Contracts;
-using Cache.Models;
 using Clients.AuthApi;
 using EmailSender.Contracts;
 using FluentValidation;

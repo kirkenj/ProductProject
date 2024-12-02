@@ -24,7 +24,7 @@ COPY ["Common/Response/CustomResponse.csproj", "Common/Response/"]
 COPY ["ProductService/Core/Domain/Domain.csproj", "ProductService/Core/Domain/"]
 COPY ["ProductService/Infrastucture/Infrastucture/Infrastructure.csproj", "ProductService/Infrastucture/Infrastucture/"]
 COPY ["Common/HttpDelegatingHandlers/HttpDelegatingHandlers.csproj", "Common/HttpDelegatingHandlers/"]
-COPY ["Exceptions/Exceptions.csproj", "Exceptions/"]
+COPY ["Common/Exceptions/Exceptions.csproj", "Common/Exceptions/"]
 COPY ["ProductService/Infrastucture/Persistence/Persistence.csproj", "ProductService/Infrastucture/Persistence/"]
 RUN dotnet restore "./ProductService/Api/ProductAPI/ProductAPI.csproj"
 COPY . .
