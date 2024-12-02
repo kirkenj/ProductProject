@@ -30,11 +30,11 @@ namespace Infrastructure
 
             services.AddScoped<IAuthApiClient, AuthApiClient>(sp =>
             {
-                var clf = sp.GetRequiredService<IHttpClientFactory>();
-                var cl = clf.CreateClient(HTTTP_CLIENT_NAME);
+                var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                var client = clientFactory.CreateClient(HTTTP_CLIENT_NAME);
                 var url = Environment.GetEnvironmentVariable(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME)
                     ?? throw new CouldNotGetEnvironmentVariableException(AUTH_API_URI_ENVIRONMENT_VARIBALE_NAME);
-                return new AuthApiClient(url, cl);
+                return new AuthApiClient(url, client);
             });
 
             services.AddScoped<IAuthApiClientService, AuthClientService>();

@@ -1,16 +1,15 @@
 ﻿using Clients.CustomGateway;
 using Front.Services.MessageHandlers;
-using Microsoft.Extensions.Options;
 
 namespace Front.Configuration
 {
     public static class HttpClientsRegistration
     {
-        private const string GATEWAY_API_URI_SECTION_NAME = "GatewayUri";
+        private const string BACKEND_URL_SECTION_NAME = "URL_BACKEND";
 
         public static IServiceCollection ConfigureClients(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<GatewayClientSettings>(o => o.Uri = configuration[GATEWAY_API_URI_SECTION_NAME]?.ToString() ?? throw new InvalidOperationException("Couldn't get Gateway Uri from configuration"));
+            var backendUrl = configuration[BACKEND_URL_SECTION_NAME]?.ToString() ?? throw new InvalidOperationException("Couldn't get backend url from configuration");
 
             services.AddScoped<HeadersMessageHandler>();
             services.AddScoped<TokenDelegatingHandler>();
@@ -23,18 +22,16 @@ namespace Front.Configuration
 
             services.AddScoped<IAuthGatewayClient, GatewayClient>(sp =>
             {
-                var clf = sp.GetRequiredService<IHttpClientFactory>();
-                var client = clf.CreateClient(nameof(IAuthGatewayClient));
-                var settings = sp.GetRequiredService<IOptions<GatewayClientSettings>>();
-                return new GatewayClient(settings.Value.Uri, client);
+                var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                var client = clientFactory.CreateClient(nameof(IAuthGatewayClient));
+                return new GatewayClient(backendUrl, client);
             });
 
             services.AddScoped<IGatewayClient, GatewayClient>(sp =>
             {
-                var clf = sp.GetRequiredService<IHttpClientFactory>();
-                var client = clf.CreateClient(nameof(IGatewayClient));
-                var settings = sp.GetRequiredService<IOptions<GatewayClientSettings>>();
-                return new GatewayClient(settings.Value.Uri, client);
+                var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                var client = clientFactory.CreateClient(nameof(IGatewayClient));
+                return new GatewayClient(backendUrl, client);
             });
             return services;
         }

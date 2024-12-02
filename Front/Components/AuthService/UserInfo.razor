@@ -128,7 +128,7 @@
             <td> Address</td>
             <td align="right"><Front.Components.Common.TextBox @ref=AddressInputTextBox Type="text" Class="input-group-text text-lg-end"/> </td>
         </tr>
-        @if (IsAdmin)
+        @if (IsAdminOrOwner)
         {
             <tr>
                 <td></td>
@@ -604,7 +604,7 @@ else
 
     private async Task OnTerminateSessionsClicked(MouseEventArgs e)
     {
-        if (!IsAdmin || userDto == null)
+        if (!IsAdminOrOwner || userDto == null)
         {
             return;
         }

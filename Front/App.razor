@@ -1,6 +1,7 @@
 ﻿@inject Front.Services.LocalStorageAccessor storageAccessor;
 @inject NavigationManager navManager
 @inject Front.Services.CustomAuthStateProvider stateProvider;
+@inject ILogger<App> logger;
 
 <Front.Components.Modals.MessageBox @ref="MessageBox" />
 
@@ -22,10 +23,11 @@
             </Router>
         </CascadingAuthenticationState>
     </ChildContent>
-    <ErrorContent>
+    <ErrorContent Context="exception">
         @{
+            logger.LogError(exception.ToString());
             MessageBox.OnClose += async (e) => 
-            {
+            {                
                 await storageAccessor.Clear();
                 navManager.NavigateTo("", true); 
             };

@@ -1,6 +1,5 @@
 ﻿using AuthAPI.Contracts;
 using Extensions.ClaimsPrincipalExtensions;
-using HashProvider.Contracts;
 using HashProvider.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
