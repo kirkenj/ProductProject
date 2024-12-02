@@ -1,5 +1,7 @@
 ﻿using Clients.CustomGateway;
 using Front.Services.MessageHandlers;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 namespace Front.Configuration
 {
@@ -12,7 +14,12 @@ namespace Front.Configuration
             var backendUrl = configuration[BACKEND_URL_SECTION_NAME]?.ToString() ?? throw new InvalidOperationException("Couldn't get backend url from configuration");
 
             services.AddScoped<HeadersMessageHandler>();
-            services.AddScoped<TokenDelegatingHandler>();
+            services.AddScoped<TokenDelegatingHandler>(sp =>
+            {
+                var tokenProvider = sp.GetRequiredService<IAccessTokenProvider>();
+                var navManager = sp.GetRequiredService<NavigationManager>();
+                return new(tokenProvider, navManager, backendUrl);
+            });
 
             services.AddHttpClient<IAuthGatewayClient, GatewayClient>(nameof(IAuthGatewayClient), a => a = new HttpClient());
 

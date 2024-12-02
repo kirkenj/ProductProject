@@ -8,10 +8,10 @@ namespace Front.Services.MessageHandlers
     {
         private readonly IAccessTokenProvider _accessTokenProvider;
 
-        public TokenDelegatingHandler(IAccessTokenProvider provider, NavigationManager navigation) : base(provider, navigation)
+        public TokenDelegatingHandler(IAccessTokenProvider provider, NavigationManager navigation, string authorizedUrl) : base(provider, navigation)
         {
             _accessTokenProvider = provider;
-            ConfigureHandler(["http://localhost:5118/", "http://localhost:7023"]);
+            ConfigureHandler([authorizedUrl]);
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
