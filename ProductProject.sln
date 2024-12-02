@@ -91,7 +91,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductApi", "Common\Client
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpDelegatingHandlers", "Common\HttpDelegatingHandlers\HttpDelegatingHandlers.csproj", "{774A10F2-EA4C-4C79-AD18-ECB8E478F28F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exceptions", "Exceptions\Exceptions.csproj", "{DFF66734-32AB-43D8-AE60-FA67CEC3BDA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exceptions", "Common\Exceptions\Exceptions.csproj", "{DFF66734-32AB-43D8-AE60-FA67CEC3BDA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

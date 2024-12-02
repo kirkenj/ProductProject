@@ -19,7 +19,7 @@
     <ProjectReference Include="..\..\..\Common\Constants\Constants.csproj" />
     <ProjectReference Include="..\..\..\Common\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\..\..\Common\HashProvider\HashProvider.csproj" />
-    <ProjectReference Include="..\..\..\Exceptions\Exceptions.csproj" />
+    <ProjectReference Include="..\..\..\Common\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\..\Core\Application\Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Persistence\Persistence.csproj" />

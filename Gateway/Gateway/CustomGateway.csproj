@@ -20,7 +20,7 @@
     <ProjectReference Include="..\..\Common\Clients\AuthClientService\AuthClientService.csproj" />
     <ProjectReference Include="..\..\Common\Clients\ProductApi\ProductApi.csproj" />
     <ProjectReference Include="..\..\Common\HttpDelegatingHandlers\HttpDelegatingHandlers.csproj" />
-    <ProjectReference Include="..\..\Exceptions\Exceptions.csproj" />
+    <ProjectReference Include="..\..\Common\Exceptions\Exceptions.csproj" />
   </ItemGroup>
 
 </Project>
