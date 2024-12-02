@@ -52,11 +52,18 @@ services:
     ports:
       - "5902:80"
     depends_on:
-      - sqlServer
-      - redis  
       - authApi
       - productApi
 
+  front:
+    image: kirkenj/front
+    environment:
+      - URL_BACKEND=http://gateway
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway
+      
 volumes:
   sql_volume:
     external: true

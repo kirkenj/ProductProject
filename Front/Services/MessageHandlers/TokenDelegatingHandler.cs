@@ -11,7 +11,7 @@ namespace Front.Services.MessageHandlers
         public TokenDelegatingHandler(IAccessTokenProvider provider, NavigationManager navigation, string authorizedUrl) : base(provider, navigation)
         {
             _accessTokenProvider = provider;
-            ConfigureHandler([authorizedUrl]);
+            ConfigureHandler(["http://240.0.0.0"]);
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
