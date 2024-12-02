@@ -23,7 +23,7 @@ namespace Persistence
             });
 
             using var scope = services.BuildServiceProvider();
-            using var context = scope.GetService<AuthDbContext>() ?? throw new Exception();
+            using var context = scope.GetRequiredService<AuthDbContext>();
             context.Database.EnsureCreated();
             return services;
         }
