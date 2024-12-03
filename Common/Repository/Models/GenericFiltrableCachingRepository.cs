@@ -8,35 +8,38 @@ namespace Repository.Models
 {
     public class GenericFiltrableCachingRepository<T, TIdType, TFilter> :
         GenericCachingRepository<T, TIdType>,
-        IGenericCachingRepository<T, TIdType>,
         IGenericFiltrableRepository<T, TIdType, TFilter>
         where T : class, IIdObject<TIdType> where TIdType : struct
     {
+
         public GenericFiltrableCachingRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<GenericCachingRepository<T, TIdType>> logger, Func<IQueryable<T>, TFilter, IQueryable<T>> getFilteredSetDelegate)
-            : base(dbContext, customMemoryCache, logger)
         {
-            GetFilteredSetDelegate = getFilteredSetDelegate;
+            FiltrableRepository = new(dbContext, getFilteredSetDelegate);
+            CustomMemoryCache = customMemoryCache;
+            Logger = logger;
         }
 
-        private readonly Func<IQueryable<T>, TFilter, IQueryable<T>> GetFilteredSetDelegate;
+        protected GenericFiltrableRepository<T, TIdType, TFilter> FiltrableRepository { get; set; }
+
+        protected override GenericRepository<T, TIdType> Repository => FiltrableRepository;
 
         public virtual async Task<T?> GetAsync(TFilter filter)
         {
             var key = JsonSerializer.Serialize(filter) + "First";
 
-            _logger.LogInformation($"Got request: {key}");
+            Logger.LogInformation($"Got request: {key}");
 
             var cacheResult = await CustomMemoryCache.GetAsync<T>(key);
 
             if (cacheResult != null)
             {
-                _logger.LogInformation($"Request {key}. Found in cache");
+                Logger.LogInformation($"Request {key}. Found in cache");
                 return cacheResult;
             }
 
-            _logger.LogInformation($"Request {key}. Requesting the database");
+            Logger.LogInformation($"Request {key}. Requesting the database");
 
-            var repResult = await GetFilteredSetDelegate(DbSet, filter).FirstOrDefaultAsync();
+            var repResult = await FiltrableRepository.GetAsync(filter);
 
             if (repResult != null)
             {
@@ -51,18 +54,18 @@ namespace Repository.Models
         {
             var key = JsonSerializer.Serialize(filter) + $"page: {page}, pageSize: {pageSize}";
 
-            _logger.LogInformation($"Got request: {key}");
+            Logger.LogInformation($"Got request: {key}");
 
             var result = await CustomMemoryCache.GetAsync<IReadOnlyCollection<T>>(key);
 
             if (result != null)
             {
-                _logger.LogInformation($"Request {key}. Found in cache");
+                Logger.LogInformation($"Request {key}. Found in cache");
                 return result;
             }
 
-            _logger.LogInformation($"Request {key}. Requesting the database");
-            result = await GetPageContent(GetFilteredSetDelegate(DbSet, filter), page, pageSize).ToArrayAsync();
+            Logger.LogInformation($"Request {key}. Requesting the database");
+            result = await FiltrableRepository.GetPageContent(filter, page, pageSize);
 
             var tasks = result.Select(item => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, item.Id), item))
                 .Append(SetCacheAsync(key, result));

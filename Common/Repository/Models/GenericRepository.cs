@@ -8,8 +8,6 @@ namespace Repository.Models
         where T : class, IIdObject<TIdType>
         where TIdType : struct
     {
-        protected static readonly Guid _repId = Guid.NewGuid();
-
         private readonly DbContext _dbContext = null!;
 
         protected DbSet<T> DbSet => _dbContext.Set<T>();

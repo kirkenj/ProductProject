@@ -58,7 +58,7 @@ services:
   front:
     image: kirkenj/front
     environment:
-      - URL_BACKEND=http://gateway
+      - URL_BACKEND=http://localhost:5902
     ports:
       - "80:80"
     depends_on:

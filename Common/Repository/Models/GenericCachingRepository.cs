@@ -5,48 +5,83 @@ using Repository.Contracts;
 
 namespace Repository.Models
 {
-    public class GenericCachingRepository<T, TIdType> :
-        GenericRepository<T, TIdType>,
-        IGenericCachingRepository<T, TIdType>
-        where T : class, IIdObject<TIdType> where TIdType : struct
+    public class GenericCachingRepository<T, TIdType> : IGenericRepository<T, TIdType> where T : class, IIdObject<TIdType> where TIdType : struct
     {
-        protected readonly ILogger<GenericCachingRepository<T, TIdType>> _logger;
+        protected readonly Guid _repId = Guid.NewGuid();
 
-        public GenericCachingRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<GenericCachingRepository<T, TIdType>> logger) : base(dbContext)
+        private ILogger<GenericCachingRepository<T, TIdType>>? _logger;
+        private GenericRepository<T, TIdType>? _repository;
+        private ICustomMemoryCache? _customMemoryCache;
+
+        protected GenericCachingRepository()
+        {
+        }
+
+        public GenericCachingRepository(DbContext dbContext, ICustomMemoryCache customMemoryCache, ILogger<GenericCachingRepository<T, TIdType>> logger)
         {
             CustomMemoryCache = customMemoryCache;
-            _logger = logger;
+            Repository = new GenericRepository<T, TIdType>(dbContext);
+            Logger = logger;
         }
-        public ICustomMemoryCache CustomMemoryCache { get; private set; }
+
+        protected ILogger<GenericCachingRepository<T, TIdType>> Logger 
+        {
+            get => _logger ?? throw new ArgumentNullException(nameof(Logger));
+            set
+            {
+                ArgumentNullException.ThrowIfNull(value);
+                _logger = value;
+            }
+        }
+
+        protected virtual GenericRepository<T, TIdType> Repository 
+        { 
+            get => _repository ?? throw new ArgumentNullException(nameof(Repository));
+            private set
+            {
+                ArgumentNullException.ThrowIfNull(value);
+                _repository = value;
+            }
+        }
+
+        protected ICustomMemoryCache CustomMemoryCache
+        {
+            get => _customMemoryCache ?? throw new ArgumentNullException(nameof(CustomMemoryCache));
+            set
+            {
+                ArgumentNullException.ThrowIfNull(value);
+                _customMemoryCache = value;
+            }
+        }
 
         public int СacheTimeoutMiliseconds { get; set; } = 2_000;
         protected string CacheKeyPrefix => _repId + " ";
         protected string CacheKeyFormatToAccessSingleViaId => CacheKeyPrefix + "{0}";
 
 
-        public override async Task AddAsync(T obj)
+        public async Task AddAsync(T obj)
         {
             ArgumentNullException.ThrowIfNull(obj);
 
-            await base.AddAsync(obj);
+            await Repository.AddAsync(obj);
 
             await SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, obj.Id), obj);
         }
 
-        public override async Task DeleteAsync(T obj)
+        public async Task DeleteAsync(T obj)
         {
             ArgumentNullException.ThrowIfNull(obj);
 
-            await base.DeleteAsync(obj);
+            await Repository.DeleteAsync(obj);
 
             var cacheKey = string.Format(CacheKeyFormatToAccessSingleViaId, obj.Id);
 
             await CustomMemoryCache.RemoveAsync(cacheKey);
 
-            _logger.Log(LogLevel.Information, $"Removed the key {cacheKey}");
+            Logger.Log(LogLevel.Information, $"Removed the key {cacheKey}");
         }
 
-        public override async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default)
+        public async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default)
         {
             var key = CacheKeyPrefix + $"(page:{page}, pagesize:{pageSize}";
 
@@ -57,7 +92,7 @@ namespace Repository.Models
                 return cacheResult;
             }
 
-            var result = await base.GetPageContent(DbSet, page, pageSize).ToArrayAsync();
+            var result = await Repository.GetPageContent(page, pageSize);
 
             var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r))
                 .Append(CustomMemoryCache.SetAsync(key, result, TimeSpan.FromMilliseconds(СacheTimeoutMiliseconds)));
@@ -67,21 +102,21 @@ namespace Repository.Models
             return result;
         }
 
-        public override async Task<T?> GetAsync(TIdType id)
+        public async Task<T?> GetAsync(TIdType id)
         {
-            _logger.Log(LogLevel.Information, $"Got request for {typeof(T).Name} with id = '{id}'. ");
+            Logger.Log(LogLevel.Information, $"Got request for {typeof(T).Name} with id = '{id}'. ");
             var cacheKey = string.Format(CacheKeyFormatToAccessSingleViaId, id);
             var result = await CustomMemoryCache.GetAsync<T>(cacheKey);
 
             if (result != null)
             {
-                _logger.Log(LogLevel.Information, $"Found it in cache.");
+                Logger.Log(LogLevel.Information, $"Found it in cache.");
                 return result;
             }
 
-            _logger.Log(LogLevel.Information, "Sending request to database.");
+            Logger.Log(LogLevel.Information, "Sending request to database.");
 
-            result = await base.GetAsync(id);
+            result = await Repository.GetAsync(id);
 
             if (result != null)
             {
@@ -91,18 +126,18 @@ namespace Repository.Models
             return result;
         }
 
-        public override async Task UpdateAsync(T obj)
+        public async Task UpdateAsync(T obj)
         {
             ArgumentNullException.ThrowIfNull(obj);
 
             await Task.WhenAll
                 (
-                    base.UpdateAsync(obj),
+                    Repository.UpdateAsync(obj),
                     SetCacheAsync(CacheKeyPrefix + obj.Id, obj)
                 );
         }
 
-        public override async Task<IReadOnlyCollection<T>> GetAllAsync()
+        public async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
             var key = CacheKeyPrefix + "All";
 
@@ -110,11 +145,11 @@ namespace Repository.Models
 
             if (cacheResult != null)
             {
-                _logger.Log(LogLevel.Information, $"Key found in cache.");
+                Logger.Log(LogLevel.Information, $"Key found in cache.");
                 return cacheResult;
             }
 
-            var result = await base.GetAllAsync();
+            var result = await Repository.GetAllAsync();
 
             var tasks = result.Select(r => SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, r.Id), r))
                 .Append(SetCacheAsync(key, result));
@@ -132,7 +167,7 @@ namespace Repository.Models
 
             await CustomMemoryCache.SetAsync(key, value, TimeSpan.FromMilliseconds(СacheTimeoutMiliseconds));
 
-            _logger.Log(LogLevel.Information, $"Set cache with key '{key}'");
+            Logger.Log(LogLevel.Information, $"Set cache with key '{key}'");
         }
     }
 }
