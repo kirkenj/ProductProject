@@ -42,7 +42,7 @@ namespace Repository.Tests.GenericCachingRepository
 
             var userFromCache = await _customMemoryCache.GetAsync<User>(keyToGetCachedUser);
 
-            await _repository.DeleteAsync(userFromContext ?? throw new Exception());
+            await _repository.DeleteAsync(userFromContext?.Id ?? throw new Exception());
 
             var attemptToGetuserFromContext = await _repository.GetAsync(user.Id);
 

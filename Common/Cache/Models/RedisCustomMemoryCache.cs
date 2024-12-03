@@ -1,5 +1,4 @@
 ﻿using Cache.Contracts;
-using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
@@ -25,6 +24,25 @@ namespace Cache.Models
             _implementation.StringSet(keyToCheckConnection, encoding.GetBytes("World"));
             _implementation.KeyDelete(keyToCheckConnection);
         }
+
+        public virtual async Task<T?> GetAsync<T>(string key)
+        {
+            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            var result = await _implementation.StringGetAsync(key.Trim());
+
+            if (result == default || result.HasValue == false || result.IsNullOrEmpty == true)
+            {
+                return default;
+            }
+
+            return JsonSerializer.Deserialize<T>(result.ToString());
+        }
+
+        public virtual Task<bool> RefreshKeyAsync(string key, double millisecondsToExpire) => _implementation.KeyExpireAsync(key, TimeSpan.FromMilliseconds(millisecondsToExpire));
 
         public virtual Task RemoveAsync(string key)
         {
@@ -54,24 +72,5 @@ namespace Cache.Models
 
             await _implementation.StringSetAsync(key.Trim(), JsonSerializer.Serialize(value), expirity);
         }
-
-        public virtual async Task<T?> GetAsync<T>(string key)
-        {
-            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-
-            var result = await _implementation.StringGetAsync(key.Trim());
-
-            if (result == default || result.HasValue == false || result.IsNullOrEmpty == true)
-            {
-                return default;
-            }
-
-            return JsonSerializer.Deserialize<T>(result.ToString());
-        }
-
-        public virtual Task<bool> RefreshKeyAsync(string key, double millisecondsToExpire) => _implementation.KeyExpireAsync(key, TimeSpan.FromMilliseconds(millisecondsToExpire));
     }
 }

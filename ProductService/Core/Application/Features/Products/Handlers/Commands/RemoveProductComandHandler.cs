@@ -34,7 +34,7 @@ namespace Application.Features.Product.Handlers.Commands
                 return Response<string>.NotFoundResponse(nameof(product.Id), true);
             }
 
-            await _productRepository.DeleteAsync(product);
+            await _productRepository.DeleteAsync(product.Id);
 
             UserDto ownerResult = _mapper.Map<UserDto>(await _authClientService.UsersGETAsync(product.ProducerId, cancellationToken));
 

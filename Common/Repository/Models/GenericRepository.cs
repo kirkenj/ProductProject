@@ -1,23 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repository.Contracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace Repository.Models
 {
-    public class GenericRepository<T, TIdType> :
-        IGenericRepository<T, TIdType>
+    public class GenericRepository<T, TIdType> : IGenericRepository<T, TIdType>
         where T : class, IIdObject<TIdType>
         where TIdType : struct
     {
         private readonly DbContext _dbContext = null!;
 
-        protected DbSet<T> DbSet => _dbContext.Set<T>();
-
-        private Func<CancellationToken, Task<int>> SaveChangesAsync => _dbContext.SaveChangesAsync;
-
         public GenericRepository(DbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
+
+
+        protected DbSet<T> DbSet => _dbContext.Set<T>();
 
         public virtual async Task AddAsync(T obj)
         {
@@ -25,20 +24,22 @@ namespace Repository.Models
 
             await _dbContext.AddAsync(obj);
 
-            await SaveChangesAsync(CancellationToken.None);
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
         }
 
-        public virtual async Task DeleteAsync(T obj)
+        public virtual async Task DeleteAsync(TIdType id)
         {
-            ArgumentNullException.ThrowIfNull(obj);
+            var val = await DbSet.FirstOrDefaultAsync(e => e.Id.Equals(id));
 
-            _dbContext.Remove(obj);
+            if (val == null) return;
 
-            await SaveChangesAsync(CancellationToken.None);
+            DbSet.Remove(val);
+
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
         }
 
 
-        public virtual async Task<IReadOnlyCollection<T>> GetAllAsync() => await DbSet.ToArrayAsync();
+        public virtual async Task<IReadOnlyCollection<T>> GetAllAsync() => await DbSet.AsNoTracking().ToArrayAsync();
 
         protected IQueryable<T> GetPageContent(IQueryable<T> query, int? page = default, int? pageSize = default)
         {
@@ -52,20 +53,20 @@ namespace Repository.Models
             return query;
         }
 
-        public virtual async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default)
-        {
-            return await GetPageContent(DbSet, page, pageSize).ToArrayAsync();
-        }
+        public virtual async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) =>
+            await GetPageContent(DbSet.AsNoTracking(), page, pageSize).ToArrayAsync();
+        
 
-        public virtual async Task<T?> GetAsync(TIdType id)
-        {
-            return await DbSet.FirstOrDefaultAsync(o => o.Id.Equals(id));
-        }
+        public virtual async Task<T?> GetAsync(TIdType id) => 
+            await DbSet.AsNoTracking().FirstOrDefaultAsync(o => o.Id.Equals(id));
 
         public virtual async Task UpdateAsync(T obj)
         {
-            _dbContext.Entry(obj).State = EntityState.Modified;
-            await SaveChangesAsync(CancellationToken.None);
+            var currentDbVal = DbSet.First(o => o.Id.Equals(obj.Id));
+            var ent = DbSet.Entry(currentDbVal);
+            ent.CurrentValues.SetValues(obj);
+            ent.State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
         }
     }
 }

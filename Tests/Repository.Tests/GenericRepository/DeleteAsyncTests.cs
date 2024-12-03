@@ -27,29 +27,11 @@ namespace Repository.Tests.GenericRepository
         {
             var user = Users.First();
 
-            await _repository.DeleteAsync(user);
+            await _repository.DeleteAsync(user.Id);
 
             var repUsers = await _repository.GetAllAsync();
 
             Assert.That(repUsers, Does.Not.Contain(user));
-        }
-
-        [Test]
-        public void DeleteAsync_UserNotInDbSet_ThrowsArgumentException()
-        {
-            var user = new User
-            {
-                Address = "Zone 51",
-                Name = "Natan",
-                Email = "Natan228@ya.ru",
-                Login = "BBCReporter",
-                Id = Guid.NewGuid()
-            };
-
-            var func = async () => await _repository.DeleteAsync(user);
-
-
-            Assert.That(func, Throws.Exception);
         }
     }
 }

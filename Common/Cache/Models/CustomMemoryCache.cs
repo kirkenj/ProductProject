@@ -61,7 +61,6 @@ namespace Cache.Models
 
         public Task SetAsync<T>(string key, T value, TimeSpan offset)
         {
-
             if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
             {
                 throw new ArgumentNullException(nameof(key));

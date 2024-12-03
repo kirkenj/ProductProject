@@ -68,13 +68,11 @@ namespace Repository.Models
             await SetCacheAsync(string.Format(CacheKeyFormatToAccessSingleViaId, obj.Id), obj);
         }
 
-        public async Task DeleteAsync(T obj)
+        public async Task DeleteAsync(TIdType id)
         {
-            ArgumentNullException.ThrowIfNull(obj);
+            await Repository.DeleteAsync(id);
 
-            await Repository.DeleteAsync(obj);
-
-            var cacheKey = string.Format(CacheKeyFormatToAccessSingleViaId, obj.Id);
+            var cacheKey = string.Format(CacheKeyFormatToAccessSingleViaId, id);
 
             await CustomMemoryCache.RemoveAsync(cacheKey);
 

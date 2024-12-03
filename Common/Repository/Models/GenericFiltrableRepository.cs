@@ -16,11 +16,11 @@ namespace Repository.Models
 
         private readonly Func<IQueryable<T>, TFilter, IQueryable<T>> GetFilteredSetDelegate;
 
-        public virtual async Task<T?> GetAsync(TFilter filter) => await GetFilteredSetDelegate(DbSet, filter).FirstOrDefaultAsync();
+        public virtual async Task<T?> GetAsync(TFilter filter) => await GetFilteredSetDelegate(DbSet.AsNoTracking(), filter).FirstOrDefaultAsync();
 
         public virtual async Task<IReadOnlyCollection<T>> GetPageContent(TFilter filter, int? page = default, int? pageSize = default)
         {
-            var result = await GetPageContent(GetFilteredSetDelegate(DbSet, filter), page, pageSize).ToArrayAsync();
+            var result = await GetPageContent(GetFilteredSetDelegate(DbSet.AsNoTracking(), filter), page, pageSize).ToArrayAsync();
 
             return result;
         }

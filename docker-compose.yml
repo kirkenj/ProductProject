@@ -34,6 +34,7 @@ services:
       - EmailSettings=${EmailSettings}
       - AuthApiUri=http://authApi
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - UseDefaultCache=false
     ports:
       - "5901:80"
     depends_on:
