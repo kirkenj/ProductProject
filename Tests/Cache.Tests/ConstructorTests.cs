@@ -37,7 +37,7 @@ namespace Cache.Tests
         public void Constructor_CorrectUri_ReturnsValue()
         {
             //arrange
-            string? redisUrl = "localhost:3300";
+            string? redisUrl = "localhost:6379";
 
             //act
             var instanseInitDelegate = new RedisCustomMemoryCache(redisUrl);

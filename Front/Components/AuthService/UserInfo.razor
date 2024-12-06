@@ -152,7 +152,13 @@
                 <tr>
                     <td>New password</td>
                     <td>
-                        <input type="text" class="input-group-text" style="width:auto" @bind-value="NewPassword" />
+                        <input type="password" class="input-group-text" style="width:auto" @bind-value="NewPassword" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Confirm password</td>
+                    <td>
+                        <input type="password" class="input-group-text" style="width:auto" @bind-value="ConfirmPassword" />
                     </td>
                 </tr>
                 <tr>
@@ -228,6 +234,7 @@ else
 
     private string? PasswordMessage;
     private string? NewPassword;
+    private string? ConfirmPassword;
 
     private static IEnumerable<RoleDto> Roles = null!;
 
@@ -651,6 +658,12 @@ else
         if (string.IsNullOrEmpty(NewPassword))
         {
             PasswordMessage = "Password can not be empty";
+            return;
+        }
+
+        if (NewPassword != ConfirmPassword)
+        {
+            PasswordMessage = "Confirm password has to be equal to new password";
             return;
         }
 
