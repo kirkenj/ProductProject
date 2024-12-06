@@ -6,7 +6,6 @@ using Cache.Contracts;
 using EmailSender.Contracts;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Persistence;

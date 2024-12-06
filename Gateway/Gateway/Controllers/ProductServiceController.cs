@@ -43,7 +43,7 @@ namespace CustomGateway.Controllers.Product
 
         public async Task<ICollection<ProductListDto>> List([FromQuery] IEnumerable<Guid>? ids, [FromQuery] string? namePart, [FromQuery] string? descriptionPart, [FromQuery] double? priceStart, [FromQuery] double? priceEnd, [FromQuery] bool? isAvailable, [FromQuery] IEnumerable<Guid> producerIds, [FromQuery] DateTimeOffset? creationDateStart, [FromQuery] DateTimeOffset? creationDateEnd, [FromQuery] int? page, [FromQuery] int? pageSize)
         {
-            return await _implementation.List(ids, namePart, descriptionPart, priceStart, priceEnd, isAvailable, producerIds, creationDateStart, creationDateEnd, page, pageSize);
+            return await _implementation.ProductAllAsync(ids, namePart, descriptionPart, priceStart, priceEnd, isAvailable, producerIds, creationDateStart, creationDateEnd, page, pageSize);
         }
 
         /// <returns>Success</returns>
@@ -55,12 +55,12 @@ namespace CustomGateway.Controllers.Product
         }
 
         /// <returns>Success</returns>
-        [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Product", Name = "ProductPUT")]
+        [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Product/{id}", Name = "ProductPUT")]
         [Produces("text/plain")]
-        public async System.Threading.Tasks.Task<string> ProductPUT([Microsoft.AspNetCore.Mvc.FromBody] UpdateProductDto? body)
+        public async System.Threading.Tasks.Task<string> ProductPUT(Guid id, [Microsoft.AspNetCore.Mvc.FromBody] UpdateProductModel? body)
         {
 
-            return await _implementation.ProductPUTAsync(body);
+            return await _implementation.ProductPUTAsync(id,body);
         }
 
         /// <returns>Success</returns>

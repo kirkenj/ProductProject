@@ -1,5 +1,4 @@
 ﻿using Cache.Models;
-using Microsoft.Extensions.Options;
 
 namespace Repository.Tests.Common
 {

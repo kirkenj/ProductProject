@@ -6,7 +6,6 @@ using Application.Features.User.Handlers.Commands;
 using Application.MediatRBehaviors;
 using Application.Models.User;
 using Cache.Contracts;
-using Cache.Models;
 using EmailSender.Contracts;
 using FluentValidation;
 using HashProvider.Contracts;

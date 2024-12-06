@@ -20,7 +20,7 @@
 
 <table>
     <tr>
-        <td colspan="2">@productDto.Id</td>
+        <td colspan="2">@Id</td>
     </tr>
     @if (!string.IsNullOrEmpty(NameMessage))
     {
@@ -158,7 +158,7 @@
 
 
 @code {
-    private Clients.CustomGateway.UpdateProductDto productDto = new()
+    private Clients.CustomGateway.UpdateProductModel productDto = new()
         {
             CreationDate = DateTime.Now.Date
         };
@@ -192,7 +192,7 @@
         source = await gatewyClient.ProductGETAsync(Id.Value);
 
         var t = System.Text.Json.JsonSerializer.Serialize(source);
-        productDto = System.Text.Json.JsonSerializer.Deserialize<Clients.CustomGateway.UpdateProductDto>(t) ?? throw new Exception("Couldn't copy with json");
+        productDto = System.Text.Json.JsonSerializer.Deserialize<Clients.CustomGateway.UpdateProductModel>(t) ?? throw new Exception("Couldn't copy with json");
         ProducerName = (await gatewyClient.UsersGETAsync(productDto.ProducerId)).Login;
 
     }
@@ -278,7 +278,7 @@
 
         try
         {
-            var result = await gatewyClient.ProductPUTAsync(productDto);
+            var result = await gatewyClient.ProductPUTAsync(Id ?? Guid.Empty, productDto);
             MessageBox.ClearOnCloseEvent();
             MessageBox.OnClose += (cancelled) =>
             {
@@ -289,7 +289,7 @@
         }
         catch (Clients.CustomGateway.GatewayException ex)
         {
-            MessageBox.ModalShow("Error", ex.Response);
+            await HandleGatewayExceptionAsync(ex);
         }
     }
     private void OnSelectUserClicked(MouseEventArgs e)
@@ -345,16 +345,22 @@
             }
             catch (Clients.CustomGateway.GatewayException ex)
             {
-                if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
-                {
-                    HandleValidationFailure(failures);
-                    return;
-                }
-
-                MessageBox.ModalShow("Error", ex.Response);
+                await HandleGatewayExceptionAsync(ex);
             }
         };
         MessageBox.ModalShow("Warning", "The product will be deleted", "btn btn-danger");
+    }
+
+    Task HandleGatewayExceptionAsync(GatewayException ex){
+
+        if (ex.IsValidationException(out IEnumerable<FluentValidation.Results.ValidationFailure>? failures) && failures != null)
+        {
+            HandleValidationFailure(failures);
+            return Task.CompletedTask;
+        }
+
+        MessageBox.ModalShow("Error", ex.Response);
+        return Task.CompletedTask;
     }
 
     void HandleValidationFailure(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
@@ -364,7 +370,7 @@
             return;
         }
 
-        Clients.CustomGateway.UpdateProductDto q;
+        Clients.CustomGateway.UpdateProductModel q;
 
         foreach (var f in failures)
         {
@@ -382,7 +388,7 @@
                 case nameof(q.ProducerId):
                     ProducerMessage = f.ErrorMessage;
                     break;
-                case nameof(q.Id):
+                case nameof(Id):
                     MessageBox.ModalShow("Error", f.ErrorMessage);
                     break;
                 case nameof(q.Description):

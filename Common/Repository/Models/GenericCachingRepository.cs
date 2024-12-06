@@ -24,7 +24,7 @@ namespace Repository.Models
             Logger = logger;
         }
 
-        protected ILogger<GenericCachingRepository<T, TIdType>> Logger 
+        protected ILogger<GenericCachingRepository<T, TIdType>> Logger
         {
             get => _logger ?? throw new ArgumentNullException(nameof(Logger));
             set
@@ -34,8 +34,8 @@ namespace Repository.Models
             }
         }
 
-        protected virtual GenericRepository<T, TIdType> Repository 
-        { 
+        protected virtual GenericRepository<T, TIdType> Repository
+        {
             get => _repository ?? throw new ArgumentNullException(nameof(Repository));
             private set
             {

@@ -2,12 +2,14 @@
 using Application.Features.Product.Requests.Commands;
 using Application.Features.Product.Requests.Queries;
 using Application.Models.Product;
+using AutoMapper;
 using Constants;
 using CustomResponse;
 using Extensions.ClaimsPrincipalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProductAPI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -55,12 +57,12 @@ namespace ProductAPI.Controllers
         }
 
         // PUT api/<ValuesController>/5
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> Put([FromBody] UpdateProductDto updateProductDto)
+        public async Task<ActionResult<string>> Put(Guid id, [FromBody] UpdateProductModel updateProductModel)
         {
-            Response<ProductDto> productRequestResult = await _mediator.Send(new GetProductDtoRequest() { Id = updateProductDto.Id });
+            Response<ProductDto> productRequestResult = await _mediator.Send(new GetProductDtoRequest() { Id = id });
 
             if (productRequestResult.Success == false)
             {
@@ -72,8 +74,6 @@ namespace ProductAPI.Controllers
                 throw new ApplicationException();
             }
 
-            UpdateProductCommand updateProductCommand = new() { UpdateProductDto = updateProductDto };
-
             if (User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) == false)
             {
                 if (productRequestResult.Result.ProducerId != User.GetUserId())
@@ -81,8 +81,22 @@ namespace ProductAPI.Controllers
                     return BadRequest("You are not the owner of this product");
                 }
 
-                updateProductDto.ProducerId = productRequestResult.Result.ProducerId;
+                updateProductModel.ProducerId = productRequestResult.Result.ProducerId;
             }
+
+            UpdateProductCommand updateProductCommand = new()
+            {
+                UpdateProductDto = new()
+                {
+                    Id = id,
+                    CreationDate = updateProductModel.CreationDate,
+                    Description = updateProductModel.Description,
+                    IsAvailable = updateProductModel.IsAvailable,
+                    Name = updateProductModel.Name,
+                    Price = updateProductModel.Price,
+                    ProducerId = updateProductModel.ProducerId
+                }
+            };
 
             var result = await _mediator.Send(updateProductCommand);
             return result.GetActionResult();

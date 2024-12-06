@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repository.Contracts;
-using System.ComponentModel.DataAnnotations;
 
 namespace Repository.Models
 {
@@ -55,9 +54,9 @@ namespace Repository.Models
 
         public virtual async Task<IReadOnlyCollection<T>> GetPageContent(int? page = default, int? pageSize = default) =>
             await GetPageContent(DbSet.AsNoTracking(), page, pageSize).ToArrayAsync();
-        
 
-        public virtual async Task<T?> GetAsync(TIdType id) => 
+
+        public virtual async Task<T?> GetAsync(TIdType id) =>
             await DbSet.AsNoTracking().FirstOrDefaultAsync(o => o.Id.Equals(id));
 
         public virtual async Task UpdateAsync(T obj)

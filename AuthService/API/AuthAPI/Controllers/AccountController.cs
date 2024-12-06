@@ -28,7 +28,7 @@ namespace AuthAPI.Controllers
             _mediator = mediator;
         }
 
-        
+
         [HttpGet]
         public async Task<ActionResult<UserDto>> Get()
         {

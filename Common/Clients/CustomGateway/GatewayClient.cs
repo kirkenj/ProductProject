@@ -234,12 +234,12 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> ProductPUTAsync(UpdateProductDto body);
+        System.Threading.Tasks.Task<string> ProductPUTAsync(System.Guid id, UpdateProductModel body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> ProductPUTAsync(UpdateProductDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<string> ProductPUTAsync(System.Guid id, UpdateProductModel body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
@@ -2261,16 +2261,19 @@ namespace Clients.CustomGateway
 
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<string> ProductPUTAsync(UpdateProductDto body)
+        public virtual System.Threading.Tasks.Task<string> ProductPUTAsync(System.Guid id, UpdateProductModel body)
         {
-            return ProductPUTAsync(body, System.Threading.CancellationToken.None);
+            return ProductPUTAsync(id, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="GatewayException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<string> ProductPUTAsync(UpdateProductDto body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<string> ProductPUTAsync(System.Guid id, UpdateProductModel body, System.Threading.CancellationToken cancellationToken)
         {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -2286,8 +2289,9 @@ namespace Clients.CustomGateway
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Product"
-                    urlBuilder_.Append("api/Product");
+                    // Operation Path: "api/Product/{id}"
+                    urlBuilder_.Append("api/Product/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2741,11 +2745,8 @@ namespace Clients.CustomGateway
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UpdateProductDto
+    public partial class UpdateProductModel
     {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }

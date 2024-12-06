@@ -1,5 +1,4 @@
 using Cache.Models;
-using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
 namespace Cache.Tests
