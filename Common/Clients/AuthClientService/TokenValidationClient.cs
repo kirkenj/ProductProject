@@ -25,7 +25,7 @@ namespace Clients.AuthApi
         {
             _logger.LogInformation($"Sending request to auth client for hashDefaults.");
 
-            var defaults = await _authApiClient.GetHashDefaultsAsync();
+            var defaults = await _authApiClient.HashProviderSettingsAsync();
 
             _logger.LogInformation($"Request to auth client for hashDefaults - Success.");
 
@@ -41,7 +41,7 @@ namespace Clients.AuthApi
 
             var tokenHash = HashProvider?.GetHash(token) ?? throw new ApplicationException($"Couldn't get hash");
 
-            return await _authApiClient.IsTokenValidAsync(tokenHash);
+            return await _authApiClient.IsValidAsync(tokenHash);
         }
     }
 }

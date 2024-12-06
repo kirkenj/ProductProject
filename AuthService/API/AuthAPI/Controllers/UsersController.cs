@@ -4,12 +4,14 @@ using Application.Features.User.Requests.Queries;
 using Application.Models.User;
 using AuthAPI.ActionFIlters;
 using AuthAPI.Contracts;
+using AuthAPI.Models.Requests;
 using Constants;
 using CustomResponse;
 using Extensions.ClaimsPrincipalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -51,101 +53,106 @@ namespace AuthAPI.Controllers
             return result.GetActionResult();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> UpdateUser(UpdateUserInfoDto request)
+        public async Task<ActionResult<string>> Put(Guid id, UpdateUserModel updateUserModel)
         {
-            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && request.Id != User.GetUserId())
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && id != User.GetUserId())
             {
                 return Forbid();
             }
 
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
-                UpdateUserInfoDto = request
+                UpdateUserInfoDto = new UpdateUserInfoDto 
+                {
+                    Id = id, 
+                    Address = updateUserModel.Address, 
+                    Name = updateUserModel.Name 
+                }
             });
 
             return result.GetActionResult();
         }
 
-        [HttpPut("Email")]
+        [HttpPut("{id}/Email")]
         [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> UpdateEmail([FromBody] UpdateUserEmailDto request)
+        public async Task<ActionResult<string>> UpdateEmail(Guid id, [FromBody][EmailAddress] string newEmail)
         {
-            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && request.Id != User.GetUserId())
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && id != User.GetUserId())
             {
                 return Forbid();
             }
 
             Response<string> result = await _mediator.Send(new SendTokenToUpdateUserEmailRequest
             {
-                UpdateUserEmailDto = request
+                UpdateUserEmailDto = new UpdateUserEmailDto { Id = id, Email = newEmail }
             });
 
             return result.GetActionResult();
         }
 
-        [HttpPost("Email")]
+        [HttpPost("{id}/Email/Confirm")]
         [Authorize]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> ConfirmEmailUpdate(ConfirmEmailChangeDto request)
+        public async Task<ActionResult<string>> ConfirmEmailUpdate(Guid id, [FromBody][EmailAddress] string confirmToken)
         {
-            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && request.Id != User.GetUserId())
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && id != User.GetUserId())
             {
                 return Forbid();
             }
 
             Response<string> result = await _mediator.Send(new ConfirmEmailChangeComand
             {
-                ConfirmEmailChangeDto = request
+                ConfirmEmailChangeDto = new ConfirmEmailChangeDto { Id = id, Token = confirmToken }
             });
 
             if (result.Success)
             {
-                await _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(id, DateTime.UtcNow);
             }
 
             return result.GetActionResult();
         }
 
-        [HttpPut("UserTag")]
-        [Authorize]
+        [HttpPut("{id}/Login")]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> UpdateLogin(UpdateUserLoginDto request)
+        [Authorize]
+        public async Task<ActionResult<string>> UpdateLogin(Guid id, string newLogin)
         {
-            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && request.Id != User.GetUserId())
+            if (!User.IsInRole(ApiConstants.ADMIN_ROLE_NAME) && id != User.GetUserId())
             {
                 return Forbid();
             }
 
             Response<string> result = await _mediator.Send(new UpdateUserLoginComand
             {
-                UpdateUserLoginDto = request
+                UpdateUserLoginDto = new UpdateUserLoginDto { Id = id, NewLogin = newLogin }
             });
 
             if (result.Success)
             {
-                await _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(id, DateTime.UtcNow);
             }
 
             return result.GetActionResult();
         }
 
-        [HttpPut("Role")]
+        [HttpPut("{id}/Role")]
         [Authorize(ApiConstants.ADMIN_POLICY_NAME)]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> UpdateRole(UpdateUserRoleDTO request)
+        public async Task<ActionResult<string>> UpdateRole(Guid id, int roleId)
         {
             Response<string> result = await _mediator.Send(new UpdateUserRoleCommand
             {
-                UpdateUserRoleDTO = request
+                UpdateUserRoleDTO = new UpdateUserRoleDTO { Id = id, RoleID = roleId }
             });
 
             if (result.Success)
             {
-                await _tokenTracker.InvalidateUser(request.Id, DateTime.UtcNow);
+                await _tokenTracker.InvalidateUser(id, DateTime.UtcNow);
             }
 
             return result.GetActionResult();

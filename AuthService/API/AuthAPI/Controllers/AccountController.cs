@@ -28,11 +28,9 @@ namespace AuthAPI.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("TokenClaims")]
-        public IEnumerable<KeyValuePair<string, string>> GetTokenClaims() => User.Claims.Select(o => new KeyValuePair<string, string>(o.Type ?? "Unknown", o.Value ?? "Unknown"));
-
+        
         [HttpGet]
-        public async Task<ActionResult<UserDto>> GetAccountDetails()
+        public async Task<ActionResult<UserDto>> Get()
         {
             Response<UserDto> result = await _mediator.Send(new GetUserDtoRequest()
             {
@@ -43,7 +41,7 @@ namespace AuthAPI.Controllers
 
         [HttpPut]
         [Produces("text/plain")]
-        public async Task<ActionResult<string>> UpdateUser(UpdateUserModel updateUserModel)
+        public async Task<ActionResult<string>> Put(UpdateUserModel updateUserModel)
         {
             Response<string> result = await _mediator.Send(new UpdateNotSensitiveUserInfoComand
             {
@@ -62,7 +60,6 @@ namespace AuthAPI.Controllers
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdatePassword([FromBody] string request)
         {
-
             Response<string> result = await _mediator.Send(new UpdateUserPasswordComand
             {
                 UpdateUserPasswordDto = new UpdateUserPasswordDto
@@ -75,7 +72,7 @@ namespace AuthAPI.Controllers
             return result.GetActionResult();
         }
 
-        [HttpPut("UserTag")]
+        [HttpPut("Login")]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> UpdateLogin(string newLogin)
         {
@@ -115,7 +112,7 @@ namespace AuthAPI.Controllers
             return result.GetActionResult();
         }
 
-        [HttpPost("Email")]
+        [HttpPost("Email/Confirm")]
         [Produces("text/plain")]
         public async Task<ActionResult<string>> ConfirmEmailUpdate([FromBody] string confirmationToken)
         {

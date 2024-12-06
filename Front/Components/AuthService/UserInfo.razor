@@ -331,7 +331,7 @@ else
 
             try
             {
-                var message = await gatewayClient.EmailPUTAsync(EmailInputTextBox.Value);
+                var message = await gatewayClient.Email2Async(userDto.Id, EmailInputTextBox.Value);
                 ShowEmailChangeConfirmInputBox(message);
             }
             catch (Clients.CustomGateway.GatewayException ex)
@@ -382,9 +382,9 @@ else
 
         try
         {
-            await gatewayClient.EmailPOST2Async(new() { Token = resultString, Id = userDto.Id });
+            await gatewayClient.Confirm2Async(userDto.Id, resultString);
 
-            if ((User?.Id ?? Guid.Empty) == userDto.Id)//check if the method is wotking with authenticated user. If so user will have to relogin
+            if ((User?.Id ?? Guid.Empty) == userDto.Id)
             {
                 messageBox.OnClose += (c) => { messageBox.ClearOnCloseEvent(); authStateProvider.Logout(); navManager.NavigateTo(""); return Task.CompletedTask; };
                 messageBox.ModalShow("Success","Now you have to login with new parameters");
@@ -451,7 +451,7 @@ else
 
             try
             {
-                var message = await gatewayClient.UserTag2Async(new UpdateUserLoginDto() { Id = userDto.Id, NewLogin = LoginInputTextBox.Value });
+                var message = await gatewayClient.LoginPUT2Async(userDto.Id, LoginInputTextBox.Value);
 
                 if (User.Id == userDto.Id)
                 {
@@ -524,7 +524,7 @@ else
 
         try
         {
-            var msg = await gatewayClient.RoleAsync(new() { Id = userDto.Id, RoleID = RoleListBox.Value });
+            var msg = await gatewayClient.RoleAsync(userDto.Id, RoleListBox.Value);
 
             if (User.Id == userDto.Id)
             {
@@ -591,7 +591,7 @@ else
 
         try
         {
-            var msg = await gatewayClient.UsersPUTAsync(new() { Id = userDto.Id, Address = AddressInputTextBox.Value, Name = NameInputTextBox.Value });
+            var msg = await gatewayClient.UsersPUTAsync(userDto.Id, new() {Address = AddressInputTextBox.Value, Name = NameInputTextBox.Value });
             var uri = navManager.Uri;
             navManager.NavigateTo("");
             navManager.NavigateTo(uri);
@@ -618,7 +618,7 @@ else
 
         try
         {
-            await gatewayClient.InvalidateUsersTokenAsync(userDto.Id);
+            await gatewayClient.TerminateSessionsAsync(userDto.Id);
             if (userDto.Id == User?.Id)
             {
                 messageBox.ModalShow("Attention", "Relogin needed"); 
@@ -701,31 +701,26 @@ else
             return;
         }
 
-        Clients.CustomGateway.UpdateUserEmailDto emailDto;
-        Clients.CustomGateway.UpdateUserInfoDto infoDto;
-        Clients.CustomGateway.UpdateUserLoginDto loginDto;
-        Clients.CustomGateway.UpdateUserRoleDTO roleDto;
-        
         foreach (var f in failures)
         {
             switch (f.PropertyName.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[1])
             {
-                case nameof(emailDto.Id):
+                case "Id":
                     messageBox.ModalShow("Error", f.ErrorMessage);
                     break;
-                case nameof(emailDto.Email):
+                case "Email":
                     EmailChangeInputMessage = f.ErrorMessage;
                     break;
-                case nameof(infoDto.Address):
+                case "Address":
                     AddressChangeInputMessage = f.ErrorMessage;
                     break;
-                case nameof(infoDto.Name):
+                case "Name":
                     NameChangeInputMessage = f.ErrorMessage;
                     break;
-                case nameof(loginDto.NewLogin):
+                case "NewLogin":
                     messageBox.ModalShow("Error", f.ErrorMessage);
                     break;
-                case nameof(roleDto.RoleID):
+                case "RoleID":
                     messageBox.ModalShow("Error", f.ErrorMessage);
                     break;
             }

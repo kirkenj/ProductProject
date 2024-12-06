@@ -19,15 +19,15 @@ namespace AuthAPI.Controllers
             _tokenTracker = tokenTracker;
         }
 
-        [HttpPost("IsTokenValid")]
-        public async Task<ActionResult<bool>> IsTokenValid([FromBody] string tokenHash)
+        [HttpGet("IsValid")]
+        public async Task<ActionResult<bool>> IsTokenValid(string tokenHash)
         {
             bool result = await _tokenTracker.IsValid(tokenHash);
             return Ok(result);
         }
 
         [Authorize]
-        [HttpPost("InvalidateUsersToken")]
+        [HttpPost("TerminateSessions")]
         public async Task<ActionResult> InvalidateToken(Guid userId)
         {
             if (!User.IsInRole(Constants.ApiConstants.ADMIN_ROLE_NAME) && User.GetUserId() != userId)
@@ -39,7 +39,7 @@ namespace AuthAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("GetHashDefaults")]
+        [HttpGet("HashProviderSettings")]
         public HashProviderSettings GetHashDefaults() => new() { HashAlgorithmName = _tokenTracker.HashProvider.HashAlgorithmName, EncodingName = _tokenTracker.HashProvider.Encoding.BodyName };
     }
 }

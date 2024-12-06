@@ -148,14 +148,14 @@
         List<UserDto> res;
         if (filter == currentFilter && incrimentPageCounter)
         {
-            res = (await gatewayClient.UsersListAsync(null, null, LoginFilter, null, EmailFilter, AddressFilter, NameFilter, roleFilter, ++_loadCounter, LoadAmm)).ToList();
+            res = (await gatewayClient.ListAsync(null, null, LoginFilter, null, EmailFilter, AddressFilter, NameFilter, roleFilter, ++_loadCounter, LoadAmm)).ToList();
             Users.AddRange(res);
         }
         else
         {
             _loadCounter = 1;
             currentFilter = filter;
-            res = (await gatewayClient.UsersListAsync(null, null, LoginFilter, null, EmailFilter, AddressFilter, NameFilter, roleFilter, _loadCounter, LoadAmm)).ToList();
+            res = (await gatewayClient.ListAsync(null, null, LoginFilter, null, EmailFilter, AddressFilter, NameFilter, roleFilter, _loadCounter, LoadAmm)).ToList();
             Users = res;
         }
 

@@ -13,7 +13,7 @@ namespace Front.Services
 
         public async Task<User> SendAuthenticateRequestAsync(string email, string password)
         {
-            var response = await _authHttpClient.LoginAsync(new LoginDto { Email = email, Password = password });
+            var response = await _authHttpClient.LoginPOSTAsync(new LoginDto { Email = email, Password = password });
             string token = response.Token;
             var claimPrincipal = CreateClaimsPrincipalFromToken(token);
             var user = User.FromClaimsPrincipal(claimPrincipal);

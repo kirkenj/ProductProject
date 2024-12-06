@@ -19,14 +19,14 @@ namespace AuthAPI.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("Roles")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<RoleDto>>> GetRolesList()
         {
             Response<List<RoleDto>> result = await _mediator.Send(new GetRoleListRequest());
             return result.GetActionResult();
         }
 
-        [HttpGet("Roles/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<RoleDto>> GetRole(int id)
         {
             Response<RoleDto> result = await _mediator.Send(new GetRoleDtoRequest() { Id = id });
