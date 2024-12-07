@@ -2,7 +2,6 @@
 using Application.Features.Product.Requests.Commands;
 using Application.Features.Product.Requests.Queries;
 using Application.Models.Product;
-using AutoMapper;
 using Constants;
 using CustomResponse;
 using Extensions.ClaimsPrincipalExtensions;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductAPI.Models;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ProductAPI.Controllers
 {
@@ -26,7 +24,6 @@ namespace ProductAPI.Controllers
             _mediator = mediator;
         }
 
-        // GET: api/<ValuesController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductListDto>>> Get([FromQuery] ProductFilter productFilter, int? page, int? pageSize)
         {
@@ -34,7 +31,6 @@ namespace ProductAPI.Controllers
             return result.GetActionResult();
         }
 
-        // GET api/<ValuesController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> Get(Guid id)
         {
@@ -42,7 +38,6 @@ namespace ProductAPI.Controllers
             return result.GetActionResult();
         }
 
-        // POST api/<ValuesController>
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<Guid>> Post([FromBody] CreateProductDto createProductDto)
@@ -56,7 +51,6 @@ namespace ProductAPI.Controllers
             return result.GetActionResult();
         }
 
-        // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
         [Authorize]
         [Produces("text/plain")]
@@ -102,7 +96,6 @@ namespace ProductAPI.Controllers
             return result.GetActionResult();
         }
 
-        // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
         [Authorize]
         [Produces("text/plain")]

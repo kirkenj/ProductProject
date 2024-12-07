@@ -41,9 +41,9 @@ namespace AuthAPI.Services
 
         public async Task<bool> IsValid(string tokenHash)
         {
-            if (tokenHash == null)
+            if (string.IsNullOrEmpty(tokenHash))
             {
-                return true;
+                return false;
             }
 
             var key = _keyGeneratingDelegate(tokenHash);
@@ -62,12 +62,7 @@ namespace AuthAPI.Services
             var banResult = await _memoryCache.GetAsync<DateTime>(
                 _keyGeneratingDelegate(trackInfo.UserId.ToString() ?? throw new InvalidOperationException(nameof(trackInfo))));
 
-            if (banResult == default)
-            {
-                return true;
-            }
-
-            return trackInfo.DateTime >= banResult;
+            return banResult == default || trackInfo.DateTime > banResult;
         }
 
         public async Task Track(string token, TUserIdType userId, DateTime tokenRegistrationTime)

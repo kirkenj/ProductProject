@@ -2,9 +2,11 @@ using Clients.AuthApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.ControllerBase
+namespace CustomGateway.Controllers;
+
+public class AuthServiceController : Microsoft.AspNetCore.Mvc.ControllerBase
 {
-    private IAuthApiClient _implementation = null!;
+    private readonly IAuthApiClient _implementation = null!;
 
     public AuthServiceController(IAuthApiClient implementation)
     {
@@ -16,7 +18,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Account")]
     public System.Threading.Tasks.Task<UserDto> AccountGET()
     {
-
         return _implementation.AccountGETAsync();
     }
 
@@ -26,7 +27,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account")]
     public System.Threading.Tasks.Task<string> AccountPUT([Microsoft.AspNetCore.Mvc.FromBody] UpdateUserModel body)
     {
-
         return _implementation.AccountPUTAsync(body);
     }
 
@@ -36,7 +36,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account/Password")]
     public System.Threading.Tasks.Task<string> Password([Microsoft.AspNetCore.Mvc.FromBody] string body)
     {
-
         return _implementation.PasswordAsync(body);
     }
 
@@ -46,7 +45,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account/Login")]
     public System.Threading.Tasks.Task<string> LoginPUT([Microsoft.AspNetCore.Mvc.FromQuery] string newLogin)
     {
-
         return _implementation.LoginPUTAsync(newLogin);
     }
 
@@ -56,7 +54,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Account/Email")]
     public System.Threading.Tasks.Task<string> Email([Microsoft.AspNetCore.Mvc.FromBody] string body)
     {
-
         return _implementation.EmailAsync(body);
     }
 
@@ -66,7 +63,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Account/Email/Confirm")]
     public System.Threading.Tasks.Task<string> Confirm([Microsoft.AspNetCore.Mvc.FromBody] string body)
     {
-
         return _implementation.ConfirmAsync(body);
     }
 
@@ -75,7 +71,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Auth/Register")]
     public System.Threading.Tasks.Task<string> Register([Microsoft.AspNetCore.Mvc.FromBody] CreateUserDto body)
     {
-
         return _implementation.RegisterAsync(body);
     }
 
@@ -83,7 +78,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Auth/Login")]
     public System.Threading.Tasks.Task<LoginResultModel> LoginPOST([Microsoft.AspNetCore.Mvc.FromBody] LoginDto body)
     {
-
         return _implementation.LoginPOSTAsync(body);
     }
 
@@ -92,7 +86,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Auth/ForgotPassword")]
     public System.Threading.Tasks.Task<string> ForgotPassword([Microsoft.AspNetCore.Mvc.FromBody] string body)
     {
-
         return _implementation.ForgotPasswordAsync(body);
     }
 
@@ -100,7 +93,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Roles")]
     public System.Threading.Tasks.Task<System.Collections.Generic.ICollection<RoleDto>> RolesAll()
     {
-
         return _implementation.RolesAllAsync();
     }
 
@@ -108,7 +100,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Roles/{id}")]
     public System.Threading.Tasks.Task<RoleDto> Roles(int id)
     {
-
         return _implementation.RolesAsync(id);
     }
 
@@ -116,7 +107,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Tokens/IsValid")]
     public System.Threading.Tasks.Task<bool> IsValid([Microsoft.AspNetCore.Mvc.FromQuery] string tokenHash)
     {
-
         return _implementation.IsValidAsync(tokenHash);
     }
 
@@ -125,7 +115,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Tokens/TerminateSessions")]
     public System.Threading.Tasks.Task TerminateSessions([Microsoft.AspNetCore.Mvc.FromQuery] System.Guid? userId)
     {
-
         return _implementation.TerminateSessionsAsync(userId);
     }
 
@@ -133,7 +122,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Tokens/HashProviderSettings")]
     public System.Threading.Tasks.Task<HashProviderSettings> HashProviderSettings()
     {
-
         return _implementation.HashProviderSettingsAsync();
     }
 
@@ -141,7 +129,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Users/list")]
     public System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDto>> List([Microsoft.AspNetCore.Mvc.FromQuery] System.Collections.Generic.IEnumerable<System.Guid> ids, [Microsoft.AspNetCore.Mvc.FromQuery] string accurateLogin, [Microsoft.AspNetCore.Mvc.FromQuery] string loginPart, [Microsoft.AspNetCore.Mvc.FromQuery] string accurateEmail, [Microsoft.AspNetCore.Mvc.FromQuery] string emailPart, [Microsoft.AspNetCore.Mvc.FromQuery] string address, [Microsoft.AspNetCore.Mvc.FromQuery] string name, [Microsoft.AspNetCore.Mvc.FromQuery] System.Collections.Generic.IEnumerable<int> roleIds, [Microsoft.AspNetCore.Mvc.FromQuery] int? page, [Microsoft.AspNetCore.Mvc.FromQuery] int? pageSize)
     {
-
         return _implementation.ListAsync(ids, accurateLogin, loginPart, accurateEmail, emailPart, address, name, roleIds, page, pageSize);
     }
 
@@ -149,7 +136,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Users/{id}")]
     public System.Threading.Tasks.Task<UserDto> UsersGET(System.Guid id)
     {
-
         return _implementation.UsersGETAsync(id);
     }
 
@@ -159,7 +145,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users/{id}")]
     public System.Threading.Tasks.Task<string> UsersPUT(System.Guid id, [Microsoft.AspNetCore.Mvc.FromBody] UpdateUserModel body)
     {
-
         return _implementation.UsersPUTAsync(id, body);
     }
 
@@ -169,7 +154,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users/{id}/Email")]
     public System.Threading.Tasks.Task<string> Email2(System.Guid id, [Microsoft.AspNetCore.Mvc.FromBody] string body)
     {
-
         return _implementation.Email2Async(id, body);
     }
 
@@ -179,7 +163,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Users/{id}/Email/Confirm")]
     public System.Threading.Tasks.Task<string> Confirm2(System.Guid id, [Microsoft.AspNetCore.Mvc.FromBody] string body)
     {
-
         return _implementation.Confirm2Async(id, body);
     }
 
@@ -189,7 +172,6 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Users/{id}/Login")]
     public System.Threading.Tasks.Task<string> LoginPUT2(System.Guid id, [Microsoft.AspNetCore.Mvc.FromQuery] string newLogin)
     {
-
         return _implementation.LoginPUT2Async(id, newLogin);
     }
 
@@ -201,5 +183,4 @@ public partial class AuthServiceController : Microsoft.AspNetCore.Mvc.Controller
     {
         return _implementation.RoleAsync(id, roleId);
     }
-
 }
