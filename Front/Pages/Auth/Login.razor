@@ -10,6 +10,9 @@
 
     <h1>Login</h1>
 
+    <div class="text-danger">
+        @LoginResult
+    </div>
     <div>
         Email
         <input name="email" class="input-group-text" @bind="Email"/>
@@ -17,9 +20,6 @@
     <div>
         Password
         <input name="pwd" type="password" class="input-group-text" @bind="Password" />
-    </div>
-    <div>
-        @LoginResult
     </div>
     <div>
         <button class="btn btn-secondary" @onclick="OnForgotPasswordClicked">Forgot password</button>
@@ -67,6 +67,10 @@ else
             Password = string.Empty;
             Email = string.Empty;
             navManager.NavigateTo("");
+        }
+        catch(Clients.CustomGateway.GatewayException ex)
+        {
+            LoginResult = ex.Response;
         }
         catch(Exception ex)
         {
