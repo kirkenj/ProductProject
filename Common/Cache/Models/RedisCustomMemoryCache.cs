@@ -1,6 +1,5 @@
 ﻿using Cache.Contracts;
 using StackExchange.Redis;
-using System.Text;
 using System.Text.Json;
 
 namespace Cache.Models
@@ -20,8 +19,7 @@ namespace Cache.Models
             _implementation = connection.GetDatabase();
 
             var keyToCheckConnection = "hello";
-            Encoding encoding = Encoding.UTF8;
-            _implementation.StringSet(keyToCheckConnection, encoding.GetBytes("World"));
+            _implementation.StringSet(keyToCheckConnection, "World");
             _implementation.KeyDelete(keyToCheckConnection);
         }
 
