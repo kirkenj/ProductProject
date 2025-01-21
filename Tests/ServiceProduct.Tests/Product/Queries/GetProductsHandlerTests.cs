@@ -13,7 +13,7 @@ namespace ServiceProduct.Tests.Product.Queries
     {
         public IMapper Mapper { get; set; } = null!;
         public IMediator Mediator { get; set; } = null!;
-        public ProductDbContext Context { get; set; }
+        public ProductDbContext Context { get; set; } = null!;
         public IEnumerable<Domain.Models.Product> Products => Context.Products;
 
         [SetUp]
