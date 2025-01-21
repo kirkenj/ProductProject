@@ -7,7 +7,7 @@ using Persistence;
 using ServiceProduct.Tests.Common;
 
 
-namespace ServiceAuth.Tests.User.Queries
+namespace ServiceProduct.Tests.Product.Queries
 {
     public class GetProductsHandlerTests
     {
@@ -29,7 +29,7 @@ namespace ServiceAuth.Tests.User.Queries
         }
 
         [Test]
-        public async Task GetUserListRequest_ReturnsAllValues()
+        public async Task GetUserProductRequest_ReturnsAllValues()
         {
             //arrange
             var expectedResult = Mapper.Map<List<ProductListDto>>(Products);

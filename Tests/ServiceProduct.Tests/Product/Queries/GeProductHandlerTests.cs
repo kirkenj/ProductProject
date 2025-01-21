@@ -4,13 +4,13 @@ using ServiceProduct.Tests.Common;
 using System.Net;
 
 
-namespace ServiceAuth.Tests.User.Queries
+namespace ServiceProduct.Tests.Product.Queries
 {
     public class GeProductHandlerTests : TestBase
     {
 
         [Test]
-        public async Task GetUserDtoRequest_IdDefault_Returns404()
+        public async Task GetProductDtoRequest_IdDefault_Returns404()
         {
             //arrange
 
@@ -27,7 +27,7 @@ namespace ServiceAuth.Tests.User.Queries
         }
 
         [Test]
-        public async Task GetUserDtoRequest_IdNotExcist_Returns404()
+        public async Task GetProductDtoRequest_IdNotExcist_Returns404()
         {
             //arrange
 
@@ -44,7 +44,7 @@ namespace ServiceAuth.Tests.User.Queries
         }
 
         [Test]
-        public async Task GetUserDtoRequest_IdExcists_ReturnsValue()
+        public async Task GetProductDtoRequest_IdExcists_ReturnsValue()
         {
             //arrange
             var prods = Products.ToArray();

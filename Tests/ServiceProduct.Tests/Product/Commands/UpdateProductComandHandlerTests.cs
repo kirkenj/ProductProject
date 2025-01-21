@@ -5,7 +5,7 @@ using FluentValidation;
 using ServiceProduct.Tests.Common;
 
 
-namespace ServiceAuth.Tests.Product.Commands
+namespace ServiceProduct.Tests.Product.Commands
 {
     public class UpdateProductComandHandlerTests : TestBase
     {
